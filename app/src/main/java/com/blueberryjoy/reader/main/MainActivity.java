@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_TAB) return true;
         super.onKeyDown(keyCode, event);
-        return true;
+        return false;
     }
 
     private void initializeOnBackHandler() {
