@@ -1,0 +1,89 @@
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/menu_background"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="6dp"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textCopyUrl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/popup_menu_copy_url"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/textCopyUrlBorder"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/menu_border" />
+
+        <TextView
+            android:id="@+id/textOpen"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/popup_menu_open"
+            android:textSize="16sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/menu_border" />
+
+        <TextView
+            android:id="@+id/textOpenNewWindow"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/popup_menu_open_new_window"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/textOpenNewWindowBorder"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/menu_border" />
+
+        <TextView
+            android:id="@+id/textOpenChrome"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/popup_menu_open_chrome"
+            android:textSize="16sp" />
+
+        <View
+            android:id="@+id/textEditBorder"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/menu_border" />
+
+        <TextView
+            android:id="@+id/textEdit"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/popup_menu_edit"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

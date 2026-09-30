@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+
+    <!-- SQLite databases -->
+    <include
+        domain="database"
+        path="." />
+
+    <!-- Downloaded files -->
+    <include
+        domain="file"
+        path="downloads/" />
+
+    <!-- Bookmark file -->
+    <include
+        domain="file"
+        path="bookmark.txt" />
+
+</full-backup-content>

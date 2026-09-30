@@ -1,0 +1,27 @@
+# Gradle
+.gradle/
+build/
+
+# Android Studio
+.idea/
+*.iml
+local.properties
+gradle.properties
+
+# Build outputs
+/app/release/
+*.apk
+*.aab
+
+# OS files
+.DS_Store
+
+# Folders
+/HTML
+/Js
+/adblock
+/app-ads
+/logo
+/gradle/gradle-daemon-jvm.properties
+.old/
+/.report

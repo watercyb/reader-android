@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple">#FF673AB7</color>
+    <color name="menu_background">#FFFFFFFF</color>
+    <color name="url_background">#FFFFFFFF</color>
+    <color name="primary_text">#DE000000</color>
+    <color name="logo_background">#FFFFFFFF</color>
+    <color name="page_current_background">#E8F0FE</color>
+    <color name="menu_border">#33000000</color>
+</resources>

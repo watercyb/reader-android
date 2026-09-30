@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    tools:context="com.blueberryjoy.reader.main.MainActivity"
+    tools:ignore="Overdraw">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewReadingText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="?android:attr/colorBackground"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutUrl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/editTextUrl"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/main_url_rounded_corner"
+                        android:backgroundTint="@color/url_background"
+                        android:ems="10"
+                        android:hint="@string/search_or_enter_url"
+                        android:inputType="textUri"
+                        android:maxHeight="240dp"
+                        android:minHeight="32dp"
+                        android:paddingStart="5dp"
+                        android:paddingTop="0dp"
+                        android:paddingEnd="5dp"
+                        android:paddingBottom="2dp"
+                        android:singleLine="true"
+                        android:text="@string/default_url"
+                        tools:ignore="Autofill,LabelFor" />
+
+                    <FrameLayout
+                        android:id="@+id/frameLayoutUrl"
+                        android:layout_width="10dp"
+                        android:layout_height="match_parent"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutUrlButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="10dp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imageViewPrivate"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_marginLeft="2dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="2dp"
+                            android:padding="3dp"
+                            android:src="@mipmap/ic_private"
+                            android:visibility="gone"
+                            tools:ignore="ContentDescription" />
+
+                        <FrameLayout
+                            android:layout_width="0dp"
+                            android:layout_height="32dp"
+                            android:layout_weight="1"
+                            android:clickable="true"
+                            android:foreground="?attr/selectableItemBackground">
+
+                            <TextView
+                                android:id="@+id/numberBox"
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/main_menu_box"
+                                android:gravity="center"
+                                android:text="@string/_0"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_below="@+id/linearLayoutUrl"
+                    android:background="?android:attr/colorBackground" />
+
+                <LinearLayout
+                    android:id="@+id/linearLayoutAppbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:layout_below="@+id/linearLayoutUrl"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <Button
+                        android:id="@+id/buttonCopy"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginEnd="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:text="@string/url_copy"
+                        app:cornerRadius="10dp" />
+
+                    <Button
+                        android:id="@+id/buttonPaste"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:text="@string/url_paste"
+                        app:cornerRadius="10dp" />
+
+                    <Button
+                        android:id="@+id/buttonReplace"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:text="@string/url_replace"
+                        app:cornerRadius="10dp" />
+
+                    <Button
+                        android:id="@+id/buttonClear"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:minWidth="0dp"
+                        android:minHeight="0dp"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:text="@string/url_clear"
+                        app:cornerRadius="10dp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <FrameLayout
+                android:id="@+id/frameLayoutWebViewContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.blueberryjoy.reader.main.webview.MyWebView
+            android:id="@+id/webViewReading"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:visibility="gone"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="16dp"
+        android:indeterminate="true"
+        android:indeterminateTint="#ff673AB7"
+        android:progressBackgroundTint="#ff2A2A2A"
+        android:translationZ="1dp"
+        android:visibility="gone"
+        tools:ignore="MissingConstraints" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewHistory"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/colorBackground"
+        android:clipToPadding="false"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/buttonPrev"
+        android:layout_width="45dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/find_prev"
+        android:padding="0dp"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPlay"
+        app:srcCompat="@mipmap/ic_prev" />
+
+    <ImageView
+        android:id="@+id/buttonPlay"
+        android:layout_width="45dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/dsc_play"
+        android:paddingStart="5dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="0dp"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/ic_play" />
+
+    <ImageView
+        android:id="@+id/buttonReadingMode"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/des_reading_mode"
+        android:padding="0dp"
+        android:scaleX="1.15"
+        android:scaleY="1.15"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/imageButtonSetting"
+        app:layout_constraintStart_toEndOf="@+id/buttonNext"
+        app:srcCompat="@mipmap/ic_readingmode_normal" />
+
+    <ImageView
+        android:id="@+id/buttonReloadText"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/des_reload_text"
+        android:padding="0dp"
+        android:scaleX="1.2"
+        android:scaleY="1.2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/buttonPrev"
+        app:layout_constraintStart_toEndOf="@+id/buttonScroll"
+        app:srcCompat="@mipmap/ic_load_text" />
+
+    <ImageView
+        android:id="@+id/buttonScroll"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/des_scroll_to_bottom"
+        android:padding="0dp"
+        android:scaleX="1.15"
+        android:scaleY="1.15"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/ic_scrolltobottom" />
+
+    <ImageView
+        android:id="@+id/buttonNext"
+        android:layout_width="45dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/des_next"
+        android:padding="0dp"
+        android:scaleX="1.12"
+        android:scaleY="1.12"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonPlay"
+        app:srcCompat="@mipmap/ic_next" />
+
+
+    <TextView
+        android:id="@+id/textViewLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:backgroundTint="?android:attr/colorBackground"
+        android:paddingStart="20dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="1dp"
+        android:paddingBottom="1dp"
+        android:text="@string/loading_dot"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/textViewReadingText"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewReadingText"
+        android:layout_width="fill_parent"
+        android:layout_height="100dp"
+        android:background="#11D0CBDA"
+        android:scrollbars="vertical"
+        android:text=""
+        android:textColor="@color/purple"
+        android:textSize="16sp"
+        android:translationZ="-1dp"
+        app:layout_constraintBottom_toTopOf="@+id/frameLayoutBottomBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/frameLayoutBottomBar"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="?android:attr/colorBackground"
+        android:elevation="-1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </FrameLayout>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/menuContainer"
+        android:layout_width="200dp"
+        android:layout_height="350dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/menu_background"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonPlay"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ImageView
+        android:id="@+id/imageButtonSetting"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/des_setting"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@mipmap/ic_setting" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutFindBar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="?android:attr/colorBackground"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <EditText
+            android:id="@+id/editTextFind"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:background="@color/url_background"
+            android:ems="10"
+            android:inputType="text"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:singleLine="true"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="Autofill,LabelFor" />
+
+        <Button
+            android:id="@+id/buttonFindPrev"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:text="@string/find_prev"
+            android:textColor="@color/primary_text" />
+
+        <Button
+            android:id="@+id/buttonFindNext"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:text="@string/find_next"
+            android:textColor="@color/primary_text" />
+
+        <Button
+            android:id="@+id/buttonFindClose"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="10dp"
+            android:background="@android:color/transparent"
+            android:padding="0dp"
+            android:text="@string/find_close"
+            android:textColor="@color/primary_text" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
