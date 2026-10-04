@@ -37,4 +37,10 @@ public class WindowsRecyclerViewItems {
         if (!items.isEmpty()) return items.get(items.size() - 1);
         return null;
     }
+
+    public void move(int from, int to) {
+        WindowsRecyclerViewNode temp = items.get(from);
+        items.remove(from);
+        items.add(to, temp);
+    }
 }

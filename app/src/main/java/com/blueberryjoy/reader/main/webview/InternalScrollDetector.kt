@@ -20,11 +20,7 @@ class InternalScrollDetector {
     }
 
     fun onTouchEvent(event: MotionEvent): Boolean {
-        if (!isEnabled) {
-            return false
-        }
-
-        return when (event.action) {
+        return isEnabled && when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 reset()
                 initialX = event.x
@@ -32,6 +28,7 @@ class InternalScrollDetector {
                 activePointerId = event.getPointerId(0)
                 false
             }
+
             MotionEvent.ACTION_MOVE -> {
                 val activePointerIndex = event.findPointerIndex(activePointerId)
                 val initialEventY = initialY
@@ -50,11 +47,13 @@ class InternalScrollDetector {
                     isInternalScroll()
                 }
             }
+
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                 (isInternalScroll()).also {
                     reset()
                 }
             }
+
             else -> false
         }
     }

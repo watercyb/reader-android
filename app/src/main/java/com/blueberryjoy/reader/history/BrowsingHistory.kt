@@ -178,8 +178,8 @@ object BrowsingHistory : ViewModel() {
                         o2.first.timestamp.compareTo(o1.first.timestamp)
                     o2.second.compareTo(o1.second)
                 })
-                for (pair in rankedResults) {
-                    matchedHistory.add(pair.first)
+                for ((first) in rankedResults) {
+                    matchedHistory.add(first)
                 }
             }
             val domainCounts = HashMap<String, Int>()

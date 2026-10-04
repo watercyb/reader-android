@@ -105,4 +105,9 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
         windowsRecyclerViewItems.remove(idx);
         notifyItemRemoved(idx);
     }
+
+    public void move(int from, int to) {
+        windowsRecyclerViewItems.move(from, to);
+        notifyItemMoved(from, to);
+    }
 }

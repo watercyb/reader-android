@@ -313,8 +313,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_TAB) return true;
-        super.onKeyDown(keyCode, event);
-        return false;
+        return super.onKeyDown(keyCode, event);
     }
 
     private void initializeOnBackHandler() {
@@ -1375,7 +1374,7 @@ public class MainActivity extends AppCompatActivity {
                 int from = viewHolder.getBindingAdapterPosition();
                 int to = target.getBindingAdapterPosition();
                 WindowList.move(from, to);
-                recyclerViewAdapter.notifyItemMoved(from, to);
+                recyclerViewAdapter.move(from, to);
                 return true;
             }
 

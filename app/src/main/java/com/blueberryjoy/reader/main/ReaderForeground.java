@@ -191,6 +191,10 @@ public class ReaderForeground extends Service {
                         }
                     });
                 }
+
+                //TODO
+                restartMediaPlayerForMediaSession();
+
                 //run everytime when switch back, and before "initial" when open app
                 if (WindowList.isValidReadingStatus()) {
                     //When ForegroundService stopped.
@@ -377,6 +381,7 @@ public class ReaderForeground extends Service {
             }
             isWaiting = false;
             isPause = false;
+
             read(1);
         }
         foregroundTimeoutTimer.cancel();
@@ -436,29 +441,28 @@ public class ReaderForeground extends Service {
 
     private void mediaControl() {
         if (mediaSession != null) return;
-        if (mediaPlayer != null) mediaPlayer.release();
+        restartMediaPlayerForMediaSession();
         mediaSession = new MediaSession(getBaseContext(), "1");
-        mediaSession.setActive(true);
-        mediaPlayer = MediaPlayer.create(this, R.raw.hour);
-        mediaPlayer.setOnCompletionListener(mp -> {
-        });
-        mediaPlayer.setVolume(0.0f, 0.0f);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
-        mediaPlayer.pause();
-
         mediaSession.setMetadata(metadataBuilder.build());
         mediaSession.setCallback(new MediaSession.Callback() {
             @Override
             public void onPlay() {
                 super.onPlay();
-                play();
+                if (isPause) {
+                    play();
+                } else {
+                    pause();
+                }
             }
 
             @Override
             public void onPause() {
                 super.onPause();
-                pause();
+                if (isPause) {
+                    play();
+                } else {
+                    pause();
+                }
             }
 
             @Override
@@ -474,12 +478,26 @@ public class ReaderForeground extends Service {
             }
 
         });
+
         mediaSession.setActive(true);
+    }
+
+    private void restartMediaPlayerForMediaSession() {
+        if (mediaPlayer != null) mediaPlayer.release();
+        mediaPlayer = MediaPlayer.create(this, R.raw.second);
+        mediaPlayer.setOnCompletionListener(mp -> {
+        });
+        mediaPlayer.setVolume(0.0f, 0.0f);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.start();
+        mediaPlayer.pause();
     }
 
     private void setPlaybackStatePlay() {
         mediaControl();
         mediaSession.setPlaybackState(stateBuilder.setState(PlaybackState.STATE_PLAYING, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 0f).build());
+        //Recreate the MediaPlayer to restore Bluetooth media-button routing.
+        restartMediaPlayerForMediaSession();
     }
 
     private void setPlaybackStatePause() {

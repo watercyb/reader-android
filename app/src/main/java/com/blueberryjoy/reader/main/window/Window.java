@@ -579,9 +579,7 @@ public class Window {
             }
         });
 
-        webView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-            JavaScriptHandler.updateWindowHeight(webView);
-        });
+        webView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> JavaScriptHandler.updateWindowHeight(webView));
 
         webView.setOnLongClickListener(v -> {
             WebView.HitTestResult result = ((WebView) v).getHitTestResult();
