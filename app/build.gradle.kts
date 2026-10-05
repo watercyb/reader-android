@@ -30,7 +30,6 @@ android {
 
     buildTypes {
         debug {
-            //buildConfigField("boolean", "DEBUG", "true")
         }
         release {
             manifestPlaceholders += mapOf()
@@ -45,7 +44,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            //buildConfigField("boolean", "DEBUG", "false")
             signingConfig = signingConfigs.getByName("debug")
         }
     }

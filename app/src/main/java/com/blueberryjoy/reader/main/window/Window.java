@@ -316,7 +316,7 @@ public class Window {
         return 0;
     }
 
-    //Idx<0: do not update idx.
+    //Idx<0 -> not update idx.
     public void addPageToCache(@Nullable String url, int idx, @Nullable String title, String state) {
         if (url == null) url = webView.getUrl();
         if (url == null) return;
@@ -340,14 +340,12 @@ public class Window {
             @Override
             @JavascriptInterface
             public void onPageScroll(int position) {
-                //MessageSender.sendMessage(new MessageWebView(MessageWebView.ACTION_SCROLL, position));
                 if (isCurrentWindow) WindowList.onPageScroll(position);
             }
 
             @Override
             @JavascriptInterface
             public void onMessage(String message) {
-                //MessageSender.sendMessage(new MessageWebView(message, -1));
                 Message.log("Received from JS: " + message);
                 switch (message) {
                     case WebViewJSInterface.ACTION_UNMATCHING,
@@ -372,10 +370,9 @@ public class Window {
         };
 
         Runnable afterSamePageLoaded = () -> {
-            //If the title is updated after afterSamePageLoaded before samePageLoaded.
+            //Check if the title is updated after afterSamePageLoaded and before samePageLoaded.
             if (!windowIndexCache.checkTitle(webView.getTitle())) {
-                //if (isCurrentWindow) Message.log("afterSamePageLoaded different url: " + webView.getTitle());
-                //TODO should have to check the content.
+                //TODO should check the content.
                 webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                     if (!html.equals("true")) {
                         if (isCurrentWindow)
@@ -402,10 +399,8 @@ public class Window {
             }
         };
 
-        //Loading order onPageStarted (except js load and forward/backward) =>
-        //onPageFinished & doUpdateVisitedHistory (only doUpdateVisitedHistory can get the change after forward/backward (sometime...), and some js load?).
-        //when doUpdateVisitedHistory called, the page may not finish loading e.g. title.
         webView.setWebViewClient(new WebViewClient() {
+            //Will not be called on page forward/back navigation or JS‑updated pages.
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //if (isCurrentWindow) Message.log("onPageStarted: " + url);
@@ -421,12 +416,13 @@ public class Window {
                 clearReadingArr();
             }
 
+            //Only called when page open or reload normally, paired with onPageStarted.
             @Override
             public void onPageFinished(WebView view, String url) {
-                //Only called when page open or reload paired with onPageStarted.
                 if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
             }
 
+            //May run before the page finishes loading (title, JS content).
             @Override
             public void doUpdateVisitedHistory(WebView view, @NonNull String url, boolean isReload) {
                 super.doUpdateVisitedHistory(view, url, isReload);
@@ -435,17 +431,14 @@ public class Window {
                 webView.evaluateJavascript("(function() { return document.body.innerHTML.includes('\\u003Cframe'); })();", (html) -> {
                     if (isCurrentWindow) WindowList.onSwipeRefreshRequired(!html.equals("true"));
                 });
-                //TODO moved inside if loop.
-                //if (isCurrentWindow) WindowList.clearNotification();
-                //If url or title is different, considering there is a new page.
+                //If onPageStarted is not called and url/title are different -> different page.
                 if (getLoadingState() == 0 && (!isCurrentWindow || ((!WindowList.getWebUrl().equals(url) || !windowIndexCache.checkTitle(webView.getTitle())) && !WindowList.isReadingMode()))) {
                     setLoadingState(-1);
                     if (isCurrentWindow) {
                         WindowList.onUrlChanged(url);
                         WindowList.onResetTextBoxRequired();
                     }
-                    //Check the title if page is updated by JS code, if the title matching, consider it is the same page and insert url to the url pool of that page.
-                    //Since the idx checking is based on url, the idx record will not lose during re-rendering.
+                    //Additional check on the page contents, if matched -> same page.
                     webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                         if (windowIndexCache.checkTitle(webView.getTitle()) && html.equals("true")) {
                             //Same page.
@@ -460,7 +453,6 @@ public class Window {
                             isLoadedText = false;
                             if (isCurrentWindow) WindowList.onLoadedTextStateChanged(false);
                             if (ReaderSettings.getIsReloadPageAfterJS()) {
-                                //Refresh the page by setting.
                                 runTask(() -> webViewLoadUrl(null), true);
                             } else {
                                 clearPageIdx();
@@ -501,7 +493,6 @@ public class Window {
             @Override
             public void onScaleChanged(@NonNull WebView view, float oldScale, float newScale) {
                 webView.setScaleFactor(newScale);
-                //view.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.windowHeight = " + view.getHeight() / newScale + ";");
                 JavaScriptHandler.updateWindowHeight((MyWebView) view);
             }
 
@@ -552,7 +543,6 @@ public class Window {
 
             @Override
             public void onReceivedTitle(WebView view, String title) {
-                //if (isCurrentWindow) Message.log("onReceivedTitle: " + title + " loadingState: " + loadingState);
                 if (!isPrivate)
                     new Handler(Looper.getMainLooper()).postDelayed(() -> BrowsingHistory.INSTANCE.debouncedInsert(getUrl(), title), 1000);
             }
@@ -563,7 +553,7 @@ public class Window {
             if (isLoadedText && idx >= 0) {
                 idx = getReadingIdx(idx);
                 if (idx >= 0)
-                    WindowList.updateIdx(idx);//WindowList.getMainActivityProvider().updateIdx(idx);
+                    WindowList.updateIdx(idx);
             } else if (!isLoadedText) {
                 reloadText(x, y, false);
             }
@@ -600,11 +590,10 @@ public class Window {
     }
 
     private void addToPage() {
-        //webView.loadUrl("javascript:" + Files.getJSCode("target", String.valueOf(webView.getHeight() / webView.getScaleFactor())));
         JavaScriptHandler.loadJavaScriptCode(webView, FileStorage.getJSCode("target", String.valueOf(webView.getHeight() / webView.getScaleFactor())));
     }
 
-    //isDownloadPageAfterLoad: -1 -> not download, 0 -> download, 1 -> append
+    //isDownloadPageAfterLoad: -1 -> not download, 0 -> download, 1 -> append.
     public void getArrFromPage(boolean isPlayAfterLoad, boolean isSamePage, boolean isMoveToIdx, int isDownloadPageAfterLoad, int doubleClicked_x, int doubleClicked_y) {
         if (!isCurrentWindow) return;
         WindowList.onAlertStatusChanged(true);
@@ -626,7 +615,7 @@ public class Window {
                 }
                 int idx = getCachedIdx();
                 if (idx >= getReadingArr().length) idx = 0;
-                //Need delay for some website, which has pop-up layer on double click.
+                //Need delay on some website, which has pop-up layer on double-clicking.
                 if (doubleClicked_x >= 0) {
                     int finalIdx = idx;
                     new CountDownTimer(300, 300) {
@@ -638,7 +627,6 @@ public class Window {
                         public void onFinish() {
                             webView.evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", html1 -> {
                                 if (!isCurrentWindow) return;
-                                //WindowList.getMainActivityProvider().requireReaderInitial(finalIdx, isMoveToIdx, isSamePage);
                                 WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
                                 if (html1.equals("null")) return;
                                 int nextIdx;
@@ -649,14 +637,12 @@ public class Window {
                                 }
                                 nextIdx = getReadingIdx(nextIdx);
                                 if (nextIdx >= 0)
-                                    //WindowList.getMainActivityProvider().updateIdx(nextIdx);
                                     WindowList.updateIdx(nextIdx);
                             });
                         }
                     }.start();
                 } else {
                     if (!isCurrentWindow) return;
-                    //mainActivityProvider.requireReaderInitial(idx, isMoveToIdx, isSamePage);
                     WindowList.readerInitial(idx, isMoveToIdx, isSamePage);
                     if (isPlayAfterLoad && !isReading) WindowList.readerPause();
                     if (isDownloadPageAfterLoad == 0) {
@@ -664,7 +650,6 @@ public class Window {
                     } else if (isDownloadPageAfterLoad == 1) {
                         FileStorage.DownloadPage(App.Companion.getAppContext(), "", "download", readingArr, idx, true);
                     }
-                    //mainActivityProvider.requireDownloadPage(webView.getUrl(), webView.getTitle(), readingArr, idx, false);
                 }
                 setLoadingState(0);
                 isLoadedText = true;
@@ -679,7 +664,6 @@ public class Window {
     }
 
     private void clearPageIdx() {
-        //webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.clearIdx();");
         JavaScriptHandler.clearIdx(webView);
     }
 
@@ -724,7 +708,6 @@ public class Window {
     }
 
     public void webViewLoadUrl(@Nullable String url) {
-        //The WebView listener onPageStarted may not be called on some website (https://books.fishhawk.top/).
         if (!isCurrentWindow) return;
         if (isReading) WindowList.readerPause();
         WindowList.onReadingModeSwitchingRequired(false);
@@ -748,6 +731,10 @@ public class Window {
         } else {
             setIsStartReadingAfterPageLoaded(true);
         }
+    }
+
+    public boolean isChangingIdxEnabled() {
+        return isCurrentWindow && isLoadedText;
     }
 
     public boolean forward() {
@@ -781,7 +768,6 @@ public class Window {
             if (!isLoadedText) {
                 addToPage();
                 getArrFromPage(false, false, false, 1, -1, -1);
-                //new Handler(Looper.getMainLooper()).postDelayed(() -> Files.DownloadPage(App.Companion.getAppContext(), "", "download", getReadingArr(), 0, true), 1000);
             } else {
                 FileStorage.DownloadPage(App.Companion.getAppContext(), "", "download", getReadingArr(), 0, true);
             }
@@ -868,7 +854,6 @@ public class Window {
 
     public void remove() {
         SQLitePage.delete(id);
-        //WindowList.getMainActivityProvider().requireRemoveView(webView);
         if (webView.getParent() == null) return;
         ((FrameLayout) webView.getParent()).removeView(webView);
         webView.destroy();
@@ -922,5 +907,4 @@ public class Window {
     public int getPosition() {
         return position;
     }
-
 }

@@ -20,13 +20,11 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
     private final LayoutInflater layoutInflater;
     private ItemClickListener itemclickListener;
 
-    // data is passed into the constructor
     public DownloadsRecyclerViewAdapter(Context context, DownloadsRecyclerViewItems downloadsRecyclerViewItems) {
         this.layoutInflater = LayoutInflater.from(context);
         this.downloadsRecyclerViewItems = downloadsRecyclerViewItems;
     }
 
-    // inflates the row layout from XML when needed
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,21 +32,18 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(downloadsRecyclerViewItems.get(position).getItem());
         holder.imageView.setImageBitmap(downloadsRecyclerViewItems.get(position).getIcon());
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
         return downloadsRecyclerViewItems.size();
     }
 
 
-    // stores and recycles views as they are scrolled off-screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, View.OnTouchListener {
         final TextView textView;
         final ImageView imageView;
@@ -89,12 +84,10 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
         }
     }
 
-    // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.itemclickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(int position);
 

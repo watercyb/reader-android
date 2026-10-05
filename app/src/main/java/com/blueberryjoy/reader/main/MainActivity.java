@@ -213,20 +213,16 @@ public class MainActivity extends AppCompatActivity {
 
         //Debug.
         if (BuildConfig.DEBUG) Thread.setDefaultUncaughtExceptionHandler(new CaptureCrash(this));
-        //WebView.setWebContentsDebuggingEnabled(true);
 
         // Initialize the Google Mobile Ads SDK on a background thread.
-        new Thread(() -> MobileAds.initialize(this, initializationStatus -> {
-        })).start();
+        initializeGoogleAds();
 
-        //Have to before window setting since it needs ReaderSettings.
+        //Have to run before window setting since it needs ReaderSettings.
         initializeViewsAndClasses();
 
         initializeSQLite();
-
         initializeWindowList();
         BrowsingHistory.INSTANCE.initialize();
-
         initializePermissions();
         initializeTextView();
         initializeListView();
@@ -239,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
         initializeSwipeRefresh();
         initializeWebUrl();
         initializeWebViewReading();
-        showTips();
         initializeRecyclerViewHistory();
+        showTips();
     }
 
     @Override
@@ -404,7 +400,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void switchScrollButton(boolean toBottom) {
-        //Scroll button resets in afterLoadedTextStateChanged()
         if (toBottom) {
             scrollToBottom.setImageResource(R.mipmap.ic_scrolltobottom);
             scrollPageDirection = 1;
@@ -428,7 +423,6 @@ public class MainActivity extends AppCompatActivity {
 
     //Only for webViewReading.
     private void addToPage(@NonNull MyWebView webView) {
-        //webView.loadUrl("javascript:" + Files.getJSCode("target", String.valueOf(webView.getHeight() / webView.getScaleFactor())));
         JavaScriptHandler.loadJavaScriptCode(webView, FileStorage.getJSCode("target", String.valueOf(webView.getHeight() / webView.getScaleFactor())));
     }
 
@@ -453,7 +447,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showDownloads() {
-        //if (isReading) sendPause();
         Intent intent = new Intent(MainActivity.this, Downloads.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityIntent.launch(intent);
@@ -475,7 +468,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showGeneralSetting() {
-        //if (isReading) sendPause();
         Intent intent = new Intent(MainActivity.this, GeneralSetting.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityIntent.launch(intent);
@@ -514,7 +506,6 @@ public class MainActivity extends AppCompatActivity {
         }
         int size = WindowList.size();
         listViewWindowsNumberBox.setText(String.valueOf(size));
-        //The Reading Mode text is switched at readingModeSwitch();
         if (WindowList.isLoadedText()) {
             listViewLoad.setTitle(getString(R.string.menu_load_text_reload));
         } else {
@@ -614,15 +605,9 @@ public class MainActivity extends AppCompatActivity {
         //About
         listViewItemList.add(new ListViewItem(getString(R.string.menu_about), (item, isLongClick) -> showAbout()));
 
-        //Save to server
-        if (BuildConfig.DEBUG) {
-            listViewItemList.add(new ListViewItem("Save to Server", (item, isLongClick) -> volleySet()));
-        }
+        //Save to server if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Save to Server", (item, isLongClick) -> volleySet()));}
 
-        //Get from server
-        if (BuildConfig.DEBUG) {
-            listViewItemList.add(new ListViewItem("Get from Server", (item, isLongClick) -> volleyGet()));
-        }
+        //Get from server if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Get from Server", (item, isLongClick) -> volleyGet()));}
 
         //Download Page
         if (BuildConfig.DEBUG) {
@@ -736,9 +721,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
+
+                //Called when bluetooth disabled.
                 @Override
                 public void onServiceDisconnected(int profile) {
-                    //Bluetooth disabled.
                     if (profile == BluetoothProfile.A2DP && WindowList.isReading())
                         WindowList.pause();
                 }
@@ -773,7 +759,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     case MessageReader.ACTION_PAUSE -> {
-                        //int pauseCount = message.getV1(pauseButtonCount + 1);
                         int pauseCount = ((MessageReader) message).message();
                         if (WindowList.getCurrentWindow() != null && pauseCount >= pauseButtonCount) {
                             pauseButtonCount = pauseCount;
@@ -784,7 +769,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                     case MessageReader.ACTION_START -> {
-                        //int startCount = message.getV1(pauseButtonCount + 1);
                         int startCount = ((MessageReader) message).message();
                         if (WindowList.getCurrentWindow() != null && WindowList.isLoadedText() && startCount >= pauseButtonCount) {
                             pauseButtonCount = startCount;
@@ -899,21 +883,20 @@ public class MainActivity extends AppCompatActivity {
     private void initializeButtons() {
         prev.setOnClickListener(v -> {
             v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            if (WindowList.getLoadingState() == 0 || !isRecycleViewWindowsShown()) {
+            if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.prev();
-            }
         });
 
         next.setOnClickListener(v -> {
             v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            if (WindowList.getLoadingState() == 0 || !isRecycleViewWindowsShown()) {
+            if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.next();
-            }
         });
 
         pause.setOnClickListener(v -> {
             v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            if (!isRecycleViewWindowsShown()) WindowList.pause();
+            if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown())
+                WindowList.pause();
         });
 
         readingModeButton.setOnClickListener(v -> {
@@ -934,19 +917,15 @@ public class MainActivity extends AppCompatActivity {
         });
 
         scrollToBottom.setOnClickListener(v -> {
-            //Scroll state is set in afterLoadedTextStateChanged().
             v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() != 0) return;
             if (scrollPageDirection == -1) {
                 hideAppBarLayout();
-                //getCurrentWebView().loadUrl("javascript:window.scrollTo({top: 0, behavior: \"smooth\"})");
                 JavaScriptHandler.scrollTo(getCurrentWebView(), 0);
                 switchScrollButton(true);
             } else if (scrollPageDirection == 1) {
                 hideAppBarLayout();
-                //getCurrentWebView().loadUrl("javascript:window.scrollTo({top: document.documentElement.scrollHeight, behavior: \"smooth\"})");
                 int scrollHeight = (int) (getCurrentWebView().getContentHeight() * getCurrentWebView().getScaleFactor());
-                //getCurrentWebView().loadUrl("javascript:window.scrollTo({top: " + scrollHeight + ", behavior: \"smooth\"})");
                 JavaScriptHandler.scrollTo(getCurrentWebView(), scrollHeight);
                 switchScrollButton(false);
             } else {
@@ -988,7 +967,6 @@ public class MainActivity extends AppCompatActivity {
                                 boolean isPrivate = WindowList.getCurrentWindow() != null && WindowList.getCurrentWindow().isPrivate();
                                 WindowList.createAndInsert(url, intent.getIntExtra("idx", 0), true, isPrivate);
                             } else {
-                                //Play will be paused in webViewLoadUrl(url); if it is playing.
                                 if (isReadingMode) readingModeSwitch();
                                 WindowList.addPageToCache(url, intent.getIntExtra("idx", 0), "");
                                 WindowList.webViewLoadUrl(url);
@@ -1103,7 +1081,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeWebViewReading() {
-        //Will open browser on loadUrl without this.
+        //Page will be opened on system browser without this.
         webViewReading.setWebViewClient(new WebViewClient() {
             @Override
             public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
@@ -1126,7 +1104,6 @@ public class MainActivity extends AppCompatActivity {
 
         webViewReading.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (isReadingMode) JavaScriptHandler.updateWindowHeight(getCurrentWebView());
-            //getCurrentWebView().loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.windowHeight = " + getCurrentWebView().getHeight() / getCurrentWebView().getScaleFactor() + ";");
         });
 
         webViewReading.setFindListener((activeMatchOrdinal, numberOfMatches, isDoneCounting) -> {
@@ -1573,6 +1550,11 @@ public class MainActivity extends AppCompatActivity {
             List<String> list = getAudioDevices();
             if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
         }, 5000);
+    }
+
+    private void initializeGoogleAds() {
+        new Thread(() -> MobileAds.initialize(this, initializationStatus -> {
+        })).start();
     }
 
     //test code

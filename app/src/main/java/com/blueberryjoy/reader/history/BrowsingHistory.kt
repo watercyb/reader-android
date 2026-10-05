@@ -218,7 +218,6 @@ object BrowsingHistory : ViewModel() {
 
     fun searchToken(searchString: String): Set<HistoryUrl> {
         if (searchString.trim().isEmpty()) return HashSet()
-        //val start = System.currentTimeMillis()
         val matchedUrls = HashSet<HistoryUrl>()
         for (list in historyTrie.get(
             searchString
@@ -228,8 +227,6 @@ object BrowsingHistory : ViewModel() {
                     matchedUrls.add(historyURL)
             }
         }
-        //val end = System.currentTimeMillis()
-        //Message.log("Search $searchString : ${end - start}")
         return matchedUrls
     }
 }

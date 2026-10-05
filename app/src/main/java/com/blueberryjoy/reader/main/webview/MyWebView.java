@@ -88,7 +88,6 @@ public class MyWebView extends NestedScrollWebView {
         webSettings.setDefaultFontSize(16);
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        //webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setAllowFileAccess(true);
         webSettings.setDisplayZoomControls(false);
         webSettings.setLoadsImagesAutomatically(true);
@@ -100,8 +99,6 @@ public class MyWebView extends NestedScrollWebView {
         }
 
         webSettings.setTextZoom(100);
-
-        //addJavascriptInterface(new WebViewJSInterface(), "Android");
 
         gestureDetector = new GestureDetector(this.getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -141,12 +138,10 @@ public class MyWebView extends NestedScrollWebView {
                 Configuration.UI_MODE_NIGHT_MASK;
         switch (currentNightMode) {
             case Configuration.UI_MODE_NIGHT_NO:
-                //this.loadUrl("javascript:(function() {document.body.style.backgroundColor = 'white'; document.body.style.color = 'black';})()");
                 JavaScriptHandler.updateThemeColor(this, false);
                 break;
             case Configuration.UI_MODE_NIGHT_YES:
             case Configuration.UI_MODE_NIGHT_UNDEFINED:
-                //this.loadUrl("javascript:(function() {document.body.style.backgroundColor = '#121212'; document.body.style.color = '#BDBDBD';})()");
                 JavaScriptHandler.updateThemeColor(this, true);
                 break;
         }

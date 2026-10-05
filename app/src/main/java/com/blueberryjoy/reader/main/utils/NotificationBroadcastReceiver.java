@@ -16,15 +16,12 @@ public class NotificationBroadcastReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         switch (Objects.requireNonNull(action)) {
             case "pause":
-                //MessageSender.sendMessage(new MessageNotification(MessageNotification.ACTION_PAUSE));
                 WindowList.pause();
                 break;
             case "next":
-                //MessageSender.sendMessage(new MessageNotification(MessageNotification.ACTION_NEXT));
                 ReaderController.next();
                 break;
             case "prev":
-                //MessageSender.sendMessage(new MessageNotification(MessageNotification.ACTION_PREV));
                 ReaderController.prev();
                 break;
             default:

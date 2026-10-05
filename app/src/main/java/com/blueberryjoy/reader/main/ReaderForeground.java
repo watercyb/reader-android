@@ -192,10 +192,9 @@ public class ReaderForeground extends Service {
                     });
                 }
 
-                //TODO
                 restartMediaPlayerForMediaSession();
 
-                //run everytime when switch back, and before "initial" when open app
+                //Run everytime when switch back, and before "initial" when open the app.
                 if (WindowList.isValidReadingStatus()) {
                     //When ForegroundService stopped.
                     updateMedia(true);
@@ -321,7 +320,7 @@ public class ReaderForeground extends Service {
             @Override
             public void onPlaybackConfigChanged(@NonNull List<AudioPlaybackConfiguration> configs) {
                 super.onPlaybackConfigChanged(configs);
-                // Called when audioPlaybackConfigurations list is changed
+                //Called when audioPlaybackConfigurations list is changed
                 if (!ReaderSettings.getIsStopWhenAudioFocusChanged()) return;
                 resumeFocusTimer.cancel();
                 boolean isNavigation = false;
@@ -343,10 +342,7 @@ public class ReaderForeground extends Service {
 
         //Called when lost audio focus.
         AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = focusChange -> audioFocusRequest = focusChange;
-
-        // initiate the audio playback attributes
         AudioAttributes playbackAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
-        // set the playback attributes for the focus requester
         focusRequest = null;
         focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(playbackAttributes).setAcceptsDelayedFocusGain(true).setOnAudioFocusChangeListener(audioFocusChangeListener).build();
     }
@@ -448,33 +444,27 @@ public class ReaderForeground extends Service {
             @Override
             public void onPlay() {
                 super.onPlay();
-                if (isPause) {
-                    play();
-                } else {
-                    pause();
-                }
+                WindowList.pause();
             }
 
             @Override
             public void onPause() {
                 super.onPause();
-                if (isPause) {
-                    play();
-                } else {
-                    pause();
-                }
+                WindowList.pause();
             }
 
             @Override
             public void onSkipToPrevious() {
                 super.onStop();
-                prev();
+                if (WindowList.isChangingIdxEnabled())
+                    prev();
             }
 
             @Override
             public void onSkipToNext() {
                 super.onStop();
-                next();
+                if (WindowList.isChangingIdxEnabled())
+                    next();
             }
 
         });

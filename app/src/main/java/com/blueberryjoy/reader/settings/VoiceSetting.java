@@ -63,7 +63,6 @@ public class VoiceSetting extends AppCompatActivity {
         spinner = findViewById(R.id.spinner);
         sample = findViewById(R.id.textView1);
 
-        //Different if api >= 30.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
             getWindow().getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
@@ -259,7 +258,7 @@ public class VoiceSetting extends AppCompatActivity {
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError adError) {
-                //Message.log("Ad failed to load: " + adError.getMessage());
+                Message.log("Ad failed to load: " + adError.getMessage());
             }
         });
         adView.loadAd(new AdRequest.Builder().build());

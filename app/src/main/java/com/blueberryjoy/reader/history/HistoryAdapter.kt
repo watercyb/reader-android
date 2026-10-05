@@ -131,7 +131,6 @@ class HistoryAdapter(
                 val filteredIndexes = ArrayList<Int>()
 
                 if (constraint.isNullOrEmpty()) {
-                    // No filter -> show all items
                     for (i in items.indices) {
                         filteredIndexes.add(i)
                     }

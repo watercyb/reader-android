@@ -22,7 +22,7 @@ public class WindowIndexCache {
         this.n = n;
     }
 
-    //Idx<0: do not update idx.
+    //Idx<0 -> not update idx.
     public void addPage(String url, int idx, String title) {
         titleCache = title;
         url = decodeUrl(url);
@@ -55,7 +55,7 @@ public class WindowIndexCache {
         first.idx = idx;
     }
 
-    //Move the matched node to the first.
+    //Will move the matched node to the first.
     public int getIdx(@NonNull String url) {
         url = decodeUrl(url);
         if (first.urls.contains(url))

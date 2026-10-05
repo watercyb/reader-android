@@ -141,20 +141,20 @@ public class Downloads extends AppCompatActivity {
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError adError) {
-                //Message.log("Ad failed to load: " + adError.getMessage());
+                Message.log("Ad failed to load: " + adError.getMessage());
             }
 
             @Override
             public void onAdLoaded() {
-                // Get the last visible item position before height change
+                //Get the last visible item position before height change
                 LinearLayoutManager layoutManager = (LinearLayoutManager) downloads.getLayoutManager();
                 if (layoutManager != null) {
                     int lastVisiblePosition = layoutManager.findLastVisibleItemPosition();
                     super.onAdLoaded();
-                    // Wait for the layout to update
+                    //Wait for the layout to update
                     if ((lastVisiblePosition == recyclerViewAdapter.getItemCount() - 1)) {
                         downloads.post(() -> {
-                            // Scroll back to the last visible item to keep it at the bottom
+                            //Scroll back to the last visible item to keep it at the bottom
                             layoutManager.scrollToPositionWithOffset(lastVisiblePosition, 0);
                         });
                     }

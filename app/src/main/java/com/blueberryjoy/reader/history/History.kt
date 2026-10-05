@@ -131,7 +131,7 @@ class History : AppCompatActivity() {
         adView.adListener = object : AdListener() {
 
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                // Message.log("Ad failed to load: ${adError.message}")
+                Message.log("Ad failed to load: ${adError.message}")
             }
 
             override fun onAdLoaded() {

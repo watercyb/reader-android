@@ -28,10 +28,10 @@ public class SQLite {
     public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
-            // 1️⃣ Add the state column (nullable for now)
+            // Add the state column (nullable for now)
             database.execSQL("ALTER TABLE pages ADD COLUMN state TEXT");
 
-            // 2️⃣ Create a new table with proper NOT NULL state column
+            // Create a new table with proper NOT NULL state column
             database.execSQL(
                     "CREATE TABLE pages_new (" +
                             "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
@@ -42,16 +42,16 @@ public class SQLite {
                             ")"
             );
 
-            // 3️⃣ Copy old data into new table, filling state with '' if null
+            // Copy old data into new table, filling state with '' if null
             database.execSQL(
                     "INSERT INTO pages_new (id, idx, isCurrent, state, url) " +
                             "SELECT id, idx, isCurrent, COALESCE(state, ''), url FROM pages"
             );
 
-            // 4️⃣ Drop old table
+            // Drop old table
             database.execSQL("DROP TABLE pages");
 
-            // 5️⃣ Rename new table to original name
+            // Rename new table to original name
             database.execSQL("ALTER TABLE pages_new RENAME TO pages");
         }
     };

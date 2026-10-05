@@ -17,7 +17,6 @@ public class Favicon {
 
     public static void initial() {
         icons.clear();
-        //TODO
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = 1;
         icons.put("null", BitmapFactory.decodeResource(App.Companion.getAppContext().getResources(), R.mipmap.ic_favicon, options));

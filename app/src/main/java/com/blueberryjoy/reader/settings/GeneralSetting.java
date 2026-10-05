@@ -181,7 +181,7 @@ public class GeneralSetting extends AppCompatActivity {
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError adError) {
-                //Message.log("Ad failed to load: " + adError.getMessage());
+                Message.log("Ad failed to load: " + adError.getMessage());
             }
         });
         adView.loadAd(new AdRequest.Builder().build());

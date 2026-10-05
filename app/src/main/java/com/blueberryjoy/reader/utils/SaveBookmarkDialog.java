@@ -63,7 +63,6 @@ public class SaveBookmarkDialog {
         autoCompleteTextViewType = view.findViewById(R.id.type);
 
         textInputEditTextTitle.setText(title);
-        //textInputEditTextTitle.selectAll();
         textInputEditTextTitle.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 title = textInputEditTextTitle.getText() == null ? "" : textInputEditTextTitle.getText().toString().trim();

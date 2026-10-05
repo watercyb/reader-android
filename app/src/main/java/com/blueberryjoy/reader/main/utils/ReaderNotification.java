@@ -97,7 +97,6 @@ public class ReaderNotification {
                 .setActions(prevAction, playAction, nextAction)
                 .setChannelId(id)
                 .setSmallIcon(R.drawable.ic_notification_cat_while)
-                //.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_notification_foreground))
                 .build();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.createNotificationChannel(notificationChannel);

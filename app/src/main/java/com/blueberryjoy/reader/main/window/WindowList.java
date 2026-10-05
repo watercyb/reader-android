@@ -133,11 +133,9 @@ public class WindowList {
 
     public static void setCurrentWindow(int idx) {
         currentWindow = null;
-        //int oldIdx = -1;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getIsCurrentWindow()) {
                 list.get(i).setIsCurrentWindow(false, i);
-                //oldIdx = i;
             }
         }
         if (idx >= 0 && idx < list.size()) {
@@ -289,6 +287,10 @@ public class WindowList {
 
     public static void pause() {
         if (currentWindow != null) currentWindow.pause();
+    }
+
+    public static boolean isChangingIdxEnabled() {
+        return currentWindow != null&& currentWindow.isChangingIdxEnabled();
     }
 
     public static void setReading(boolean isReading) {

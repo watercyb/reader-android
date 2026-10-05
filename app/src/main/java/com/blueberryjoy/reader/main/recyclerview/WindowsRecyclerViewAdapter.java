@@ -19,13 +19,11 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
     private final LayoutInflater layoutInflater;
     private ItemClickListener itemclickListener;
 
-    // data is passed into the constructor
     public WindowsRecyclerViewAdapter(Context context, WindowsRecyclerViewItems windowsRecyclerViewItems) {
         this.layoutInflater = LayoutInflater.from(context);
         this.windowsRecyclerViewItems = windowsRecyclerViewItems;
     }
 
-    // inflates the row layout from XML when needed
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,7 +31,6 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
         return new ViewHolder(view);
     }
 
-    // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(windowsRecyclerViewItems.get(position).item());
@@ -47,14 +44,12 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
         }
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
         return windowsRecyclerViewItems.size();
     }
 
 
-    // stores and recycles views as they are scrolled off-screen
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView textView;
         final ImageView imageView;
@@ -77,12 +72,10 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
         }
     }
 
-    // allows clicks events to be caught
     public void setClickListener(ItemClickListener itemClickListener) {
         this.itemclickListener = itemClickListener;
     }
 
-    // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(int position);
     }

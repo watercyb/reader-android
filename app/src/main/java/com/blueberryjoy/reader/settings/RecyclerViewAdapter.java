@@ -38,7 +38,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public static final int TYPE_DIVIDER = 0;
     public static final int TYPE_ITEM = 1;
 
-    // This list holds the positions from the original list that should be displayed
     @NonNull
     final
     List<Integer> displayIndexes = new ArrayList<>();
