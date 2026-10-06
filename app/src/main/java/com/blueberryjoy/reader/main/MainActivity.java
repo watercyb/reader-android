@@ -897,7 +897,7 @@ public class MainActivity extends AppCompatActivity {
 
         pause.setOnClickListener(v -> {
             //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown())
+            if (!isRecycleViewWindowsShown())
                 WindowList.pause();
         });
         ClickAnimation.INSTANCE.set(pause);
