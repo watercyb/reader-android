@@ -725,7 +725,11 @@ public class Window {
     public void pause() {
         if (!isCurrentWindow) return;
         if (isLoadedText) {
-            WindowList.readerPause();
+            if (readingArr.length != 0) {
+                WindowList.readerPause();
+            } else {
+                getArrFromPage(true, false, true, -1, -1, -1);
+            }
         } else if (getLoadingState() == 0) {
             getArrFromPage(true, false, true, -1, -1, -1);
         } else {

@@ -631,25 +631,31 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View listViewHeader = layoutInflater.inflate(R.layout.listview_main_header, null);
-        listViewHeader.findViewById(R.id.imageViewBookmark).setOnClickListener(v -> new SaveBookmarkDialog(this.getWindow(), FileStorage.getTypesFromFile(), WindowList.getUrl(), WindowList.getTitle(), WindowList.getIdx(), null, (url, title, idx, type) -> {
+        ImageView imageViewBookmark = listViewHeader.findViewById(R.id.imageViewBookmark);
+        imageViewBookmark.setOnClickListener(v -> new SaveBookmarkDialog(this.getWindow(), FileStorage.getTypesFromFile(), WindowList.getUrl(), WindowList.getTitle(), WindowList.getIdx(), null, (url, title, idx, type) -> {
             FileStorage.appendAndSaveBookmarkJSON(url, title, idx, type);
             listViewHide();
         }, 0).show());
+        ClickAnimation.INSTANCE.set(imageViewBookmark);
         listViewHeaderForward = listViewHeader.findViewById(R.id.imageViewForward);
         listViewHeaderForward.setOnClickListener(v -> {
             forward();
             listViewHide();
         });
-        listViewHeader.findViewById(R.id.imageViewReload).setOnClickListener(v -> {
+        ClickAnimation.INSTANCE.set(listViewHeaderForward);
+        ImageView imageViewReload = listViewHeader.findViewById(R.id.imageViewReload);
+        imageViewReload.setOnClickListener(v -> {
             if (isReadingMode) readingModeSwitch();
             WindowList.webViewLoadUrl(null);
             listViewHide();
         });
+        ClickAnimation.INSTANCE.set(imageViewReload);
         listViewHeaderDownload = listViewHeader.findViewById(R.id.imageViewDownload);
         listViewHeaderDownload.setOnClickListener(v -> {
             if (!webUrl.getText().toString().startsWith("file")) WindowList.download(false);
             listViewHide();
         });
+        ClickAnimation.INSTANCE.set(listViewHeaderDownload);
         listViewWindowsNumberBox = listViewHeader.findViewById(R.id.numberBox);
         listViewHeader.findViewById(R.id.frameLayoutWindows).setOnClickListener(v -> {
             recycleViewWindowsShow();
