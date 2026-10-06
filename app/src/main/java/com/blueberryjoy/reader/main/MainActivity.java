@@ -1301,7 +1301,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextNotMatching() {
-                if (!isReadingMode) reloadText.setImageResource(R.mipmap.ic_reload_text_warning);
+                if (!isReadingMode) {
+                    //TODO
+                    reloadText.setImageResource(R.mipmap.ic_reload_text_warning);
+                    GlobalTipDialog.show(MainActivity.this, reloadText, getString(R.string.tip_text_unmatch), 13, 64, 32, Gravity.BOTTOM | Gravity.START, true);
+                }
             }
 
             @Override

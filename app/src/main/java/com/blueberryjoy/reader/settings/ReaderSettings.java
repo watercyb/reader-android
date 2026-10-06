@@ -50,6 +50,7 @@ public class ReaderSettings {
     10: history open in new tab
     11: delete suggestion
     12: scroll to text
+    13: text not matching.
     */
     private static long tips = 0;
     private static boolean isShowWelcome;
