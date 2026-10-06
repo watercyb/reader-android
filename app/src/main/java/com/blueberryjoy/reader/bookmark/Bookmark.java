@@ -17,7 +17,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -41,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.main.MainActivity;
+import com.blueberryjoy.reader.utils.ClickAnimation;
 import com.blueberryjoy.reader.utils.GlobalTipDialog;
 import com.blueberryjoy.reader.utils.FileStorage;
 import com.blueberryjoy.reader.utils.Message;
@@ -213,42 +213,53 @@ public class Bookmark extends AppCompatActivity {
         itemTouchHelper.attachToRecyclerView(bookmark);
 
         addButton.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
             new SaveBookmarkDialog(Bookmark.this.getWindow(), bookmarkList.getTypes(), url, title, idx, null, (newUrl, newTitle, newIdx, type) -> {
                 FileStorage.appendAndSaveBookmarkJSON(bookmarkList, newUrl, newTitle, newIdx, type);
                 recyclerViewAdapter.getFilter().filter(filter.getText().toString());
             }, 0).show();
         });
+        ClickAnimation.INSTANCE.set(addButton);
 
         importButton.setOnClickListener(v -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Bookmark.this);
-            alertDialogBuilder.setTitle(getString(R.string.bookmark_title_import)).setMessage(getString(R.string.bookmark_text_import)).setCancelable(false).setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
-                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
-                startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE));
-            });
+            alertDialogBuilder
+                    .setTitle(getString(R.string.bookmark_title_import))
+                    .setMessage(getString(R.string.bookmark_text_import))
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
+                        //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
+                        startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE));
+                    });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-
         });
+        ClickAnimation.INSTANCE.set(importButton);
 
         exportButton.setOnClickListener(v -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Bookmark.this);
-            alertDialogBuilder.setTitle(getString(R.string.bookmark_title_export)).setMessage(getString(R.string.bookmark_text_export)).setCancelable(false).setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
-                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
-                startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "bookmark.txt"));
-            });
+            alertDialogBuilder
+                    .setTitle(getString(R.string.bookmark_title_export))
+                    .setMessage(getString(R.string.bookmark_text_export))
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
+                        //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
+                        startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "bookmark.txt"));
+                    });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         });
+        ClickAnimation.INSTANCE.set(exportButton);
 
         searchButton.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (filter.getVisibility() == View.GONE) {
                 filterShow();
             } else {
                 filterHide();
             }
         });
+        ClickAnimation.INSTANCE.set(searchButton);
 
         filter.addTextChangedListener(new TextWatcher() {
             @Override

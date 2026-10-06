@@ -72,6 +72,8 @@ public class ReaderForeground extends Service {
     private MediaMetadata.Builder metadataBuilder;
     private boolean canPlay = true;
     private AudioManager.AudioPlaybackCallback audioPlaybackCallback;
+    private boolean isHoldFocus = false;
+    private CountDownTimer holdFocusTimer;
 
     @Override
     protected void attachBaseContext(@NonNull Context base) {
@@ -307,8 +309,22 @@ public class ReaderForeground extends Service {
             @Override
             public void onFinish() {
                 assert focusRequest != null;
-                if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay())
+                if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
                     audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+                    isHoldFocus = true;
+                    if (holdFocusTimer != null) holdFocusTimer.cancel();
+                    holdFocusTimer = new CountDownTimer(1000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            isHoldFocus = false;
+                            holdFocusTimer = null;
+                        }
+                    }.start();
+                }
                 if (isWaiting && isPause) {
                     play();
                     isWaiting = false;
@@ -341,7 +357,14 @@ public class ReaderForeground extends Service {
         audioManager.registerAudioPlaybackCallback(audioPlaybackCallback, null);
 
         //Called when lost audio focus.
-        AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = focusChange -> audioFocusRequest = focusChange;
+        AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = focusChange -> {
+            if (!isHoldFocus) {
+                audioFocusRequest = focusChange;
+            } else {
+                assert focusRequest != null;
+                audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+            }
+        };
         AudioAttributes playbackAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_GAME).setContentType(AudioAttributes.CONTENT_TYPE_MUSIC).build();
         focusRequest = null;
         focusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN).setAudioAttributes(playbackAttributes).setAcceptsDelayedFocusGain(true).setOnAudioFocusChangeListener(audioFocusChangeListener).build();
@@ -374,6 +397,19 @@ public class ReaderForeground extends Service {
             if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
                 assert focusRequest != null;
                 audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+                isHoldFocus = true;
+                if (holdFocusTimer != null) holdFocusTimer.cancel();
+                holdFocusTimer = new CountDownTimer(1000, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        isHoldFocus = false;
+                        holdFocusTimer = null;
+                    }
+                }.start();
             }
             isWaiting = false;
             isPause = false;

@@ -36,7 +36,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.RenderProcessGoneDetail;
 import android.webkit.WebChromeClient;
@@ -90,6 +89,7 @@ import com.blueberryjoy.reader.main.utils.JavaScriptHandler;
 import com.blueberryjoy.reader.main.utils.MainActivityProvider;
 import com.blueberryjoy.reader.main.utils.ReaderController;
 import com.blueberryjoy.reader.main.utils.WindowListener;
+import com.blueberryjoy.reader.utils.ClickAnimation;
 import com.blueberryjoy.reader.utils.SaveBookmarkDialog;
 import com.blueberryjoy.reader.sqlite.SQLite;
 import com.blueberryjoy.reader.history.BrowsingHistory;
@@ -882,30 +882,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void initializeButtons() {
         prev.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.prev();
         });
+        ClickAnimation.INSTANCE.set(prev);
 
         next.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.next();
         });
+        ClickAnimation.INSTANCE.set(next);
 
         pause.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown())
                 WindowList.pause();
         });
+        ClickAnimation.INSTANCE.set(pause);
 
         readingModeButton.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             readingModeSwitch();
         });
+        ClickAnimation.INSTANCE.set(readingModeButton);
 
         setting.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (menuContainer.getVisibility() == View.VISIBLE) {
                 listViewHide();
             } else {
@@ -915,9 +919,10 @@ public class MainActivity extends AppCompatActivity {
                 dispatchTouchArea.setListViewVisible(true);
             }
         });
+        ClickAnimation.INSTANCE.set(setting);
 
         scrollToBottom.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() != 0) return;
             if (scrollPageDirection == -1) {
                 hideAppBarLayout();
@@ -932,6 +937,7 @@ public class MainActivity extends AppCompatActivity {
                 scrollToCurrentText(getCurrentWebView(), true);
             }
         });
+        ClickAnimation.INSTANCE.set(scrollToBottom);
 
         scrollToBottom.setLongClickable(true);
 
@@ -941,11 +947,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         reloadText.setOnClickListener(v -> {
-            v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
+            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             WindowList.reloadText(-1, -1, true);
         });
+        ClickAnimation.INSTANCE.set(reloadText);
 
         numberBox.setOnClickListener(v -> recycleViewWindowsShow());
+        ClickAnimation.INSTANCE.set(numberBox);
     }
 
     private MyWebView getCurrentWebView() {
@@ -1302,7 +1310,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTextNotMatching() {
                 if (!isReadingMode) {
-                    //TODO
                     reloadText.setImageResource(R.mipmap.ic_reload_text_warning);
                     GlobalTipDialog.show(MainActivity.this, reloadText, getString(R.string.tip_text_unmatch), 13, 64, 32, Gravity.BOTTOM | Gravity.START, true);
                 }
@@ -1378,7 +1385,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        windowsView.findViewById(R.id.imageButtonAdd).setOnClickListener((v) -> {
+        ImageView imageButtonAdd = windowsView.findViewById(R.id.imageButtonAdd);
+        imageButtonAdd.setOnClickListener((v) -> {
             long now = System.currentTimeMillis();
             if (now - lastNewWindowTime < 500) return;
             lastNewWindowTime = now;
@@ -1389,7 +1397,9 @@ public class MainActivity extends AppCompatActivity {
                 recycleViewWindowsHide();
             }
         });
-        windowsView.findViewById(R.id.imageButtonAddPrivate).setOnClickListener((v) -> {
+        ClickAnimation.INSTANCE.set(imageButtonAdd);
+        ImageView imageButtonAddPrivate = windowsView.findViewById(R.id.imageButtonAddPrivate);
+        imageButtonAddPrivate.setOnClickListener((v) -> {
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, true));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
@@ -1397,6 +1407,7 @@ public class MainActivity extends AppCompatActivity {
                 recycleViewWindowsHide();
             }
         });
+        ClickAnimation.INSTANCE.set(imageButtonAddPrivate);
     }
 
     private void initializeRecycleViewWindowsPopup(@NonNull WindowsRecyclerViewAdapter recyclerViewAdapter, @NonNull Window removedWindow) {
@@ -1565,6 +1576,7 @@ public class MainActivity extends AppCompatActivity {
     final String getUrl = "https://blueberryjoy.alwaysdata.net/api/app_storage/get.php";
     final String setUrl = "https://blueberryjoy.alwaysdata.net/api/app_storage/set.php";
 
+    @SuppressWarnings("unused")
     private void volleyGet() {
         if (WindowList.getCurrentWindow() == null) return;
         try {
@@ -1592,6 +1604,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     private void volleySet() {
         if (WindowList.getCurrentWindow() == null) return;
         try {

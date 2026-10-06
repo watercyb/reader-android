@@ -14,7 +14,6 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -33,6 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blueberryjoy.reader.R
 import com.blueberryjoy.reader.main.MainActivity
+import com.blueberryjoy.reader.utils.ClickAnimation
 import com.blueberryjoy.reader.utils.GlobalTipDialog
 import com.blueberryjoy.reader.utils.Message
 import com.google.android.gms.ads.AdListener
@@ -68,13 +68,14 @@ class History : AppCompatActivity() {
         initializeRecyclerView()
 
         searchButton!!.setOnClickListener { v: View ->
-            v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
+            //v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
             if (filter!!.isGone) {
                 filterShow()
             } else {
                 filterHide()
             }
         }
+        ClickAnimation.set(searchButton)
 
         filter!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -89,7 +90,7 @@ class History : AppCompatActivity() {
         })
 
         clearButton!!.setOnClickListener { v: View ->
-            v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
+            //v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
             AlertDialog.Builder(this)
                 .setTitle(R.string.history_clear_title)
                 .setMessage(R.string.history_clear_text)
@@ -101,6 +102,7 @@ class History : AppCompatActivity() {
                 .setNegativeButton(getString(R.string.button_cancel), null)
                 .show()
         }
+        ClickAnimation.set(clearButton)
 
         GlobalTipDialog.show(
             this@History,

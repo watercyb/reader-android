@@ -24,8 +24,6 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:importantForAccessibility="no"
-        android:scaleX="1"
-        android:scaleY="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_history_delete" />
@@ -35,8 +33,6 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:importantForAccessibility="no"
-        android:scaleX="1"
-        android:scaleY="1"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonClear"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_bookmark_search" />
