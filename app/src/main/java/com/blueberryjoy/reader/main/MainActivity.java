@@ -1464,14 +1464,6 @@ public class MainActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
         webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(webView);
-
-        //TODO
-        if (BuildConfig.DEBUG) {
-            //webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-            //webView.resumeTimers();
-            //webView.onResume();
-        }
-
         return webView;
     }
 
