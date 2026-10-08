@@ -9,7 +9,7 @@ import org.json.JSONArray;
 public class JavaScriptHandler {
 
     public static void updateWindowHeight(MyWebView webView) {
-        webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.windowHeight = " + webView.getHeight() / webView.getScaleFactor() + ";");
+        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.windowHeight = " + webView.getHeight() / webView.getScaleFactor() + ";");
     }
 
     public static void updateThemeColor(WebView webView, boolean isDarkMode) {
@@ -21,14 +21,14 @@ public class JavaScriptHandler {
     }
 
     public static void clearIdx(MyWebView webView) {
-        webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.clearIdx();");
+        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.clearIdx();");
     }
 
     public static void scrollToCurrentText(MyWebView webView, boolean isSmooth) {
         if (isSmooth) {
-            webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.scrollToHighlightedSegment('smooth');");
+            webView.loadUrl("javascript: if (window.pageReader) window.pageReader.scrollToHighlightedSegment('smooth');");
         } else {
-            webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.scrollToHighlightedSegment('auto');");
+            webView.loadUrl("javascript: if (window.pageReader) window.pageReader.scrollToHighlightedSegment('auto');");
         }
     }
 
@@ -37,6 +37,6 @@ public class JavaScriptHandler {
     }
 
     public static void performClick(MyWebView webView, JSONArray idxList) {
-        webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.performClick(" + idxList + ");");
+        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.performClick(" + idxList + ");");
     }
 }

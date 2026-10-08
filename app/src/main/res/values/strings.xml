@@ -238,5 +238,6 @@
     <string name="general_setting_clear_browsing_data_history_note">Browsing history is not cleared. To remove browsing history, delete it from the History page.</string>
     <string name="general_setting_browsing_data_cleared">Browsing data cleared.</string>
     <string name="tip_text_unmatch">The page content may have changed. Tap to reload the text.</string>
+    <string name="open_next_page">Opening the next page and continuing playback.</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

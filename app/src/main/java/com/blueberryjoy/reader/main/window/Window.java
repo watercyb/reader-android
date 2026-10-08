@@ -38,6 +38,7 @@ import com.blueberryjoy.reader.utils.Ad_Blocker;
 import com.blueberryjoy.reader.utils.Favicon;
 import com.blueberryjoy.reader.utils.FileStorage;
 import com.blueberryjoy.reader.utils.Message;
+import com.blueberryjoy.reader.utils.TextToSpeechManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +77,11 @@ public class Window {
     private final boolean isPrivate;
     private int removedWindowIdx = -1;
     private boolean isRemovedWindowCurrent = false;
+
+    //Debug
+    private int playNextPageState = 0;
+    private final Handler playNextPageDelayRunHandler = new Handler(Looper.getMainLooper());
+
 
     @NonNull
     private static final Set<Character> HS = Set.of('.', '。', '?', '？', '!', '！');
@@ -383,7 +389,7 @@ public class Window {
             //Check if the title is updated after afterSamePageLoaded and before samePageLoaded.
             if (!windowIndexCache.checkTitle(webView.getTitle())) {
                 //TODO should check the content.
-                webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
+                webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                     if (!html.equals("true")) {
                         if (isCurrentWindow)
                             Message.log("afterSamePageLoaded different url: different content");
@@ -430,6 +436,8 @@ public class Window {
             @Override
             public void onPageFinished(WebView view, String url) {
                 if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
+                //Debug
+                if (BuildConfig.DEBUG) playNextPageOnPageFinishedDelay();
             }
 
             //May run before the page finishes loading (title, JS content).
@@ -449,7 +457,7 @@ public class Window {
                         WindowList.onResetTextBoxRequired();
                     }
                     //Additional check on the page contents, if matched -> same page.
-                    webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
+                    webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                         if (windowIndexCache.checkTitle(webView.getTitle()) && html.equals("true")) {
                             //Same page.
                             //if (isCurrentWindow) Message.log("Same page: " + url + " newTitle: " + webView.getTitle());
@@ -607,7 +615,7 @@ public class Window {
     public void getArrFromPage(boolean isPlayAfterLoad, boolean isSamePage, boolean isMoveToIdx, int isDownloadPageAfterLoad, int doubleClicked_x, int doubleClicked_y) {
         if (!isCurrentWindow) return;
         WindowList.onAlertStatusChanged(true);
-        webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.loadContent(); } })();", html -> {
+        webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
             if (!html.equals("null")) {
                 try {
                     JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
@@ -635,7 +643,7 @@ public class Window {
 
                         @Override
                         public void onFinish() {
-                            webView.evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", html1 -> {
+                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", html1 -> {
                                 if (!isCurrentWindow) return;
                                 WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
                                 if (html1.equals("null")) return;
@@ -734,7 +742,7 @@ public class Window {
 
     public void pause() {
         if (!isCurrentWindow) return;
-        if (BuildConfig.DEBUG && isLastIdx() && nextPage()) return;
+        if (BuildConfig.DEBUG && isLastIdx() && playNextPage()) return;
 
         if (isLoadedText) {
             if (readingArr.length != 0) {
@@ -925,8 +933,67 @@ public class Window {
     }
 
     //Debug
+    private boolean playNextPage() {
+        if (playNextPageState == 0) {
+            TextToSpeechManager.speak(App.Companion.getAppContext().getString(R.string.open_next_page));
+            if (WindowList.isInForeground()) {
+                return playNextPageClick();
+            } else {
+                playNextPageReload();
+                playNextPageState = 1;
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
 
-    private boolean nextPage() {
+    private void playNextPageOnPageFinishedDelay() {
+        if (playNextPageState == 1) {
+            playNextPageDelayRunHandler.removeCallbacksAndMessages(null);
+            playNextPageDelayRunHandler.postDelayed(this::playNextPageOnPageFinished, 1000);
+        }
+    }
+
+    private void playNextPageOnPageFinished() {
+        if (playNextPageState == 1) {
+            playNextPageState = 0;
+            if (!isCurrentWindow) return;
+
+            Message.log("loaded");
+            WindowList.onAlertStatusChanged(true);
+            webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
+                if (!html.equals("null")) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
+                        JSONArray jsonArrayArr = jsonArray.getJSONArray(0);
+                        JSONArray jsonArrayNLM = jsonArray.getJSONArray(1);
+                        String[] arr = new String[jsonArrayArr.length()];
+                        boolean[] nlm = new boolean[arr.length];
+                        for (int i = 0; i < arr.length; i++) {
+                            arr[i] = jsonArrayArr.getString(i);
+                            nlm[i] = jsonArrayNLM.getBoolean(i);
+                        }
+                        getReadingArr(arr, nlm);
+                    } catch (JSONException e) {
+                        setError(e.toString());
+                    }
+                    idx = getCachedIdx();
+                    if (idx >= getReadingArr().length) idx = 0;
+                    setLoadingState(0);
+                    isLoadedText = true;
+                    if (isCurrentWindow) {
+                        WindowList.onAlertStatusChanged(false);
+                        WindowList.onLoadedTextStateChanged(true);
+                    }
+
+                    playNextPageClick();
+                }
+            });
+        }
+    }
+
+    private int playNextPageFindIdx() {
         String[] keywords = {"next", "下一"};
         int nextPageIdx = -1;
         for (int i = readingArr.length - 1; i >= 0; i--) {
@@ -938,12 +1005,27 @@ public class Window {
             }
             if (nextPageIdx != -1) break;
         }
+        return nextPageIdx;
+    }
+
+    private boolean playNextPageClick() {
+        int nextPageIdx = playNextPageFindIdx();
         if (nextPageIdx != -1) {
             setIsStartReadingAfterPageLoaded(true);
+            webView.onResume();
+            webView.resumeTimers();
             JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+            Message.log("click");
             return true;
         } else {
             return false;
         }
+    }
+
+    private void playNextPageReload() {
+        webView.onResume();
+        webView.resumeTimers();
+        webView.reload();
+        Message.log("reload");
     }
 }

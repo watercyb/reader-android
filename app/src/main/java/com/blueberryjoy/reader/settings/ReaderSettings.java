@@ -95,6 +95,8 @@ public class ReaderSettings {
     }
 
     public static String getVoice() {
+        if (voiceName == null)
+            voiceName = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE).getString("voiceName", "en-US-language");
         return voiceName;
     }
 

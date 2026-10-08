@@ -245,6 +245,13 @@ public class MainActivity extends AppCompatActivity {
         ReaderController.unfocused();
         if (WindowList.isReading()) isReadingAfterLockedScreen = true;
         if (dispatchTouchArea.isListViewVisible()) listViewHide();
+        WindowList.setIsInForeground(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        WindowList.setIsInForeground(true);
     }
 
     @SuppressWarnings("EmptyMethod")
@@ -750,12 +757,12 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray idxList = WindowList.getPageIdx();
                         if (idxList != null) {
                             if (isBlockNextIdxChange) {
-                                getCurrentWebView().evaluateJavascript("javascript: if (typeof pageReader !== 'undefined') pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
+                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
                                 isBlockNextIdxChange = false;
                             } else {
-                                getCurrentWebView().evaluateJavascript("javascript: if (typeof pageReader !== 'undefined') pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
+                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
                             }
@@ -1457,6 +1464,14 @@ public class MainActivity extends AppCompatActivity {
         webView.setVisibility(View.GONE);
         webView.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(webView);
+
+        //TODO
+        if (BuildConfig.DEBUG) {
+            //webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+            //webView.resumeTimers();
+            //webView.onResume();
+        }
+
         return webView;
     }
 

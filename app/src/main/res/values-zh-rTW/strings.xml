@@ -226,5 +226,6 @@
     <string name="general_setting_clear_browsing_data_history_note">此操作不會清除瀏覽記錄。如要刪除瀏覽記錄，請前往歷史記錄頁面進行刪除。</string>
     <string name="general_setting_browsing_data_cleared">瀏覽資料已清除。</string>
     <string name="tip_text_unmatch">頁面內容可能已變更。點擊\n以重新載入文字。</string>
+    <string name="open_next_page">正在開啟下一頁並繼續播放。</string>
 
 </resources>

@@ -1,5 +1,5 @@
-if (typeof pageReader === "undefined") {
-  var pageReader = new (class {
+if (typeof window.pageReader === "undefined") {
+  const readerInstance = new (class {
     constructor() {
       this.addScrollListener();
     }
@@ -38,15 +38,15 @@ if (typeof pageReader === "undefined") {
     processNodeForReading(node) {
       try {
         if (node.nodeType === Node.TEXT_NODE) {
-          var text = node.nodeValue.replace("\n", "").trim();
+          let text = node.nodeValue.replace("\n", "").trim();
           if (text.length > 0) {
-            var textSegments = node.nodeValue
+            const textSegment = node.nodeValue
               .replace("\n", "")
               .split(
                 /(?<=\. )|(?<=。)|(?<=, )|(?<=，)|(?<=\?)|(?<=？)|(?<=!)|(?<=！)/g,
               );
-            if (textSegments.length > 1) {
-              var isNewLine = false;
+            if (textSegment.length > 1) {
+              let isNewLine = false;
               if (
                 this.hasLineBreaker ||
                 this.hasLineBreak(this.previousProcessedNode, node)
@@ -55,9 +55,10 @@ if (typeof pageReader === "undefined") {
                 this.readingModeHTML += "<br><br>";
                 this.hasLineBreaker = false;
               }
-              var segmentContainer = document.createElement("span");
-              for (let t of textSegments) {
-                var segmentElement = document.createElement("span");
+              const segmentContainer = document.createElement("span");
+              let segmentElement;
+              for (let t of textSegment) {
+                segmentElement = document.createElement("span");
                 segmentElement.setAttribute(
                   "style",
                   "background-color: transparent; color: ; display: inline; word-Break: break-word;",
@@ -91,9 +92,9 @@ if (typeof pageReader === "undefined") {
               /* new */
               this.previousProcessedNode = segmentElement;
             } else {
-              var range = document.createRange();
+              const range = document.createRange();
               range.selectNode(node);
-              var segmentElement = document.createElement("span");
+              const segmentElement = document.createElement("span");
               segmentElement.setAttribute(
                 "style",
                 "background-color: transparent; color: ; display: inline; word-Break: break-word;",
@@ -117,7 +118,7 @@ if (typeof pageReader === "undefined") {
             }
           }
         } else if (node.className === "pageReader") {
-          var text = node.innerText.replace("\n", "").trim();
+          let text = node.innerText.replace("\n", "").trim();
           node.id = this.nextElementId++;
           node.style.backgroundColor = "transparent";
           if (
@@ -154,8 +155,8 @@ if (typeof pageReader === "undefined") {
     isVisible(element) {
       try {
         if (element === null || element.tagName === "A") return true;
-        var style = window.getComputedStyle(element);
-        var rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
 
         const visibleStyle =
           style.width !== "0px" &&
@@ -248,12 +249,12 @@ if (typeof pageReader === "undefined") {
           }
         }
         this.highlightedElements = [];
-        var range = document.createRange();
-        var firstElement = null;
-        var lastElement = null;
+        const range = document.createRange();
+        let firstElement = null;
+        let lastElement = null;
         for (let idx of segmentIndexes) {
           idx += this.elementIdOffset;
-          var element = document.getElementById(idx);
+          const element = document.getElementById(idx);
           if (element != null) {
             element.style.background = "yellow";
             element.style.color = "black";
@@ -267,11 +268,11 @@ if (typeof pageReader === "undefined") {
         if (!firstElement) return 0;
         range.setStartBefore(firstElement);
         range.setEndAfter(lastElement);
-        var box = range.getBoundingClientRect();
+        const box = range.getBoundingClientRect();
         if (this.currentSelectionRange === null)
           this.currentSelectionRange = range;
-        var res = 0;
-        var yPrv =
+        let res = 0;
+        let yPrv =
           this.currentSelectionRange.getBoundingClientRect().y +
           window.scrollY -
           initialScrollY;
@@ -416,17 +417,25 @@ if (typeof pageReader === "undefined") {
     }
     /* Will Be Called From Java */
     performClick(segmentIndexes) {
+      const keywords = ["next", "下一"];
       for (let idx of segmentIndexes) {
         idx += this.elementIdOffset;
-        var element = document.getElementById(idx);
+        const element = document.getElementById(idx);
         if (element != null) {
-          this.sendMessage("Next Button found: " + element.innerText);
-          element.click();
-          break;
+          const text = element.innerText.toLowerCase();
+          for (let keyword of keywords) {
+            if (text.includes(keyword)) {
+              this.sendMessage("Next Button found: " + element.innerText);
+              element.click();
+              return;
+            }
+          }
         } else {
           this.sendMessage("unmatching");
         }
       }
     }
   })();
+
+  window.pageReader = readerInstance;
 }

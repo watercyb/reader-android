@@ -32,6 +32,7 @@ public class WindowList {
     private static int privateProfileIdx = 0;
     private static WindowListener WindowListener;
     private static CountDownTimer updatePositionTimer;
+    private static boolean isInForeground = true;
 
     public static void initializeWindowList(@NonNull MainActivityProvider mainActivityProvider, @NonNull WindowListener WindowListener) {
         WindowList.mainActivityProvider = mainActivityProvider;
@@ -290,7 +291,7 @@ public class WindowList {
     }
 
     public static boolean isChangingIdxEnabled() {
-        return currentWindow != null&& currentWindow.isChangingIdxEnabled();
+        return currentWindow != null && currentWindow.isChangingIdxEnabled();
     }
 
     public static void setReading(boolean isReading) {
@@ -509,5 +510,13 @@ public class WindowList {
                 }
             }
         }.start();
+    }
+
+    public static void setIsInForeground(boolean isInForeground) {
+        WindowList.isInForeground = isInForeground;
+    }
+
+    public static boolean isInForeground() {
+        return isInForeground;
     }
 }
