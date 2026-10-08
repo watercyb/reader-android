@@ -120,7 +120,10 @@ if (typeof pageReader === "undefined") {
           var text = node.innerText.replace("\n", "").trim();
           node.id = this.nextElementId++;
           node.style.backgroundColor = "transparent";
-          if (this.hasLineBreaker || this.hasLineBreak(this.previousProcessedNode, node)) {
+          if (
+            this.hasLineBreaker ||
+            this.hasLineBreak(this.previousProcessedNode, node)
+          ) {
             this.lineBreakers.push(true);
             this.readingModeHTML += "<br><br>" + node.outerHTML;
             this.hasLineBreaker = false;
@@ -265,7 +268,8 @@ if (typeof pageReader === "undefined") {
         range.setStartBefore(firstElement);
         range.setEndAfter(lastElement);
         var box = range.getBoundingClientRect();
-        if (this.currentSelectionRange === null) this.currentSelectionRange = range;
+        if (this.currentSelectionRange === null)
+          this.currentSelectionRange = range;
         var res = 0;
         var yPrv =
           this.currentSelectionRange.getBoundingClientRect().y +
@@ -325,7 +329,9 @@ if (typeof pageReader === "undefined") {
           this.highlightedElements[this.highlightedElements.length - 1]
         ) {
           let rect =
-            this.highlightedElements[this.highlightedElements.length - 1].getBoundingClientRect();
+            this.highlightedElements[
+              this.highlightedElements.length - 1
+            ].getBoundingClientRect();
           window.scrollTo({
             top:
               rect.bottom +
@@ -347,7 +353,9 @@ if (typeof pageReader === "undefined") {
           document.elementFromPoint(x, y) &&
           document.elementFromPoint(x, y).className === "pageReader"
         )
-          return document.elementFromPoint(x, y).id - pageReader.elementIdOffset;
+          return (
+            document.elementFromPoint(x, y).id - pageReader.elementIdOffset
+          );
       } catch (err) {
         this.sendErrorMessage("getElementByPosition: " + err.message);
       }
@@ -405,6 +413,20 @@ if (typeof pageReader === "undefined") {
     }
     sendMessage(message) {
       Android.onMessage(message);
+    }
+    /* Will Be Called From Java */
+    performClick(segmentIndexes) {
+      for (let idx of segmentIndexes) {
+        idx += this.elementIdOffset;
+        var element = document.getElementById(idx);
+        if (element != null) {
+          this.sendMessage("Next Button found: " + element.innerText);
+          element.click();
+          break;
+        } else {
+          this.sendMessage("unmatching");
+        }
+      }
     }
   })();
 }

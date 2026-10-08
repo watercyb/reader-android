@@ -4,6 +4,8 @@ import android.webkit.WebView;
 
 import com.blueberryjoy.reader.main.webview.MyWebView;
 
+import org.json.JSONArray;
+
 public class JavaScriptHandler {
 
     public static void updateWindowHeight(MyWebView webView) {
@@ -32,5 +34,9 @@ public class JavaScriptHandler {
 
     public static void scrollTo(MyWebView webView, int height) {
         webView.loadUrl("javascript: window.scrollTo({top: " + height + ", behavior: \"smooth\"})");
+    }
+
+    public static void performClick(MyWebView webView, JSONArray idxList) {
+        webView.loadUrl("javascript: if (typeof pageReader !== 'undefined') pageReader.performClick(" + idxList + ");");
     }
 }

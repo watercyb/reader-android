@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.App;
+import com.blueberryjoy.reader.BuildConfig;
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.history.BrowsingHistory;
 import com.blueberryjoy.reader.main.utils.JavaScriptHandler;
@@ -203,6 +204,15 @@ public class Window {
         }
     }
 
+    @Nullable
+    public JSONArray getPageIdx(int idx) {
+        if (idx >= 0 && idx < readingIdxToPageIdx.size()) {
+            return readingIdxToPageIdx.get(idx);
+        } else {
+            return null;
+        }
+    }
+
     public int getReadingIdx(int idx) {
         if (idx >= 0 && idx < pageIdxToReadingIdx.size()) return pageIdxToReadingIdx.get(idx);
         return -1;
@@ -334,7 +344,7 @@ public class Window {
             @Override
             @JavascriptInterface
             public void onError(String data) {
-                Message.log("Received from JS: " + data);
+                Message.log("Page error: " + data);
             }
 
             @Override
@@ -346,7 +356,7 @@ public class Window {
             @Override
             @JavascriptInterface
             public void onMessage(String message) {
-                Message.log("Received from JS: " + message);
+                Message.log("Page message: " + message);
                 switch (message) {
                     case WebViewJSInterface.ACTION_UNMATCHING,
                          WebViewJSInterface.ACTION_MUTATION -> {
@@ -724,6 +734,11 @@ public class Window {
 
     public void pause() {
         if (!isCurrentWindow) return;
+        if (BuildConfig.DEBUG && isLastIdx()) {
+            //TODO
+
+            nextPage();
+        }
         if (isLoadedText) {
             if (readingArr.length != 0) {
                 WindowList.readerPause();
@@ -910,5 +925,24 @@ public class Window {
 
     public int getPosition() {
         return position;
+    }
+
+    //Debug
+
+    private void nextPage() {
+        String[] keywords = {"next", "下一"};
+        int nextPageIdx = -1;
+        for (int i = readingArr.length - 1; i >= 0; i--) {
+            for (String keyword : keywords) {
+                if (readingArr[i].toLowerCase().contains(keyword)) {
+                    nextPageIdx = i;
+                    break;
+                }
+            }
+            if (nextPageIdx != -1) break;
+        }
+        if (nextPageIdx != -1) {
+            JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+        }
     }
 }
