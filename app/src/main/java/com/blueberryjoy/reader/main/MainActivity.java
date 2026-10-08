@@ -1537,8 +1537,11 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_main_about, null);
 
         TextView version = view.findViewById(R.id.textViewVersion);
-        version.setText(String.format("%s%s", getString(R.string.about_version), BuildConfig.VERSION_NAME));
-
+        if (BuildConfig.DEBUG) {
+            version.setText(String.format("%s%s (debug)", getString(R.string.about_version), BuildConfig.VERSION_NAME));
+        } else {
+            version.setText(String.format("%s%s", getString(R.string.about_version), BuildConfig.VERSION_NAME));
+        }
         TextView contact = view.findViewById(R.id.textViewContact);
         contact.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_SENDTO);

@@ -734,11 +734,8 @@ public class Window {
 
     public void pause() {
         if (!isCurrentWindow) return;
-        if (BuildConfig.DEBUG && isLastIdx()) {
-            //TODO
+        if (BuildConfig.DEBUG && isLastIdx() && nextPage()) return;
 
-            nextPage();
-        }
         if (isLoadedText) {
             if (readingArr.length != 0) {
                 WindowList.readerPause();
@@ -929,7 +926,7 @@ public class Window {
 
     //Debug
 
-    private void nextPage() {
+    private boolean nextPage() {
         String[] keywords = {"next", "下一"};
         int nextPageIdx = -1;
         for (int i = readingArr.length - 1; i >= 0; i--) {
@@ -942,7 +939,11 @@ public class Window {
             if (nextPageIdx != -1) break;
         }
         if (nextPageIdx != -1) {
+            setIsStartReadingAfterPageLoaded(true);
             JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+            return true;
+        } else {
+            return false;
         }
     }
 }
