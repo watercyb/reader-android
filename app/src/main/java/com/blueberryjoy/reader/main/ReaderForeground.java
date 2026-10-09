@@ -41,6 +41,7 @@ import com.blueberryjoy.reader.main.message.MessageNode;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
 import com.blueberryjoy.reader.main.utils.ReaderNotification;
+import com.blueberryjoy.reader.utils.Message;
 import com.blueberryjoy.reader.utils.TextToSpeechManager;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 import com.blueberryjoy.reader.main.window.WindowList;
@@ -74,6 +75,7 @@ public class ReaderForeground extends Service {
     private AudioManager.AudioPlaybackCallback audioPlaybackCallback;
     private boolean isHoldFocus = false;
     private CountDownTimer holdFocusTimer;
+    private UtteranceProgressListener utteranceProgressListener;
 
     @Override
     protected void attachBaseContext(@NonNull Context base) {
@@ -84,10 +86,11 @@ public class ReaderForeground extends Service {
     public void onCreate() {
         super.onCreate();
 
-        TextToSpeechManager.initial(new UtteranceProgressListener() {
+        utteranceProgressListener = new UtteranceProgressListener() {
             @Override
             public void onDone(String utteranceId) {
-                if (!isPause) new Handler(Looper.getMainLooper()).post(() -> read(0));
+                if (!isPause && utteranceId.equals(TextToSpeechManager.UTTERANCE_TEXT))
+                    new Handler(Looper.getMainLooper()).post(() -> read(0));
             }
 
             @Override
@@ -97,7 +100,9 @@ public class ReaderForeground extends Service {
             @Override
             public void onStart(String utteranceId) {
             }
-        });
+        };
+
+        TextToSpeechManager.initial(utteranceProgressListener);
 
         readerNotification = new ReaderNotification(getBaseContext());
         stateBuilder = new PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS);
@@ -177,22 +182,8 @@ public class ReaderForeground extends Service {
                 break;
             case ACTION_RESUME:
                 //After change language ReaderSettings.tts becomes to null, cause ReaderSetting is reloaded, but Reader is not.
-                if (TextToSpeechManager.isTTSNull()) {
-                    TextToSpeechManager.initial(new UtteranceProgressListener() {
-                        @Override
-                        public void onDone(String utteranceId) {
-                            if (!isPause) new Handler(Looper.getMainLooper()).post(() -> read(0));
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                        }
-
-                        @Override
-                        public void onStart(String utteranceId) {
-                        }
-                    });
-                }
+                if (TextToSpeechManager.isTTSNull())
+                    TextToSpeechManager.initial(utteranceProgressListener);
 
                 restartMediaPlayerForMediaSession();
 
@@ -272,6 +263,7 @@ public class ReaderForeground extends Service {
             audioManager.unregisterAudioPlaybackCallback(audioPlaybackCallback);
         if (focusRequest != null)
             audioManager.abandonAudioFocusRequest(focusRequest);
+        Message.log("ReaderForeground onDestroy");
         super.onDestroy();
     }
 
@@ -308,6 +300,7 @@ public class ReaderForeground extends Service {
 
             @Override
             public void onFinish() {
+                Message.log("Audio focus: resumeFocusTimer onFinish");
                 assert focusRequest != null;
                 if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
                     audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
@@ -349,8 +342,10 @@ public class ReaderForeground extends Service {
                 if (audioManager.isMusicActive() && !isPause && (audioFocusRequest != AudioManager.AUDIOFOCUS_GAIN || isNavigation)) {
                     pause();
                     isWaiting = true;
+                    Message.log("Audio focus: lost focus pause");
                 } else if ((!audioManager.isMusicActive() || configs.isEmpty()) && isPause && isWaiting) {
                     resumeFocusTimer.start();
+                    Message.log("Audio focus: resumeFocusTimer start");
                 }
             }
         };
@@ -394,23 +389,29 @@ public class ReaderForeground extends Service {
     private void play() {
         if (!WindowList.isValidReadingStatus() || !canPlay) return;
         if (isPause) {
-            if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
+            if (ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
+                if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    assert focusRequest != null;
+                    audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+                    isHoldFocus = true;
+                    if (holdFocusTimer != null) holdFocusTimer.cancel();
+                    holdFocusTimer = new CountDownTimer(1000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            isHoldFocus = false;
+                            holdFocusTimer = null;
+                        }
+                    }.start();
+                }
+            } else {
                 assert focusRequest != null;
                 audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
-                isHoldFocus = true;
-                if (holdFocusTimer != null) holdFocusTimer.cancel();
-                holdFocusTimer = new CountDownTimer(1000, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        isHoldFocus = false;
-                        holdFocusTimer = null;
-                    }
-                }.start();
             }
+
             isWaiting = false;
             isPause = false;
 
@@ -480,12 +481,14 @@ public class ReaderForeground extends Service {
             @Override
             public void onPlay() {
                 super.onPlay();
+                Message.log("Media control: button onPlay");
                 WindowList.pause();
             }
 
             @Override
             public void onPause() {
                 super.onPause();
+                Message.log("Media control: button onPause");
                 WindowList.pause();
             }
 

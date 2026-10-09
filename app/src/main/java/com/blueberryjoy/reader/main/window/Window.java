@@ -935,7 +935,7 @@ public class Window {
     //Debug
     private boolean playNextPage() {
         if (playNextPageState == 0) {
-            TextToSpeechManager.speak(App.Companion.getAppContext().getString(R.string.open_next_page));
+            TextToSpeechManager.speakSystem(App.Companion.getAppContext().getString(R.string.open_next_page));
             WindowList.onReadingModeSwitchingRequired(false);
             if (WindowList.isInForeground()) {
                 return playNextPageClick();

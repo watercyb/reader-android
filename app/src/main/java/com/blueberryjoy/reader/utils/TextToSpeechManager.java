@@ -1,6 +1,5 @@
 package com.blueberryjoy.reader.utils;
 
-import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
@@ -18,17 +17,15 @@ import java.util.List;
 public class TextToSpeechManager {
     @Nullable
     private static TextToSpeech tts;
-    @Nullable
-    private static Bundle params;
     private static final List<String> engineList = new ArrayList<>();
     private static final List<Voice> voiceList = new ArrayList<>();
     private static UtteranceProgressListener utteranceProgressListener;
+    public static final String UTTERANCE_SYSTEM = "utterance_system";
+    public static final String UTTERANCE_TEXT = "utterance_text";
 
     //Initialized from ReaderForeground.
     public static void initial(UtteranceProgressListener utteranceProgressListener) {
         TextToSpeechManager.utteranceProgressListener = utteranceProgressListener;
-        params = new Bundle();
-        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID);
         initializeTTSEngine();
         initializeTTS();
     }
@@ -92,8 +89,17 @@ public class TextToSpeechManager {
 
     public static boolean speak(String str) {
         if (tts == null) return false;
-        tts.speak(str, TextToSpeech.QUEUE_FLUSH, params, TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID);
+        if (tts.isSpeaking()) {
+            tts.speak(str, TextToSpeech.QUEUE_ADD, null, UTTERANCE_TEXT);
+        } else {
+            tts.speak(str, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_TEXT);
+        }
         return true;
+    }
+
+    public static void speakSystem(String str) {
+        if (tts == null) return;
+        tts.speak(str, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_SYSTEM);
     }
 
     public static void stop() {

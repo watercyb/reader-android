@@ -503,8 +503,10 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(arrayAdapter);
         if (WindowList.canGoForward()) {
             listViewHeaderForward.setImageResource(R.mipmap.ic_header_forward);
+            listViewHeaderForward.setEnabled(true);
         } else {
             listViewHeaderForward.setImageResource(R.mipmap.ic_header_forward_grey);
+            listViewHeaderForward.setEnabled(false);
         }
         if (!webUrl.getText().toString().startsWith("file")) {
             listViewHeaderDownload.setImageResource(R.mipmap.ic_header_download);
@@ -616,10 +618,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Get from server if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Get from Server", (item, isLongClick) -> volleyGet()));}
 
-        //Download Page
-        if (BuildConfig.DEBUG) {
-            listViewItemList.add(new ListViewItem("Download Page", (item, isLongClick) -> WindowList.download(true)));
-        }
+        //Download Page if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Download Page", (item, isLongClick) -> WindowList.download(true)));}
 
         //TestLog
         if (BuildConfig.DEBUG) {
