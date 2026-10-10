@@ -961,7 +961,7 @@ public class Window {
             playNextPageState = 0;
             if (!isCurrentWindow) return;
 
-            Message.log("loaded");
+            //Message.log("loaded");
             WindowList.onAlertStatusChanged(true);
             webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
                 if (!html.equals("null")) {
@@ -1016,7 +1016,7 @@ public class Window {
             webView.onResume();
             webView.resumeTimers();
             JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
-            Message.log("click");
+            //Message.log("click");
             return true;
         } else {
             return false;
@@ -1027,6 +1027,6 @@ public class Window {
         webView.onResume();
         webView.resumeTimers();
         webView.reload();
-        Message.log("reload");
+        //Message.log("reload");
     }
 }

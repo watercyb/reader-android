@@ -263,7 +263,7 @@ public class ReaderForeground extends Service {
             audioManager.unregisterAudioPlaybackCallback(audioPlaybackCallback);
         if (focusRequest != null)
             audioManager.abandonAudioFocusRequest(focusRequest);
-        Message.log("ReaderForeground onDestroy");
+        audioFocusRequest = AudioManager.AUDIOFOCUS_NONE;
         super.onDestroy();
     }
 
@@ -300,7 +300,6 @@ public class ReaderForeground extends Service {
 
             @Override
             public void onFinish() {
-                Message.log("Audio focus: resumeFocusTimer onFinish");
                 assert focusRequest != null;
                 if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
                     audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
@@ -342,10 +341,8 @@ public class ReaderForeground extends Service {
                 if (audioManager.isMusicActive() && !isPause && (audioFocusRequest != AudioManager.AUDIOFOCUS_GAIN || isNavigation)) {
                     pause();
                     isWaiting = true;
-                    Message.log("Audio focus: lost focus pause");
                 } else if ((!audioManager.isMusicActive() || configs.isEmpty()) && isPause && isWaiting) {
                     resumeFocusTimer.start();
-                    Message.log("Audio focus: resumeFocusTimer start");
                 }
             }
         };
@@ -406,10 +403,10 @@ public class ReaderForeground extends Service {
                             holdFocusTimer = null;
                         }
                     }.start();
+                } else {
+                    assert focusRequest != null;
+                    audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
                 }
-            } else {
-                assert focusRequest != null;
-                audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
             }
 
             isWaiting = false;
@@ -481,14 +478,12 @@ public class ReaderForeground extends Service {
             @Override
             public void onPlay() {
                 super.onPlay();
-                Message.log("Media control: button onPlay");
                 WindowList.pause();
             }
 
             @Override
             public void onPause() {
                 super.onPause();
-                Message.log("Media control: button onPause");
                 WindowList.pause();
             }
 

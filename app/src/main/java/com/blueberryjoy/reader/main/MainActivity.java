@@ -1576,10 +1576,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkBluetoothDevices() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            List<String> list = getAudioDevices();
-            if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
-        }, 5000);
+        //TODO needs?
+        //new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            //List<String> list = getAudioDevices();
+            //if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
+        //}, 5000);
     }
 
     private void initializeGoogleAds() {
