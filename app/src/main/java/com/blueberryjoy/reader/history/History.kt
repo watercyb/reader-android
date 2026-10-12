@@ -67,8 +67,7 @@ class History : AppCompatActivity() {
 
         initializeRecyclerView()
 
-        searchButton!!.setOnClickListener { v: View ->
-            //v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
+        searchButton!!.setOnClickListener {
             if (filter!!.isGone) {
                 filterShow()
             } else {
@@ -89,8 +88,7 @@ class History : AppCompatActivity() {
             }
         })
 
-        clearButton!!.setOnClickListener { v: View ->
-            //v.startAnimation(AnimationUtils.loadAnimation(baseContext, R.anim.alpha))
+        clearButton!!.setOnClickListener {
             AlertDialog.Builder(this)
                 .setTitle(R.string.history_clear_title)
                 .setMessage(R.string.history_clear_text)
