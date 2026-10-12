@@ -41,7 +41,6 @@ import com.blueberryjoy.reader.main.message.MessageNode;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
 import com.blueberryjoy.reader.main.utils.ReaderNotification;
-import com.blueberryjoy.reader.utils.Message;
 import com.blueberryjoy.reader.utils.TextToSpeechManager;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 import com.blueberryjoy.reader.main.window.WindowList;

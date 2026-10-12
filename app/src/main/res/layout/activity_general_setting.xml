@@ -69,63 +69,44 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="top"
+                android:paddingBottom="20dp"
                 android:text="@string/general_setting_block_ads"
                 android:textSize="16sp" />
 
             <CheckBox
                 android:id="@+id/readingBox"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="top"
+                android:paddingBottom="20dp"
                 android:text="@string/general_setting_text_display_reading_box"
                 android:textSize="16sp" />
 
             <CheckBox
                 android:id="@+id/notification"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="top"
+                android:paddingBottom="20dp"
                 android:text="@string/general_setting_text_display_reading_content_in_the_notification_bar"
                 android:textSize="16sp" />
 
             <CheckBox
-                android:id="@+id/requireAudioFocus"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="top"
-                android:text="@string/general_setting_text_require_focus_when_play"
-                android:textSize="16sp" />
-
-            <CheckBox
-                android:id="@+id/audioFocusChanged"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="top"
-                android:text="@string/general_setting_text_stop_when_focus_change"
-                android:textSize="16sp" />
-
-            <CheckBox
-                android:id="@+id/reloadAfterJS"
+                android:id="@+id/reduceRepeatText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="10dp"
                 android:gravity="top"
-                android:text="@string/general_setting_text_reload_on_JS"
+                android:paddingBottom="20dp"
+                android:text="@string/reduce_repeat_text"
                 android:textSize="16sp" />
 
             <CheckBox
@@ -136,7 +117,44 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:gravity="top"
+                android:paddingBottom="20dp"
                 android:text="@string/general_setting_skip_url"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/reloadAfterJS"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="top"
+                android:paddingBottom="20dp"
+                android:text="@string/general_setting_text_reload_on_JS"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/requireAudioFocus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="top"
+                android:paddingBottom="20dp"
+                android:text="@string/general_setting_text_require_focus_when_play"
+                android:textSize="16sp" />
+
+            <CheckBox
+                android:id="@+id/audioFocusChanged"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="top"
+                android:paddingBottom="20dp"
+                android:text="@string/general_setting_text_stop_when_focus_change"
                 android:textSize="16sp" />
 
             <CheckBox
@@ -146,8 +164,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="0dp"
                 android:gravity="top"
+                android:paddingBottom="20dp"
                 android:text="@string/general_setting_text_stop_after_BT"
                 android:textSize="16sp" />
 

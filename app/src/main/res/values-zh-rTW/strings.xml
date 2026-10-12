@@ -227,5 +227,8 @@
     <string name="general_setting_browsing_data_cleared">瀏覽資料已清除。</string>
     <string name="tip_text_unmatch">頁面內容可能已變更。點擊\n以重新載入文字。</string>
     <string name="open_next_page">正在開啟下一頁並繼續播放。</string>
+    <string name="reduce_repeat_text">簡化重複的字元和詞語</string>
+    <string name="history_today">今天</string>
+    <string name="history_yesterday">昨天</string>
 
 </resources>

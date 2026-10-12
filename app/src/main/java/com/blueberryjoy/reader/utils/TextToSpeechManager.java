@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.blueberryjoy.reader.App;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
+import com.blueberryjoy.reader.main.utils.ContentText;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 
 import java.util.ArrayList;
@@ -89,6 +90,7 @@ public class TextToSpeechManager {
 
     public static boolean speak(String str) {
         if (tts == null) return false;
+        str = ContentText.compressRepeatsRegex(str);
         if (tts.isSpeaking()) {
             tts.speak(str, TextToSpeech.QUEUE_ADD, null, UTTERANCE_TEXT);
         } else {

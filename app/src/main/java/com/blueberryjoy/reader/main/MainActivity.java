@@ -90,6 +90,7 @@ import com.blueberryjoy.reader.main.utils.MainActivityProvider;
 import com.blueberryjoy.reader.main.utils.ReaderController;
 import com.blueberryjoy.reader.main.utils.WindowListener;
 import com.blueberryjoy.reader.utils.ClickAnimation;
+import com.blueberryjoy.reader.utils.RunTime;
 import com.blueberryjoy.reader.utils.SaveBookmarkDialog;
 import com.blueberryjoy.reader.sqlite.SQLite;
 import com.blueberryjoy.reader.history.BrowsingHistory;
@@ -1578,8 +1579,8 @@ public class MainActivity extends AppCompatActivity {
     private void checkBluetoothDevices() {
         //TODO needs?
         //new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            //List<String> list = getAudioDevices();
-            //if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
+        //List<String> list = getAudioDevices();
+        //if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
         //}, 5000);
     }
 

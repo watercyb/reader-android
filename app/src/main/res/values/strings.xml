@@ -239,5 +239,8 @@
     <string name="general_setting_browsing_data_cleared">Browsing data cleared.</string>
     <string name="tip_text_unmatch">The page content may have changed. Tap to reload the text.</string>
     <string name="open_next_page">Opening the next page and continuing playback.</string>
+    <string name="reduce_repeat_text">Simplify Repeated Characters and Words</string>
+    <string name="history_today">Today</string>
+    <string name="history_yesterday">Yesterday</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

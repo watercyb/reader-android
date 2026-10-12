@@ -59,6 +59,7 @@ public class GeneralSetting extends AppCompatActivity {
         CheckBox blockAds = findViewById(R.id.blockAds);
         TextView resetTips = findViewById(R.id.resetTips);
         TextView clearBrowsingData = findViewById(R.id.clearBrowsingData);
+        CheckBox reduceRepeatText = findViewById(R.id.reduceRepeatText);
 
         readingBox.setChecked(ReaderSettings.getIsShowReadingText());
         notification.setChecked(ReaderSettings.getIsShowContentInNotification());
@@ -72,6 +73,7 @@ public class GeneralSetting extends AppCompatActivity {
         stopAfterBTDisc.setChecked(ReaderSettings.getIsStopWhenBlueToothDisconnected());
         skipURL.setChecked(ReaderSettings.getIsSkipURL());
         blockAds.setChecked(ReaderSettings.getIsBlockAds());
+        reduceRepeatText.setChecked(ReaderSettings.getIsReduceRepeatText());
 
         initialLang();
 
@@ -129,6 +131,8 @@ public class GeneralSetting extends AppCompatActivity {
                     Message.toastMSG(getString(R.string.general_setting_browsing_data_cleared));
                 })
                 .show());
+
+        reduceRepeatText.setOnClickListener(v -> ReaderSettings.saveIsReduceRepeatText(reduceRepeatText.isChecked()));
 
         initializeAd();
     }

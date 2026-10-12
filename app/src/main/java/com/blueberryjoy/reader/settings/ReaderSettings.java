@@ -54,6 +54,7 @@ public class ReaderSettings {
     */
     private static long tips = 0;
     private static boolean isShowWelcome;
+    private static boolean isReduceRepeatText = true;
 
     public static void initial() {
         SharedPreferences sharedPref = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE);
@@ -77,6 +78,7 @@ public class ReaderSettings {
         isBlockAds = sharedPref.getBoolean("isBlockAds", true);
         tips = sharedPref.getLong("tips", 0);
         isShowWelcome = sharedPref.getBoolean("isShowWelcome", true);
+        isReduceRepeatText = sharedPref.getBoolean("isReduceRepeatText", true);
     }
 
     @Nullable
@@ -271,5 +273,16 @@ public class ReaderSettings {
     public static String getVoiceName() {
         if (voiceName == null) return "";
         return voiceName;
+    }
+
+    public static boolean getIsReduceRepeatText() {
+        return isReduceRepeatText;
+    }
+
+    public static void saveIsReduceRepeatText(boolean isReduceRepeatText) {
+        if (ReaderSettings.isReduceRepeatText != isReduceRepeatText) {
+            ReaderSettings.isReduceRepeatText = isReduceRepeatText;
+            App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putBoolean("isReduceRepeatText", isReduceRepeatText).apply();
+        }
     }
 }
