@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">網頁閲讀器</string>
     <string name="find_prev">上一個</string>
+    <string name="loading_dot">載入中…</string>
     <string name="url_copy">複製</string>
     <string name="url_paste">貼上</string>
     <string name="url_replace">替換</string>

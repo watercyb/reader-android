@@ -836,6 +836,7 @@ public class Window {
             WindowList.onLoadedTextStateChanged(isLoadedText);
             if (loadingState != 0) WindowList.onProgressChanged(100);
             WindowList.onCurrentWindowChanged(idx, isPrivate);
+            WindowList.onAlertStatusChanged(false);
         } else {
             webView.setVisibility(View.GONE);
             WindowList.onUrlChanged("");

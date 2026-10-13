@@ -90,7 +90,6 @@ import com.blueberryjoy.reader.main.utils.MainActivityProvider;
 import com.blueberryjoy.reader.main.utils.ReaderController;
 import com.blueberryjoy.reader.main.utils.WindowListener;
 import com.blueberryjoy.reader.utils.ClickAnimation;
-import com.blueberryjoy.reader.utils.RunTime;
 import com.blueberryjoy.reader.utils.SaveBookmarkDialog;
 import com.blueberryjoy.reader.sqlite.SQLite;
 import com.blueberryjoy.reader.history.BrowsingHistory;
@@ -297,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isFrontLayerOn) return true;
         }
+        //TODO
         return super.dispatchTouchEvent(ev);
     }
 

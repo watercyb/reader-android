@@ -196,6 +196,7 @@
                 android:id="@+id/frameLayoutWebViewContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <com.blueberryjoy.reader.main.webview.MyWebView
@@ -205,6 +206,7 @@
             android:layout_marginTop="0dp"
             android:visibility="gone"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <ProgressBar
@@ -306,12 +308,13 @@
         android:id="@+id/textViewLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:drawable/dialog_holo_light_frame"
-        android:backgroundTint="?android:attr/colorBackground"
-        android:paddingStart="20dp"
-        android:paddingTop="10dp"
-        android:paddingEnd="1dp"
-        android:paddingBottom="1dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/main_loading_background"
+        android:paddingStart="10dp"
+        android:paddingTop="3dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp"
         android:text="@string/loading_dot"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/textViewReadingText"

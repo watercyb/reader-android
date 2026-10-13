@@ -5,7 +5,7 @@
     <string name="des_reading_mode" translatable="false">reading_mode</string>
     <string name="default_url" translatable="false">about:blank</string>
     <string name="des_next" translatable="false">next</string>
-    <string name="loading_dot" translatable="false">loading...</string>
+    <string name="loading_dot">loading...</string>
     <string name="des_setting" translatable="false">setting</string>
     <string name="url_copy">Copy</string>
     <string name="url_paste">Paste</string>
