@@ -880,6 +880,8 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
             if (find.getVisibility() != View.VISIBLE) return insets;
+            //TODO check.
+            /*
             boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
             if (isKeyboardVisible) {
                 View decorView = getWindow().getDecorView();
@@ -889,6 +891,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 find.setTranslationY(getCurrentWebView().getHeight() + (textView.getVisibility() == View.VISIBLE ? textView.getHeight() : 0) - find.getHeight());
             }
+            */
+            View decorView = getWindow().getDecorView();
+            Rect rect = new Rect();
+            decorView.getWindowVisibleDisplayFrame(rect);
+            find.setTranslationY(rect.height() - find.getHeight());
             return insets;
         });
     }
