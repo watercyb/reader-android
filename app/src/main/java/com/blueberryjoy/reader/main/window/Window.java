@@ -988,7 +988,6 @@ public class Window {
                         WindowList.onAlertStatusChanged(false);
                         WindowList.onLoadedTextStateChanged(true);
                     }
-
                     playNextPageClick();
                 }
             });

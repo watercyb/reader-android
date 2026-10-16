@@ -1,25 +1,23 @@
 package com.blueberryjoy.reader.main.utils;
 
-import com.blueberryjoy.reader.settings.GeneralSetting;
 import com.blueberryjoy.reader.settings.ReaderSettings;
+import com.blueberryjoy.reader.utils.RunTime;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ContentText {
 
-    private static final Pattern HAN_REPEAT =
-            Pattern.compile("(\\p{IsHan})\\1{4,}");
+    //private static final Pattern HAN_REPEAT = Pattern.compile("(\\p{IsHan})\\1{4,}");
+    private static final Pattern HAN_REPEAT = Pattern.compile("([\\u4E00-\\u9FFF])\\1{4,}");
 
-    private static final Pattern SYMBOL_REPEAT =
-            Pattern.compile("([^\\p{L}\\p{N}\\s])\\1{4,}");
+    private static final Pattern SYMBOL_REPEAT = Pattern.compile("([^\\p{L}\\p{N}\\s])\\1{4,}");
 
-    private static final Pattern ENGLISH_WORD_REPEAT =
-            Pattern.compile("([a-zA-Z]+)(?:\\s+\\1){4,}");
+    private static final Pattern ENGLISH_WORD_REPEAT = Pattern.compile("([a-zA-Z]+)(?:\\s+\\1){4,}");
 
+    /*
     public static String compressRepeats(String s) {
-        if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.isEmpty())
-            return s;
+        if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.isEmpty()) return s;
 
         StringBuilder result = new StringBuilder(s.length());
         int n = s.length();
@@ -107,10 +105,12 @@ public class ContentText {
 
         return result.toString();
     }
+    */
 
     public static String compressRepeatsRegex(String s) {
-        if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.length() < 5)
-            return s;
+        if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.length() < 5) return s;
+
+        RunTime.start(1);
 
         // 1. Compress repeated Chinese characters.
         s = replaceWithCount(s, HAN_REPEAT, 1);
@@ -121,55 +121,57 @@ public class ContentText {
         // 3. Compress repeated English words separated by whitespace.
         s = replaceEnglishWords(s);
 
+        RunTime.endAndShow(1);
+
         return s;
     }
 
-    private static String replaceWithCount(
-            String s, Pattern pattern, int group) {
+    private static String replaceWithCount(String s, Pattern pattern, int group) {
 
         Matcher matcher = pattern.matcher(s);
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
+        int lastEnd = 0;
 
         while (matcher.find()) {
-            String unit = matcher.group(group);
-            int count = matcher.group().codePointCount(
-                    0, matcher.group().length()) /
-                    unit.codePointCount(0, unit.length());
+            result.append(s, lastEnd, matcher.start());
 
-            String replacement = unit + " x " + count;
-            matcher.appendReplacement(
-                    result, Matcher.quoteReplacement(replacement));
+            String unit = matcher.group(group);
+            assert unit != null;
+            int count = matcher.group().codePointCount(0, matcher.group().length()) / unit.codePointCount(0, unit.length());
+
+            result.append(unit).append(" x ").append(count);
+            lastEnd = matcher.end();
         }
 
-        matcher.appendTail(result);
+        result.append(s, lastEnd, s.length());
         return result.toString();
     }
 
     private static String replaceEnglishWords(String s) {
         Matcher matcher = ENGLISH_WORD_REPEAT.matcher(s);
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
+        int lastEnd = 0;
 
         while (matcher.find()) {
+            result.append(s, lastEnd, matcher.start());
+
             String match = matcher.group();
             String word = matcher.group(1);
 
             // Count the occurrences of the word.
-            Matcher wordMatcher = Pattern.compile(
-                            "(?<!\\S)" + Pattern.quote(word) + "(?!\\S)")
-                    .matcher(match);
+            assert word != null;
+            Matcher wordMatcher = Pattern.compile("(?<!\\S)" + Pattern.quote(word) + "(?!\\S)").matcher(match);
 
             int count = 0;
             while (wordMatcher.find()) {
                 count++;
             }
 
-            String replacement = word + " x " + count;
-
-            matcher.appendReplacement(
-                    result, Matcher.quoteReplacement(replacement));
+            result.append(word).append(" x ").append(count);
+            lastEnd = matcher.end();
         }
 
-        matcher.appendTail(result);
+        result.append(s, lastEnd, s.length());
         return result.toString();
     }
 

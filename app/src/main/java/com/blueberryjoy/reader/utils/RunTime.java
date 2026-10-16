@@ -27,4 +27,8 @@ public class RunTime {
         time /= 1000;
         return time + "s";
     }
+
+    public static void endAndShow(int key) {
+        Message.log(end(key));
+    }
 }

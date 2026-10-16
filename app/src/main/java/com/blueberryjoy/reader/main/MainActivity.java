@@ -366,8 +366,10 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("CharsetObjectCanBeUsed")
     private void setWebUrl(@Nullable String url) {
         if (url == null) {
+            Message.log("webUrl: null");
             webUrl.setText("");
         } else {
+            Message.log("webUrl: " + url.substring(0, Math.min(url.length(), 15)));
             try {
                 webUrl.setText(URLDecoder.decode(url, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
