@@ -64,7 +64,7 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
         }
 
         @Override
-        public boolean onLongClick(View view) {
+        public boolean onLongClick(@NonNull View view) {
             if (itemclickListener != null) {
                 float x = (float) view.getTag(R.id.touch_x);
                 float y = (float) view.getTag(R.id.touch_y);
@@ -75,7 +75,7 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
 
         @SuppressLint("ClickableViewAccessibility")
         @Override
-        public boolean onTouch(View view, MotionEvent event) {
+        public boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 view.setTag(R.id.touch_x, event.getRawX());
                 view.setTag(R.id.touch_y, event.getRawY());

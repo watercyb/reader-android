@@ -96,6 +96,7 @@ public class ReaderSettings {
         App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putString("voiceName", voiceName).apply();
     }
 
+    @NonNull
     public static String getVoice() {
         if (voiceName == null)
             voiceName = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE).getString("voiceName", "en-US-language");
@@ -197,7 +198,8 @@ public class ReaderSettings {
         }
     }
 
-    public static String purseLang(String lang) {
+    @NonNull
+    public static String purseLang(@NonNull String lang) {
         if (lang.startsWith("zh")) {
             String langTag = Locale.getDefault().toLanguageTag();
             if (langTag.contains("Hant")) return "zh-TW";
@@ -270,6 +272,7 @@ public class ReaderSettings {
         App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putBoolean("isShowWelcome", isShowWelcome).apply();
     }
 
+    @NonNull
     public static String getVoiceName() {
         if (voiceName == null) return "";
         return voiceName;

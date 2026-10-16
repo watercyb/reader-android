@@ -1,5 +1,7 @@
 package com.blueberryjoy.reader.utils;
 
+import androidx.annotation.NonNull;
+
 import java.util.HashMap;
 
 public class RunTime {
@@ -9,6 +11,7 @@ public class RunTime {
         times.put(key, System.nanoTime());
     }
 
+    @NonNull
     public static String end(int key) {
         long endTime = System.nanoTime();
         Long startTime = times.get(key);

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.main.message.MessageBluetooth;
 import com.blueberryjoy.reader.main.message.MessageSender;
@@ -32,8 +33,9 @@ public class BluetoothConnectionReceiver extends BroadcastReceiver {
         }
     }
 
+    @Nullable
     @SuppressWarnings("deprecation")
-    private BluetoothDevice getDevice(Intent intent) {
+    private BluetoothDevice getDevice(@NonNull Intent intent) {
         return intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
     }
 }

@@ -188,11 +188,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView listViewHeaderDownload;
     private FrameLayout frameLayoutUrl;
     private ImageView imageViewPrivate;
+    @Nullable
     private Window windowToRemove = null;
     private LinearLayout linearLayoutUrlButton;
     private TextView numberBox;
+    @Nullable
     private WindowsRecyclerViewAdapter recyclerViewAdapter = null;
     private long lastNewWindowTime = 0L;
+    private LinearLayout linearLayoutBottomBar;
 
     public final static String ACTIVITY_RESULT_BOOKMARK = "bookmark";
     public final static String ACTIVITY_RESULT_DOWNLOAD = "download";
@@ -882,56 +885,42 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
             if (find.getVisibility() != View.VISIBLE) return insets;
-            //TODO check.
-            /*
+
             boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-            if (isKeyboardVisible) {
-                View decorView = getWindow().getDecorView();
-                Rect rect = new Rect();
-                decorView.getWindowVisibleDisplayFrame(rect);
-                find.setTranslationY(rect.height() - find.getHeight());
-            } else {
-                find.setTranslationY(getCurrentWebView().getHeight() + (textView.getVisibility() == View.VISIBLE ? textView.getHeight() : 0) - find.getHeight());
-            }
-            */
             View decorView = getWindow().getDecorView();
             Rect rect = new Rect();
             decorView.getWindowVisibleDisplayFrame(rect);
-            find.setTranslationY(rect.height() - find.getHeight());
+            float offset = rect.height() - find.getHeight();
+            if (!isKeyboardVisible) offset -= linearLayoutBottomBar.getHeight();
+            find.setTranslationY(offset);
+
             return insets;
         });
     }
 
     private void initializeButtons() {
         prev.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.prev();
         });
         ClickAnimation.INSTANCE.set(prev);
 
         next.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.next();
         });
         ClickAnimation.INSTANCE.set(next);
 
         pause.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (!isRecycleViewWindowsShown())
                 WindowList.pause();
         });
         ClickAnimation.INSTANCE.set(pause);
 
-        readingModeButton.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            readingModeSwitch();
-        });
+        readingModeButton.setOnClickListener(v -> readingModeSwitch());
         ClickAnimation.INSTANCE.set(readingModeButton);
 
         setting.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (menuContainer.getVisibility() == View.VISIBLE) {
                 listViewHide();
             } else {
@@ -944,7 +933,6 @@ public class MainActivity extends AppCompatActivity {
         ClickAnimation.INSTANCE.set(setting);
 
         scrollToBottom.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() != 0) return;
             if (scrollPageDirection == -1) {
                 hideAppBarLayout();
@@ -968,10 +956,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        reloadText.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            WindowList.reloadText(-1, -1, true);
-        });
+        reloadText.setOnClickListener(v -> WindowList.reloadText(-1, -1, true));
         ClickAnimation.INSTANCE.set(reloadText);
 
         numberBox.setOnClickListener(v -> recycleViewWindowsShow());
@@ -1186,6 +1171,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutUrlButton = findViewById(R.id.linearLayoutUrlButton);
         frameLayoutUrl = findViewById(R.id.frameLayoutUrl);
         numberBox = findViewById(R.id.numberBox);
+        linearLayoutBottomBar = findViewById(R.id.linearLayoutBottomBar);
 
         dispatchTouchArea = new DispatchTouchArea();
 

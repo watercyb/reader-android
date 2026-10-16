@@ -199,7 +199,7 @@ public class FileStorage {
     }
 
     @NonNull
-    private static JSONObject getJSONObject(String url, String title, int idx, String type) throws JSONException {
+    private static JSONObject getJSONObject(String url, String title, int idx, @Nullable String type) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("url", url);
         jsonObject.put("title", title);
@@ -209,7 +209,7 @@ public class FileStorage {
     }
 
     @NonNull
-    private static JSONObject getJSONObject(BookmarkItem bookmarkItem) throws JSONException {
+    private static JSONObject getJSONObject(@NonNull BookmarkItem bookmarkItem) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("url", bookmarkItem.getLink());
         jsonObject.put("title", bookmarkItem.getTitle());
@@ -393,7 +393,7 @@ public class FileStorage {
     }
 
     @NonNull
-    public static JSONArray getJSONArray(List<BookmarkItem> list) {
+    public static JSONArray getJSONArray(@NonNull List<BookmarkItem> list) {
         JSONArray jsonArray = new JSONArray();
         boolean hasFormatError = false;
         for (BookmarkItem bookmarkItem : list) {
@@ -424,7 +424,8 @@ public class FileStorage {
         }
     }
 
-    private static Bitmap resizeFavicon(Bitmap bitmap) {
+    @NonNull
+    private static Bitmap resizeFavicon(@NonNull Bitmap bitmap) {
         int maxWidth = 128;
         int maxHeight = 128;
         int width = bitmap.getWidth();

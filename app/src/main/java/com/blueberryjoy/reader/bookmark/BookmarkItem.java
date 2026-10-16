@@ -63,7 +63,7 @@ public class BookmarkItem {
         return item;
     }
 
-    public int compare(BookmarkItem bookmarkItem) {
+    public int compare(@NonNull BookmarkItem bookmarkItem) {
         if (type == null && bookmarkItem.type == null) return 0;
         if (type == null) return 1;
         if (bookmarkItem.type == null) return -1;

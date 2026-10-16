@@ -1,5 +1,8 @@
 package com.blueberryjoy.reader.main.utils;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.blueberryjoy.reader.settings.ReaderSettings;
 import com.blueberryjoy.reader.utils.RunTime;
 
@@ -107,7 +110,8 @@ public class ContentText {
     }
     */
 
-    public static String compressRepeatsRegex(String s) {
+    @Nullable
+    public static String compressRepeatsRegex(@Nullable String s) {
         if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.length() < 5) return s;
 
         RunTime.start(1);
@@ -126,7 +130,8 @@ public class ContentText {
         return s;
     }
 
-    private static String replaceWithCount(String s, Pattern pattern, int group) {
+    @NonNull
+    private static String replaceWithCount(@NonNull String s, @NonNull Pattern pattern, int group) {
 
         Matcher matcher = pattern.matcher(s);
         StringBuilder result = new StringBuilder();
@@ -147,7 +152,8 @@ public class ContentText {
         return result.toString();
     }
 
-    private static String replaceEnglishWords(String s) {
+    @NonNull
+    private static String replaceEnglishWords(@NonNull String s) {
         Matcher matcher = ENGLISH_WORD_REPEAT.matcher(s);
         StringBuilder result = new StringBuilder();
         int lastEnd = 0;

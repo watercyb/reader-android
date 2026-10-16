@@ -229,81 +229,6 @@
         android:clipToPadding="false"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/buttonPrev"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/find_prev"
-        android:padding="0dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPlay"
-        app:srcCompat="@mipmap/ic_prev" />
-
-    <ImageView
-        android:id="@+id/buttonPlay"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/dsc_play"
-        android:paddingStart="5dp"
-        android:paddingTop="0dp"
-        android:paddingEnd="0dp"
-        android:paddingBottom="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@mipmap/ic_play" />
-
-    <ImageView
-        android:id="@+id/buttonReadingMode"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/des_reading_mode"
-        android:padding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/imageButtonSetting"
-        app:layout_constraintStart_toEndOf="@+id/buttonNext"
-        app:srcCompat="@mipmap/ic_readingmode_normal" />
-
-    <ImageView
-        android:id="@+id/buttonReloadText"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/des_reload_text"
-        android:padding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPrev"
-        app:layout_constraintStart_toEndOf="@+id/buttonScroll"
-        app:srcCompat="@mipmap/ic_load_text" />
-
-    <ImageView
-        android:id="@+id/buttonScroll"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/des_scroll_to_bottom"
-        android:padding="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@mipmap/ic_scrolltobottom" />
-
-    <ImageView
-        android:id="@+id/buttonNext"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/des_next"
-        android:padding="0dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonPlay"
-        app:srcCompat="@mipmap/ic_next" />
-
-
     <TextView
         android:id="@+id/textViewLoading"
         android:layout_width="wrap_content"
@@ -330,12 +255,12 @@
         android:textColor="@color/purple"
         android:textSize="16sp"
         android:translationZ="-1dp"
-        app:layout_constraintBottom_toTopOf="@+id/frameLayoutBottomBar"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottomBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <FrameLayout
-        android:id="@+id/frameLayoutBottomBar"
+    <LinearLayout
+        android:id="@+id/linearLayoutBottomBar"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
         android:background="?android:attr/colorBackground"
@@ -344,7 +269,97 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/buttonScroll"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/des_scroll_to_bottom"
+            android:padding="0dp"
+            app:srcCompat="@mipmap/ic_scrolltobottom" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/buttonReloadText"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/des_reload_text"
+            android:padding="0dp"
+            app:srcCompat="@mipmap/ic_load_text" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/buttonPrev"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/find_prev"
+            android:padding="0dp"
+            android:visibility="visible"
+            app:srcCompat="@mipmap/ic_prev" />
+
+        <ImageView
+            android:id="@+id/buttonPlay"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/dsc_play"
+            android:paddingStart="5dp"
+            android:paddingTop="0dp"
+            android:paddingEnd="0dp"
+            android:paddingBottom="0dp"
+            app:srcCompat="@mipmap/ic_play" />
+
+        <ImageView
+            android:id="@+id/buttonNext"
+            android:layout_width="45dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/des_next"
+            android:padding="0dp"
+            android:visibility="visible"
+            app:srcCompat="@mipmap/ic_next" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/buttonReadingMode"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/des_reading_mode"
+            android:padding="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageButtonSetting"
+            app:layout_constraintStart_toEndOf="@+id/buttonNext"
+            app:srcCompat="@mipmap/ic_readingmode_normal" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/imageButtonSetting"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/des_setting"
+            app:srcCompat="@mipmap/ic_setting" />
+
+    </LinearLayout>
 
 
     <com.google.android.material.card.MaterialCardView
@@ -357,7 +372,7 @@
         app:cardBackgroundColor="@color/menu_background"
         app:cardCornerRadius="12dp"
         app:cardElevation="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonPlay"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutBottomBar"
         app:layout_constraintEnd_toEndOf="parent">
 
         <ListView
@@ -368,21 +383,12 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <ImageView
-        android:id="@+id/imageButtonSetting"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@android:color/transparent"
-        android:contentDescription="@string/des_setting"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@mipmap/ic_setting" />
-
     <LinearLayout
         android:id="@+id/linearLayoutFindBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="?android:attr/colorBackground"
+        android:translationZ="1dp"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent">
 

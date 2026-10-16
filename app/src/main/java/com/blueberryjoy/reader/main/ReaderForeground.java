@@ -73,6 +73,7 @@ public class ReaderForeground extends Service {
     private boolean canPlay = true;
     private AudioManager.AudioPlaybackCallback audioPlaybackCallback;
     private boolean isHoldFocus = false;
+    @androidx.annotation.Nullable
     private CountDownTimer holdFocusTimer;
     private UtteranceProgressListener utteranceProgressListener;
 
@@ -87,7 +88,7 @@ public class ReaderForeground extends Service {
 
         utteranceProgressListener = new UtteranceProgressListener() {
             @Override
-            public void onDone(String utteranceId) {
+            public void onDone(@NonNull String utteranceId) {
                 if (!isPause && utteranceId.equals(TextToSpeechManager.UTTERANCE_TEXT))
                     new Handler(Looper.getMainLooper()).post(() -> read(0));
             }
@@ -386,8 +387,8 @@ public class ReaderForeground extends Service {
         if (!WindowList.isValidReadingStatus() || !canPlay) return;
         if (isPause) {
             if (ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
+                assert focusRequest != null;
                 if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    assert focusRequest != null;
                     audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
                     isHoldFocus = true;
                     if (holdFocusTimer != null) holdFocusTimer.cancel();
@@ -403,7 +404,6 @@ public class ReaderForeground extends Service {
                         }
                     }.start();
                 } else {
-                    assert focusRequest != null;
                     audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
                 }
             }

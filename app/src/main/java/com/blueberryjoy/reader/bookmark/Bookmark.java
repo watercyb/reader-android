@@ -212,13 +212,10 @@ public class Bookmark extends AppCompatActivity {
         });
         itemTouchHelper.attachToRecyclerView(bookmark);
 
-        addButton.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
-            new SaveBookmarkDialog(Bookmark.this.getWindow(), bookmarkList.getTypes(), url, title, idx, null, (newUrl, newTitle, newIdx, type) -> {
-                FileStorage.appendAndSaveBookmarkJSON(bookmarkList, newUrl, newTitle, newIdx, type);
-                recyclerViewAdapter.getFilter().filter(filter.getText().toString());
-            }, 0).show();
-        });
+        addButton.setOnClickListener(v -> new SaveBookmarkDialog(Bookmark.this.getWindow(), bookmarkList.getTypes(), url, title, idx, null, (newUrl, newTitle, newIdx, type) -> {
+            FileStorage.appendAndSaveBookmarkJSON(bookmarkList, newUrl, newTitle, newIdx, type);
+            recyclerViewAdapter.getFilter().filter(filter.getText().toString());
+        }, 0).show());
         ClickAnimation.INSTANCE.set(addButton);
 
         importButton.setOnClickListener(v -> {
@@ -227,10 +224,7 @@ public class Bookmark extends AppCompatActivity {
                     .setTitle(getString(R.string.bookmark_title_import))
                     .setMessage(getString(R.string.bookmark_text_import))
                     .setCancelable(false)
-                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
-                        //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
-                        startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE));
-                    });
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE)));
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         });
@@ -242,17 +236,13 @@ public class Bookmark extends AppCompatActivity {
                     .setTitle(getString(R.string.bookmark_title_export))
                     .setMessage(getString(R.string.bookmark_text_export))
                     .setCancelable(false)
-                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> {
-                        //v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.alpha));
-                        startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "bookmark.txt"));
-                    });
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "bookmark.txt")));
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         });
         ClickAnimation.INSTANCE.set(exportButton);
 
         searchButton.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (filter.getVisibility() == View.GONE) {
                 filterShow();
             } else {

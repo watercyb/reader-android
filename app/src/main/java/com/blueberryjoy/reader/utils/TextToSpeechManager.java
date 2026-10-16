@@ -4,6 +4,7 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.App;
@@ -77,6 +78,7 @@ public class TextToSpeechManager {
         return tts.getVoice().getName();
     }
 
+    @NonNull
     public static List<Voice> getVoiceList() {
         return voiceList;
     }
@@ -117,6 +119,7 @@ public class TextToSpeechManager {
         return tts == null;
     }
 
+    @NonNull
     public static List<String> getEngineList() {
         initializeTTSEngine();
         return engineList;
@@ -126,7 +129,7 @@ public class TextToSpeechManager {
         return engineList.isEmpty();
     }
 
-    public static void setEngine(OnTTSInitializedListener onTTSInitializedListener, int idx) {
+    public static void setEngine(@NonNull OnTTSInitializedListener onTTSInitializedListener, int idx) {
         String engine = engineList.get(idx);
         if (!engine.equals(ReaderSettings.TTSEngine) && !engine.isEmpty()) {
             if (tts != null)

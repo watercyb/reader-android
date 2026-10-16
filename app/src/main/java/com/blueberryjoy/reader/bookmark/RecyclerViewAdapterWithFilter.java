@@ -93,7 +93,7 @@ public class RecyclerViewAdapterWithFilter extends RecyclerView.Adapter<Recycler
             holder.itemView.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
-                public boolean onTouch(View view, MotionEvent event) {
+                public boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         view.setTag(R.id.touch_x, event.getRawX());
                         view.setTag(R.id.touch_y, event.getRawY());
@@ -121,7 +121,7 @@ public class RecyclerViewAdapterWithFilter extends RecyclerView.Adapter<Recycler
             holder.itemView.setOnTouchListener(new View.OnTouchListener() {
                 @SuppressLint("ClickableViewAccessibility")
                 @Override
-                public boolean onTouch(View view, MotionEvent event) {
+                public boolean onTouch(@NonNull View view, @NonNull MotionEvent event) {
                     if (event.getAction() == MotionEvent.ACTION_DOWN) {
                         view.setTag(R.id.touch_x, event.getRawX());
                         view.setTag(R.id.touch_y, event.getRawY());

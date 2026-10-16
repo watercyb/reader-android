@@ -226,7 +226,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
-    private int getLanguageNameRes(String languageCode) {
+    private int getLanguageNameRes(@NonNull String languageCode) {
         return switch (languageCode) {
             case "ar" -> R.string.language_ar;
             case "as" -> R.string.language_as;

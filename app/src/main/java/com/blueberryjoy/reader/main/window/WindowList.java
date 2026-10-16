@@ -69,6 +69,7 @@ public class WindowList {
         });
     }
 
+    @NonNull
     public static WindowsRecyclerViewNode restore(@NonNull Window window) {
         boolean isCurrent = window.getIsRemovedWindowCurrent();
         window.setIsCurrentWindow(false, -1);
@@ -90,6 +91,7 @@ public class WindowList {
         setCurrentWindow(idx);
     }
 
+    @NonNull
     public static WindowsRecyclerViewNode createAndInsert(@NonNull String url, int idx, boolean isSwitch, boolean isPrivate) {
         MyWebView webView = createWebView(isPrivate);
         int position = list.isEmpty() ? 0 : list.get(list.size() - 1).getPosition() + 1000;
@@ -221,6 +223,7 @@ public class WindowList {
         return currentWindow != null && currentWindow.isLastIdx();
     }
 
+    @NonNull
     public static String getUrl() {
         if (currentWindow != null) return currentWindow.getUrl();
         return "";
@@ -363,7 +366,7 @@ public class WindowList {
         }
     }
 
-    public static int getPrivateProfileIdxFromName(String profileName) {
+    public static int getPrivateProfileIdxFromName(@NonNull String profileName) {
         if (profileName.startsWith("incognito_profile")) {
             String[] strs = profileName.split("_");
             if (strs.length == 3) {

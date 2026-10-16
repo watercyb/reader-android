@@ -333,7 +333,7 @@ public class Window {
     }
 
     //Idx<0 -> not update idx.
-    public void addPageToCache(@Nullable String url, int idx, @Nullable String title, String state) {
+    public void addPageToCache(@Nullable String url, int idx, @Nullable String title, @NonNull String state) {
         if (url == null) url = webView.getUrl();
         if (url == null) return;
         if (title == null) title = webView.getTitle();
@@ -361,7 +361,7 @@ public class Window {
 
             @Override
             @JavascriptInterface
-            public void onMessage(String message) {
+            public void onMessage(@NonNull String message) {
                 Message.log("Page message: " + message);
                 switch (message) {
                     case WebViewJSInterface.ACTION_UNMATCHING,
@@ -434,7 +434,7 @@ public class Window {
 
             //Only called when page open or reload normally, paired with onPageStarted.
             @Override
-            public void onPageFinished(WebView view, String url) {
+            public void onPageFinished(@NonNull WebView view, @NonNull String url) {
                 if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
                 //Debug
                 if (BuildConfig.DEBUG) playNextPageOnPageFinishedDelay();
@@ -528,7 +528,7 @@ public class Window {
             }
 
             @Override
-            public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+            public boolean onRenderProcessGone(@NonNull WebView view, @NonNull RenderProcessGoneDetail detail) {
                 if (detail.didCrash()) {
                     Message.toastErr(App.Companion.getAppContext().getString(R.string.browser_crashed_error));
                 } else {
@@ -560,7 +560,7 @@ public class Window {
             }
 
             @Override
-            public void onReceivedTitle(WebView view, String title) {
+            public void onReceivedTitle(WebView view, @NonNull String title) {
                 if (!isPrivate)
                     new Handler(Looper.getMainLooper()).postDelayed(() -> BrowsingHistory.INSTANCE.debouncedInsert(getUrl(), title), 1000);
             }
@@ -885,7 +885,7 @@ public class Window {
         if (isPrivate) WindowList.CheckAndIncrementPrivateProfileIdx();
     }
 
-    private boolean isValidUrl(String url) {
+    private boolean isValidUrl(@NonNull String url) {
         try {
             if (url.startsWith("http://") || url.startsWith("https://") || url.isEmpty() || url.startsWith("about:") || url.startsWith("file:"))
                 return true;
