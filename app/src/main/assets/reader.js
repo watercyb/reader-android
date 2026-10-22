@@ -140,7 +140,7 @@ if (typeof window.pageReader === "undefined") {
             return;
           }
           if (this.newlineTags.has(node.tagName)) this.hasLineBreaker = true;
-          if (this.isVisible(node)) {
+          if (this.isVisibleNew(node)) {
             node.childNodes.forEach((child) => {
               this.processNodeForReading(child);
               if (this.newlineTags.has(child.tagName))
@@ -192,6 +192,47 @@ if (typeof window.pageReader === "undefined") {
         return !outOfPage;
       } catch (err) {
         throw new Error("isVisible: " + err.message);
+      }
+    }
+    isVisibleNew(element) {
+      try {
+        if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+          return false;
+        }
+        let current = element;
+        /* Check this element and all its ancestors. */
+        while (current && current.nodeType === Node.ELEMENT_NODE) {
+          const style = window.getComputedStyle(current);
+          if (
+            style.display === "none" ||
+            style.visibility === "hidden" ||
+            style.visibility === "collapse" ||
+            Number(style.opacity) === 0 ||
+            style.contentVisibility === "hidden"
+          ) {
+            return false;
+          }
+          current = current.parentElement;
+        }
+        /* display: contents has no box of its own. */
+        const style = window.getComputedStyle(element);
+        if (style.display === "contents") {
+          return Array.from(element.children).some(this.isVisibleNew);
+        }
+        /* getClientRects handles inline elements and fragmented layout. */
+        const rects = element.getClientRects();
+        if (rects.length === 0) {
+          return false;
+        }
+        /* At least one rendered box must have nonzero area. */
+        for (const rect of rects) {
+          if (rect.width > 0 && rect.height > 0) {
+            return true;
+          }
+        }
+        return false;
+      } catch (err) {
+        throw new Error("isVisibleNew: " + err.message);
       }
     }
     hasLineBreak(previousNode, nextNode) {
@@ -363,7 +404,8 @@ if (typeof window.pageReader === "undefined") {
     }
     /* Will Be Called From Java */
     loadContent() {
-      this.addTagToPage();
+      const t=this.addTagToPage();
+      this.sendMessage("Loading time: " + t +"ms");
       return JSON.stringify([this.textSegments, this.lineBreakers]);
     }
     /* Will Be Called From Java */
