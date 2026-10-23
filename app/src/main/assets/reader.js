@@ -224,9 +224,20 @@ if (typeof window.pageReader === "undefined") {
         if (rects.length === 0) {
           return false;
         }
+        const doc = document.documentElement;
+        const body = document.body;
+        const maxX = Math.max(doc.scrollWidth, body ? body.scrollWidth : 0);
+        const maxY = Math.max(doc.scrollHeight, body ? body.scrollHeight : 0);
         /* At least one rendered box must have nonzero area. */
         for (const rect of rects) {
-          if (rect.width > 0 && rect.height > 0) {
+          if (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.left < maxX &&
+            rect.top < maxY &&
+            rect.right > 0 - (maxX - rect.left) &&
+            rect.bottom > 0 - (maxY - rect.top)
+          ) {
             return true;
           }
         }
@@ -404,8 +415,8 @@ if (typeof window.pageReader === "undefined") {
     }
     /* Will Be Called From Java */
     loadContent() {
-      const t=this.addTagToPage();
-      this.sendMessage("Loading time: " + t +"ms");
+      const t = this.addTagToPage();
+      this.sendMessage("Loading time: " + t + "ms");
       return JSON.stringify([this.textSegments, this.lineBreakers]);
     }
     /* Will Be Called From Java */
