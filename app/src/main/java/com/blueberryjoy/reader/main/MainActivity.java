@@ -638,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {}));}
+        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -1370,6 +1370,7 @@ public class MainActivity extends AppCompatActivity {
                 int from = viewHolder.getBindingAdapterPosition();
                 int to = target.getBindingAdapterPosition();
                 WindowList.move(from, to);
+                assert recyclerViewAdapter != null;
                 recyclerViewAdapter.move(from, to);
                 return true;
             }
@@ -1377,6 +1378,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 if (swipeDir == 4) {
+                    assert recyclerViewAdapter != null;
                     Window removedWindow = recyclerViewAdapter.get(viewHolder.getLayoutPosition()).window();
                     if (windowToRemove != null) {
                         windowToRemove.remove();
@@ -1398,6 +1400,7 @@ public class MainActivity extends AppCompatActivity {
             long now = System.currentTimeMillis();
             if (now - lastNewWindowTime < 500) return;
             lastNewWindowTime = now;
+            assert recyclerViewAdapter != null;
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, false));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
@@ -1408,6 +1411,7 @@ public class MainActivity extends AppCompatActivity {
         ClickAnimation.INSTANCE.set(imageButtonAdd);
         ImageView imageButtonAddPrivate = windowsView.findViewById(R.id.imageButtonAddPrivate);
         imageButtonAddPrivate.setOnClickListener((v) -> {
+            assert recyclerViewAdapter != null;
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, true));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {

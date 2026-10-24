@@ -435,7 +435,8 @@ public class Window {
             //Only called when page open or reload normally, paired with onPageStarted.
             @Override
             public void onPageFinished(@NonNull WebView view, @NonNull String url) {
-                if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
+                if (url.startsWith("file"))
+                    ((MyWebView) view).updateThemeColor();
                 //Debug
                 if (BuildConfig.DEBUG) playNextPageOnPageFinishedDelay();
             }

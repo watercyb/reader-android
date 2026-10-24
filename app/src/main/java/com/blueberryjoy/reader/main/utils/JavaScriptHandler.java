@@ -15,7 +15,11 @@ public class JavaScriptHandler {
     }
 
     public static void updateThemeColor(@NonNull WebView webView, boolean isDarkMode) {
-        webView.loadUrl("javascript:if(typeof pageReader !=='undefined') pageReader.updateThemeColor(" + isDarkMode + ");");
+        if (isDarkMode) {
+            webView.evaluateJavascript("javascript: document.body.style.backgroundColor = '#121212'; document.body.style.color ='#BDBDBD';", null);
+        } else {
+            webView.evaluateJavascript("javascript: document.body.style.backgroundColor = 'white'; document.body.style.color = 'black';", null);
+        }
     }
 
     public static void loadJavaScriptCode(@NonNull WebView webView, String code) {
