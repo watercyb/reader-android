@@ -345,11 +345,20 @@ if (typeof window.pageReader === "undefined") {
             box.y + window.scrollY - initialScrollY + box.height >
             this.windowHeight * 0.9
           ) {
-            lastElement.scrollIntoView(false);
+            lastElement.scrollIntoView({
+                behavior: 'instant',
+                block: 'end',
+                inline: 'nearest'
+            });
             window.scrollBy(0, this.windowHeight * 0.1);
             res = 1;
           } else if (box.y + window.scrollY - initialScrollY < 0) {
-            firstElement.scrollIntoView(true);
+
+            lastElement.scrollIntoView({
+                behavior: 'instant',
+                block: 'start',
+                inline: 'nearest'
+            });
             window.scrollBy(0, -this.windowHeight * 0.1);
             res = -1;
           }

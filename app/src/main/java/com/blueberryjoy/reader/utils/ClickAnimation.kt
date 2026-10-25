@@ -1,10 +1,12 @@
 package com.blueberryjoy.reader.utils
 
+import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 
 object ClickAnimation {
 
+    @SuppressLint("ClickableViewAccessibility")
     fun set(view: View) {
         view.setOnTouchListener { v, event ->
             when (event.action) {
@@ -16,7 +18,7 @@ object ClickAnimation {
                         .setDuration(50)
                         .start()
 
-                    true
+                    false
                 }
 
                 MotionEvent.ACTION_UP,
@@ -28,11 +30,11 @@ object ClickAnimation {
                         .setDuration(50)
                         .start()
 
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        v.performClick()
-                    }
+                    //if (event.action == MotionEvent.ACTION_UP) {
+                    //v.performClick()
+                    //}
 
-                    true
+                    false
                 }
 
                 else -> false
