@@ -449,6 +449,8 @@ public class Window {
                 webView.evaluateJavascript("(function() { return document.body.innerHTML.includes('\\u003Cframe'); })();", (html) -> {
                     if (isCurrentWindow) WindowList.onSwipeRefreshRequired(!html.equals("true"));
                 });
+                //Close "loading..." tag everytime when page is changed.
+                WindowList.onAlertStatusChanged(false);
                 //If onPageStarted is not called and url/title are different -> different page.
                 if (getLoadingState() == 0 && (!isCurrentWindow || ((!WindowList.getWebUrl().equals(url) || !windowIndexCache.checkTitle(webView.getTitle())) && !WindowList.isReadingMode()))) {
                     setLoadingState(-1);
@@ -937,7 +939,7 @@ public class Window {
 
     //Debug
     private boolean playNextPage() {
-        if (playNextPageState == 0) {
+        if (playNextPageState == 0 && !isDownloadedPage()) {
             TextToSpeechManager.speakSystem(App.Companion.getAppContext().getString(R.string.open_next_page));
             WindowList.onReadingModeSwitchingRequired(false);
             if (WindowList.isInForeground()) {
@@ -948,7 +950,7 @@ public class Window {
                 return true;
             }
         } else {
-            return true;
+            return false;
         }
     }
 
