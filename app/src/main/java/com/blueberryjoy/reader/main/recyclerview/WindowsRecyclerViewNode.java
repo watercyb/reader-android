@@ -9,4 +9,8 @@ public record WindowsRecyclerViewNode(String item, Bitmap icon, Window window) {
     public boolean isPrivate() {
         return window.isPrivate();
     }
+
+    public boolean isDownloadedPage() {
+        return window.isDownloadedPage();
+    }
 }

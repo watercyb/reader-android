@@ -440,7 +440,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void scrollToCurrentText(@NonNull WebView webView, boolean isSmooth) {
-        Message.log("isSmooth: " + isSmooth);
         JavaScriptHandler.scrollToCurrentText((MyWebView) webView, isSmooth);
     }
 

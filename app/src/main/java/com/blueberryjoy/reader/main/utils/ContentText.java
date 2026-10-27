@@ -60,7 +60,7 @@ public class ContentText {
             }
 
             result.append(s, lastEnd, matcher.start());
-            result.append(unit).append(" x ").append(count);
+            result.append(unit);
             lastEnd = matcher.end();
         }
 
@@ -98,7 +98,7 @@ public class ContentText {
             }
 
             result.append(s, lastEnd, matcher.start());
-            result.append(unit).append(" x ").append(count);
+            result.append(unit);
             lastEnd = matcher.end();
         }
 

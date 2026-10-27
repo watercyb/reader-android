@@ -28,7 +28,7 @@ public class DownloadsRecyclerViewAdapter extends RecyclerView.Adapter<Downloads
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.recyclerview_item, parent, false);
+        View view = layoutInflater.inflate(R.layout.recyclerview_download_item, parent, false);
         return new ViewHolder(view);
     }
 

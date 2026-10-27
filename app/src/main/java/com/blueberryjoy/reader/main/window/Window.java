@@ -435,8 +435,7 @@ public class Window {
             //Only called when page open or reload normally, paired with onPageStarted.
             @Override
             public void onPageFinished(@NonNull WebView view, @NonNull String url) {
-                if (url.startsWith("file"))
-                    ((MyWebView) view).updateThemeColor();
+                if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
                 //Debug
                 if (BuildConfig.DEBUG) playNextPageOnPageFinishedDelay();
             }
@@ -571,8 +570,7 @@ public class Window {
             if (getLoadingState() != 0 || !isCurrentWindow) return;
             if (isLoadedText && idx >= 0) {
                 idx = getReadingIdx(idx);
-                if (idx >= 0)
-                    WindowList.updateIdx(idx);
+                if (idx >= 0) WindowList.updateIdx(idx);
             } else if (!isLoadedText) {
                 reloadText(x, y, false);
             }
@@ -655,8 +653,7 @@ public class Window {
                                     return;
                                 }
                                 nextIdx = getReadingIdx(nextIdx);
-                                if (nextIdx >= 0)
-                                    WindowList.updateIdx(nextIdx);
+                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
                             });
                         }
                     }.start();
@@ -932,6 +929,10 @@ public class Window {
 
     public int getPosition() {
         return position;
+    }
+
+    public boolean isDownloadedPage() {
+        return getUrl().startsWith("file");
     }
 
     //Debug
