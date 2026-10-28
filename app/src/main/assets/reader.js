@@ -346,18 +346,17 @@ if (typeof window.pageReader === "undefined") {
             this.windowHeight * 0.9
           ) {
             lastElement.scrollIntoView({
-                behavior: 'instant',
-                block: 'end',
-                inline: 'nearest'
+              behavior: "instant",
+              block: "end",
+              inline: "nearest",
             });
             window.scrollBy(0, this.windowHeight * 0.1);
             res = 1;
           } else if (box.y + window.scrollY - initialScrollY < 0) {
-
             lastElement.scrollIntoView({
-                behavior: 'instant',
-                block: 'start',
-                inline: 'nearest'
+              behavior: "instant",
+              block: "start",
+              inline: "nearest",
             });
             window.scrollBy(0, -this.windowHeight * 0.1);
             res = -1;
@@ -411,13 +410,12 @@ if (typeof window.pageReader === "undefined") {
     getElementByPosition(x, y) {
       try {
         y -= window.scrollY;
-        if (
-          document.elementFromPoint(x, y) &&
-          document.elementFromPoint(x, y).className === "pageReader"
-        )
-          return (
-            document.elementFromPoint(x, y).id - pageReader.elementIdOffset
-          );
+        let element = document.elementFromPoint(x, y);
+        if (element && element.className === "pageReader" && element.id) {
+          return element.id - pageReader.elementIdOffset;
+        } else {
+          return "null";
+        }
       } catch (err) {
         this.sendErrorMessage("getElementByPosition: " + err.message);
       }

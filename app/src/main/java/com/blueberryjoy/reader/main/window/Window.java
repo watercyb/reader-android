@@ -81,6 +81,7 @@ public class Window {
     //Debug
     private int playNextPageState = 0;
     private final Handler playNextPageDelayRunHandler = new Handler(Looper.getMainLooper());
+    private boolean isPlayedLastIdx = false;
 
 
     @NonNull
@@ -247,6 +248,8 @@ public class Window {
     }
 
     public boolean hasNext() {
+        //Debug
+        if (isLastIdx()) isPlayedLastIdx = true;
         return nextIdx >= 0 && nextIdx < readingArr.length;
     }
 
@@ -451,6 +454,8 @@ public class Window {
                 });
                 //Close "loading..." tag everytime when page is changed.
                 WindowList.onAlertStatusChanged(false);
+                //Debug
+                isPlayedLastIdx = false;
                 //If onPageStarted is not called and url/title are different -> different page.
                 if (getLoadingState() == 0 && (!isCurrentWindow || ((!WindowList.getWebUrl().equals(url) || !windowIndexCache.checkTitle(webView.getTitle())) && !WindowList.isReadingMode()))) {
                     setLoadingState(-1);
@@ -644,13 +649,13 @@ public class Window {
 
                         @Override
                         public void onFinish() {
-                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", html1 -> {
+                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
                                 if (!isCurrentWindow) return;
                                 WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
-                                if (html1.equals("null")) return;
+                                if (idx.equals("null")) return;
                                 int nextIdx;
                                 try {
-                                    nextIdx = Integer.parseInt(html1);
+                                    nextIdx = Integer.parseInt(idx);
                                 } catch (Exception e) {
                                     return;
                                 }
@@ -742,7 +747,8 @@ public class Window {
 
     public void pause() {
         if (!isCurrentWindow) return;
-        if (BuildConfig.DEBUG && isLastIdx() && playNextPage()) return;
+        //Debug
+        if (BuildConfig.DEBUG && isLastIdx() && isPlayedLastIdx && playNextPage()) return;
 
         if (isLoadedText) {
             if (readingArr.length != 0) {
