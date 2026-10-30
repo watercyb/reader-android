@@ -45,7 +45,7 @@ An Android application that turns web pages into spoken content using text-to-sp
 
 ## Download
 
-[Link Text](https://play.google.com/store/apps/details?id=com.blueberryjoy.reader)
+https://play.google.com/store/apps/details?id=com.blueberryjoy.reader
 
 ## License
 
