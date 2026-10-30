@@ -19,10 +19,12 @@ An Android application that turns web pages into spoken content using text-to-sp
 ## Technologies
 
 - Java
+- Kotlin
 - Android SDK
 - Android WebView
 - Android TextToSpeech (TTS)
 - Android Foreground Services
+- Clerk
 - SQLite
 - JavaScript
 - Gradle
