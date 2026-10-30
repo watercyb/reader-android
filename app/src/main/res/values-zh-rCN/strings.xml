@@ -228,9 +228,16 @@
     <string name="general_setting_browsing_data_cleared">浏览数据已清除。</string>
     <string name="tip_text_unmatch">页面内容可能已更改。点击\n以重新加载文字。</string>
     <string name="open_next_page">正在打开下一页并继续播放。</string>
-    <string name="reduce_repeat_text">简化重复的字符和词语</string>
+    <string name="general_setting_reduce_repeat_text">减少过度重复的字符和词语</string>
     <string name="history_today">今天</string>
     <string name="history_yesterday">昨天</string>
+    <string name="general_setting_reduce_repeat_never">从不</string>
+    <string name="general_setting_reduce_repeat_three">3次</string>
+    <string name="general_setting_reduce_repeat_four">4次</string>
+    <string name="general_setting_reduce_repeat_five">5次</string>
+    <string name="general_setting_reduce_repeat_six">6次</string>
+    <string name="general_setting_reduce_repeat_seven">7次</string>
+    <string name="general_setting_reduce_repeat_eight">8次</string>
 
 
 </resources>

@@ -54,7 +54,7 @@ public class ReaderSettings {
     */
     private static long tips = 0;
     private static boolean isShowWelcome;
-    private static boolean isReduceRepeatText = true;
+    private static int reduceRepeatText = 5;
 
     public static void initial() {
         SharedPreferences sharedPref = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE);
@@ -78,7 +78,7 @@ public class ReaderSettings {
         isBlockAds = sharedPref.getBoolean("isBlockAds", true);
         tips = sharedPref.getLong("tips", 0);
         isShowWelcome = sharedPref.getBoolean("isShowWelcome", true);
-        isReduceRepeatText = sharedPref.getBoolean("isReduceRepeatText", true);
+        reduceRepeatText = sharedPref.getInt("reduceRepeatText", 5);
     }
 
     @Nullable
@@ -278,14 +278,14 @@ public class ReaderSettings {
         return voiceName;
     }
 
-    public static boolean getIsReduceRepeatText() {
-        return isReduceRepeatText;
+    public static int getReduceRepeatText() {
+        return reduceRepeatText;
     }
 
-    public static void saveIsReduceRepeatText(boolean isReduceRepeatText) {
-        if (ReaderSettings.isReduceRepeatText != isReduceRepeatText) {
-            ReaderSettings.isReduceRepeatText = isReduceRepeatText;
-            App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putBoolean("isReduceRepeatText", isReduceRepeatText).apply();
+    public static void saveReduceRepeatText(int reduceRepeatText) {
+        if (ReaderSettings.reduceRepeatText != reduceRepeatText) {
+            ReaderSettings.reduceRepeatText = reduceRepeatText;
+            App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putInt("reduceRepeatText", reduceRepeatText).apply();
         }
     }
 }

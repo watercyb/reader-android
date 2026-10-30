@@ -444,17 +444,6 @@ if (typeof window.pageReader === "undefined") {
         this.sendErrorMessage("isExtractedContentStillPresent: " + err.message);
       }
     }
-    /* Will Be Called From Java
-    updateThemeColor(darkMode) {
-      if (darkMode) {
-        document.body.style.backgroundColor = "#121212";
-        document.body.style.color = "#BDBDBD";
-      } else {
-        document.body.style.backgroundColor = "white";
-        document.body.style.color = "black";
-      }
-    }
-    */
     sendErrorMessage(err) {
       Android.onError(err);
     }

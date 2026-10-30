@@ -18,23 +18,25 @@ public class ContentText {
     // e.g. let's go, let's go, let's go...
     private static final Pattern SEPARATED_SEQUENCE_REPEAT = Pattern.compile("(.{2,}?)(?:[,，、\\s]+\\1){4,}", Pattern.DOTALL);
 
+
     @Nullable
     public static String compressRepeatsRegex(@Nullable String s) {
-        if (!ReaderSettings.getIsReduceRepeatText() || s == null || s.length() < 5)
+        int threshold = ReaderSettings.getReduceRepeatText();
+        if (s == null || s.length() < threshold)
             return s;
 
         // 1. Compress repeated sequences separated by delimiters.
-        s = replaceSeparatedSequences(s);
+        s = replaceSeparatedSequences(s, threshold, Pattern.compile(String.format("(.{1,}?)(?:\\1){%s,}", threshold - 1), Pattern.DOTALL));
 
         // 2. Compress repeated adjacent sequences.
-        s = replaceAdjacentSequences(s);
+        s = replaceAdjacentSequences(s, threshold, Pattern.compile(String.format("(.{2,}?)(?:[,，、\\s]+\\1){%s,}", threshold - 1), Pattern.DOTALL));
 
         return s;
     }
 
     @NonNull
-    private static String replaceSeparatedSequences(@NonNull String s) {
-        Matcher matcher = SEPARATED_SEQUENCE_REPEAT.matcher(s);
+    private static String replaceSeparatedSequences(@NonNull String s, int threshold, Pattern pattern) {
+        Matcher matcher = pattern.matcher(s);
         StringBuilder result = new StringBuilder();
         int lastEnd = 0;
 
@@ -55,7 +57,7 @@ public class ContentText {
                 pos += unit.length();
             }
 
-            if (count < 5) {
+            if (count < threshold) {
                 continue;
             }
 
@@ -69,8 +71,8 @@ public class ContentText {
     }
 
     @NonNull
-    private static String replaceAdjacentSequences(@NonNull String s) {
-        Matcher matcher = SEQUENCE_REPEAT.matcher(s);
+    private static String replaceAdjacentSequences(@NonNull String s, int threshold, Pattern pattern) {
+        Matcher matcher = pattern.matcher(s);
         StringBuilder result = new StringBuilder();
         int lastEnd = 0;
 
@@ -93,7 +95,7 @@ public class ContentText {
 
             int count = matchedLength / unitLength;
 
-            if (count < 5) {
+            if (count < threshold) {
                 continue;
             }
 

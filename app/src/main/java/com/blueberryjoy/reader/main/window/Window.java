@@ -597,17 +597,12 @@ public class Window {
 
         webView.setOnLongClickListener(v -> {
             WebView.HitTestResult result = ((WebView) v).getHitTestResult();
-
             int type = result.getType();
             String link = result.getExtra();
-
             if ((type == WebView.HitTestResult.SRC_ANCHOR_TYPE || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) && link != null && !link.equals(lastLongPressedLink)) {
-
                 lastLongPressedLink = link;
                 if (isCurrentWindow) WindowList.onLongClick(lastLongPressedLink, isPrivate);
                 v.postDelayed(() -> lastLongPressedLink = null, 500);
-
-                return true;
             }
             return false;
         });
