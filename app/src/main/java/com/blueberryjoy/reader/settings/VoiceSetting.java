@@ -221,7 +221,7 @@ public class VoiceSetting extends AppCompatActivity {
             String textSample = getString(R.string.voice_setting_text_hint);
             if (sample.getText().length() > 0)
                 textSample = sample.getText().toString();
-            TextToSpeechManager.speak(textSample);
+            TextToSpeechManager.speakSystem(textSample);
         });
         return recyclerViewAdapter;
     }

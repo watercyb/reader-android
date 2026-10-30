@@ -1,6 +1,7 @@
 package com.blueberryjoy.reader.bookmark;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +28,13 @@ public class BookmarkList {
             items.remove(idx);
     }
 
+    @Nullable
     public BookmarkItem get(int idx) {
         if (idx < items.size()) return items.get(idx);
         return null;
     }
 
-    public void add(BookmarkItem bookmarkItem) {
+    public void add(@NonNull BookmarkItem bookmarkItem) {
         String type = bookmarkItem.getType();
         if (type != null) {
             if (dividers.containsKey(type)) {
@@ -56,7 +58,7 @@ public class BookmarkList {
         items.add(originalIdx, bookmarkItem);
     }
 
-    public void setItems(List<BookmarkItem> list) {
+    public void setItems(@NonNull List<BookmarkItem> list) {
         list.sort(BookmarkItem::compare);
         items.clear();
         dividers.clear();
@@ -85,7 +87,7 @@ public class BookmarkList {
             dividers.put(prv, new Divider(count, false));
     }
 
-    private void insert(BookmarkItem bookmarkItem, boolean before) {
+    private void insert(@NonNull BookmarkItem bookmarkItem, boolean before) {
         if (before) {
             for (int i = 0; i < items.size(); i++) {
                 if (bookmarkItem.compare(items.get(i)) <= 0) {
@@ -104,7 +106,7 @@ public class BookmarkList {
         items.add(bookmarkItem);
     }
 
-    public boolean isShown(String type) {
+    public boolean isShown(@Nullable String type) {
         if (type == null) return true;
         Divider divider = dividers.getOrDefault(type, null);
         if (divider == null) return false;
@@ -128,7 +130,7 @@ public class BookmarkList {
         }
     }
 
-    public void updateDivider(BookmarkItem bookmarkItem, String newType) {
+    public void updateDivider(@NonNull BookmarkItem bookmarkItem, @Nullable String newType) {
         String oldType = bookmarkItem.getType();
         Divider divider = dividers.getOrDefault(oldType, null);
         if (divider == null) return;
@@ -176,7 +178,7 @@ public class BookmarkList {
         }
     }
 
-    public void updateBookmark(BookmarkItem bookmarkItem, String title, String type) {
+    public void updateBookmark(@NonNull BookmarkItem bookmarkItem, String title, @Nullable String type) {
         String oldType = bookmarkItem.getType();
         bookmarkItem.updateTitle(title);
         if ((oldType == null && type == null) || (oldType != null && oldType.equals(type)))
@@ -200,11 +202,12 @@ public class BookmarkList {
         insert(bookmarkItem, false);
     }
 
+    @NonNull
     public HashSet<String> getTypes() {
         return new HashSet<>(dividers.keySet());
     }
 
-    public void updateFilteredCount(HashMap<String, Integer> counts) {
+    public void updateFilteredCount(@NonNull HashMap<String, Integer> counts) {
         for (Map.Entry<String, Divider> entry : dividers.entrySet()) {
             String type = entry.getKey();
             Divider divider = entry.getValue();

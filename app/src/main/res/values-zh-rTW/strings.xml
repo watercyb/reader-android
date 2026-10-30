@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">網頁閲讀器</string>
     <string name="find_prev">上一個</string>
+    <string name="loading_dot">載入中…</string>
     <string name="url_copy">複製</string>
     <string name="url_paste">貼上</string>
     <string name="url_replace">替換</string>
@@ -226,5 +227,19 @@
     <string name="general_setting_clear_browsing_data_history_note">此操作不會清除瀏覽記錄。如要刪除瀏覽記錄，請前往歷史記錄頁面進行刪除。</string>
     <string name="general_setting_browsing_data_cleared">瀏覽資料已清除。</string>
     <string name="tip_text_unmatch">頁面內容可能已變更。點擊\n以重新載入文字。</string>
+    <string name="open_next_page">正在開啟下一頁並繼續播放。</string>
+
+    <string name="general_setting_reduce_repeat_text">減少過度重複的字元和詞語</string>
+    <string name="history_today">今天</string>
+    <string name="history_yesterday">昨天</string>
+    <string name="general_setting_reduce_repeat_never">永不</string>
+    <string name="general_setting_reduce_repeat_three">3次</string>
+
+    <string name="general_setting_reduce_repeat_four">4次</string>
+    <string name="general_setting_reduce_repeat_five">5次</string>
+    <string name="general_setting_reduce_repeat_six">6次</string>
+    <string name="general_setting_reduce_repeat_seven">7次</string>
+    <string name="general_setting_reduce_repeat_eight">8次</string>
+
 
 </resources>

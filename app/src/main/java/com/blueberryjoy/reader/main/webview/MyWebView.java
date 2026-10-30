@@ -75,6 +75,7 @@ public class MyWebView extends NestedScrollWebView {
                 break;
         }
         gestureDetector.onTouchEvent(event);
+
         return super.onTouchEvent(event);
     }
 

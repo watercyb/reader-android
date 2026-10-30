@@ -1,5 +1,6 @@
 package com.blueberryjoy.reader.sqlite;
 
+import androidx.annotation.NonNull;
 import androidx.room.Room;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -27,7 +28,7 @@ public class SQLite {
 
     public static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
             // Add the state column (nullable for now)
             database.execSQL("ALTER TABLE pages ADD COLUMN state TEXT");
 
@@ -58,7 +59,7 @@ public class SQLite {
 
     public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL(
                     "CREATE TABLE IF NOT EXISTS histories (" +
                             "id INTEGER PRIMARY KEY NOT NULL, " +
@@ -70,7 +71,7 @@ public class SQLite {
 
     public static final Migration MIGRATION_3_4 = new Migration(3, 4) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL(
                     "DROP TABLE IF EXISTS histories"
             );
@@ -87,7 +88,7 @@ public class SQLite {
 
     public static final Migration MIGRATION_4_5 = new Migration(4, 5) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
 
             // Rename the old table
             database.execSQL(
@@ -122,14 +123,14 @@ public class SQLite {
 
     public static final Migration MIGRATION_5_6 = new Migration(5, 6) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE pages ADD COLUMN isPrivate INTEGER NOT NULL DEFAULT 0");
         }
     };
 
     public static final Migration MIGRATION_6_7 = new Migration(6, 7) {
         @Override
-        public void migrate(SupportSQLiteDatabase database) {
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
 
             database.execSQL(
                     "ALTER TABLE pages ADD COLUMN `position` INTEGER NOT NULL DEFAULT 0"

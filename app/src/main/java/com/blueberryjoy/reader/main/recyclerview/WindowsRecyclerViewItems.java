@@ -1,6 +1,7 @@
 package com.blueberryjoy.reader.main.recyclerview;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class WindowsRecyclerViewItems {
         items.add(idx, windowsRecyclerViewNode);
     }
 
+    @Nullable
     public WindowsRecyclerViewNode getLast() {
         if (!items.isEmpty()) return items.get(items.size() - 1);
         return null;

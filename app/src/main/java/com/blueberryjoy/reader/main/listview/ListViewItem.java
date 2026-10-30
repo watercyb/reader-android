@@ -1,9 +1,13 @@
 package com.blueberryjoy.reader.main.listview;
 
+import androidx.annotation.Nullable;
+
 public class ListViewItem {
     private String title;
     private final ListViewAction action;
+    @Nullable
     private final ListViewTitleProvider getTitle;
+    @Nullable
     private final ListViewEnableProvider getEnable;
 
     public ListViewItem(String title, ListViewAction action) {

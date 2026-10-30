@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.App;
+import com.blueberryjoy.reader.BuildConfig;
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.history.BrowsingHistory;
 import com.blueberryjoy.reader.main.utils.JavaScriptHandler;
@@ -37,6 +38,7 @@ import com.blueberryjoy.reader.utils.Ad_Blocker;
 import com.blueberryjoy.reader.utils.Favicon;
 import com.blueberryjoy.reader.utils.FileStorage;
 import com.blueberryjoy.reader.utils.Message;
+import com.blueberryjoy.reader.utils.TextToSpeechManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,6 +77,12 @@ public class Window {
     private final boolean isPrivate;
     private int removedWindowIdx = -1;
     private boolean isRemovedWindowCurrent = false;
+
+    //Debug
+    private int playNextPageState = 0;
+    private final Handler playNextPageDelayRunHandler = new Handler(Looper.getMainLooper());
+    private boolean isPlayedLastIdx = false;
+
 
     @NonNull
     private static final Set<Character> HS = Set.of('.', '。', '?', '？', '!', '！');
@@ -203,6 +211,15 @@ public class Window {
         }
     }
 
+    @Nullable
+    public JSONArray getPageIdx(int idx) {
+        if (idx >= 0 && idx < readingIdxToPageIdx.size()) {
+            return readingIdxToPageIdx.get(idx);
+        } else {
+            return null;
+        }
+    }
+
     public int getReadingIdx(int idx) {
         if (idx >= 0 && idx < pageIdxToReadingIdx.size()) return pageIdxToReadingIdx.get(idx);
         return -1;
@@ -231,6 +248,8 @@ public class Window {
     }
 
     public boolean hasNext() {
+        //Debug
+        if (isLastIdx()) isPlayedLastIdx = true;
         return nextIdx >= 0 && nextIdx < readingArr.length;
     }
 
@@ -317,7 +336,7 @@ public class Window {
     }
 
     //Idx<0 -> not update idx.
-    public void addPageToCache(@Nullable String url, int idx, @Nullable String title, String state) {
+    public void addPageToCache(@Nullable String url, int idx, @Nullable String title, @NonNull String state) {
         if (url == null) url = webView.getUrl();
         if (url == null) return;
         if (title == null) title = webView.getTitle();
@@ -334,7 +353,7 @@ public class Window {
             @Override
             @JavascriptInterface
             public void onError(String data) {
-                Message.log("Received from JS: " + data);
+                Message.log("Page error: " + data);
             }
 
             @Override
@@ -345,8 +364,8 @@ public class Window {
 
             @Override
             @JavascriptInterface
-            public void onMessage(String message) {
-                Message.log("Received from JS: " + message);
+            public void onMessage(@NonNull String message) {
+                Message.log("Page message: " + message);
                 switch (message) {
                     case WebViewJSInterface.ACTION_UNMATCHING,
                          WebViewJSInterface.ACTION_MUTATION -> {
@@ -373,7 +392,7 @@ public class Window {
             //Check if the title is updated after afterSamePageLoaded and before samePageLoaded.
             if (!windowIndexCache.checkTitle(webView.getTitle())) {
                 //TODO should check the content.
-                webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
+                webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                     if (!html.equals("true")) {
                         if (isCurrentWindow)
                             Message.log("afterSamePageLoaded different url: different content");
@@ -418,8 +437,10 @@ public class Window {
 
             //Only called when page open or reload normally, paired with onPageStarted.
             @Override
-            public void onPageFinished(WebView view, String url) {
+            public void onPageFinished(@NonNull WebView view, @NonNull String url) {
                 if (url.startsWith("file")) ((MyWebView) view).updateThemeColor();
+                //Debug
+                if (BuildConfig.DEBUG) playNextPageOnPageFinishedDelay();
             }
 
             //May run before the page finishes loading (title, JS content).
@@ -431,6 +452,10 @@ public class Window {
                 webView.evaluateJavascript("(function() { return document.body.innerHTML.includes('\\u003Cframe'); })();", (html) -> {
                     if (isCurrentWindow) WindowList.onSwipeRefreshRequired(!html.equals("true"));
                 });
+                //Close "loading..." tag everytime when page is changed.
+                WindowList.onAlertStatusChanged(false);
+                //Debug
+                isPlayedLastIdx = false;
                 //If onPageStarted is not called and url/title are different -> different page.
                 if (getLoadingState() == 0 && (!isCurrentWindow || ((!WindowList.getWebUrl().equals(url) || !windowIndexCache.checkTitle(webView.getTitle())) && !WindowList.isReadingMode()))) {
                     setLoadingState(-1);
@@ -439,7 +464,7 @@ public class Window {
                         WindowList.onResetTextBoxRequired();
                     }
                     //Additional check on the page contents, if matched -> same page.
-                    webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
+                    webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
                         if (windowIndexCache.checkTitle(webView.getTitle()) && html.equals("true")) {
                             //Same page.
                             //if (isCurrentWindow) Message.log("Same page: " + url + " newTitle: " + webView.getTitle());
@@ -510,7 +535,7 @@ public class Window {
             }
 
             @Override
-            public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
+            public boolean onRenderProcessGone(@NonNull WebView view, @NonNull RenderProcessGoneDetail detail) {
                 if (detail.didCrash()) {
                     Message.toastErr(App.Companion.getAppContext().getString(R.string.browser_crashed_error));
                 } else {
@@ -542,7 +567,7 @@ public class Window {
             }
 
             @Override
-            public void onReceivedTitle(WebView view, String title) {
+            public void onReceivedTitle(WebView view, @NonNull String title) {
                 if (!isPrivate)
                     new Handler(Looper.getMainLooper()).postDelayed(() -> BrowsingHistory.INSTANCE.debouncedInsert(getUrl(), title), 1000);
             }
@@ -552,8 +577,7 @@ public class Window {
             if (getLoadingState() != 0 || !isCurrentWindow) return;
             if (isLoadedText && idx >= 0) {
                 idx = getReadingIdx(idx);
-                if (idx >= 0)
-                    WindowList.updateIdx(idx);
+                if (idx >= 0) WindowList.updateIdx(idx);
             } else if (!isLoadedText) {
                 reloadText(x, y, false);
             }
@@ -573,17 +597,12 @@ public class Window {
 
         webView.setOnLongClickListener(v -> {
             WebView.HitTestResult result = ((WebView) v).getHitTestResult();
-
             int type = result.getType();
             String link = result.getExtra();
-
             if ((type == WebView.HitTestResult.SRC_ANCHOR_TYPE || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) && link != null && !link.equals(lastLongPressedLink)) {
-
                 lastLongPressedLink = link;
                 if (isCurrentWindow) WindowList.onLongClick(lastLongPressedLink, isPrivate);
                 v.postDelayed(() -> lastLongPressedLink = null, 500);
-
-                return true;
             }
             return false;
         });
@@ -597,7 +616,7 @@ public class Window {
     public void getArrFromPage(boolean isPlayAfterLoad, boolean isSamePage, boolean isMoveToIdx, int isDownloadPageAfterLoad, int doubleClicked_x, int doubleClicked_y) {
         if (!isCurrentWindow) return;
         WindowList.onAlertStatusChanged(true);
-        webView.evaluateJavascript("(function() {if (typeof pageReader !== 'undefined') { return pageReader.loadContent(); } })();", html -> {
+        webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
             if (!html.equals("null")) {
                 try {
                     JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
@@ -625,19 +644,18 @@ public class Window {
 
                         @Override
                         public void onFinish() {
-                            webView.evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", html1 -> {
+                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
                                 if (!isCurrentWindow) return;
                                 WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
-                                if (html1.equals("null")) return;
+                                if (idx.equals("null")) return;
                                 int nextIdx;
                                 try {
-                                    nextIdx = Integer.parseInt(html1);
+                                    nextIdx = Integer.parseInt(idx);
                                 } catch (Exception e) {
                                     return;
                                 }
                                 nextIdx = getReadingIdx(nextIdx);
-                                if (nextIdx >= 0)
-                                    WindowList.updateIdx(nextIdx);
+                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
                             });
                         }
                     }.start();
@@ -724,6 +742,9 @@ public class Window {
 
     public void pause() {
         if (!isCurrentWindow) return;
+        //Debug
+        if (BuildConfig.DEBUG && isLastIdx() && isPlayedLastIdx && playNextPage()) return;
+
         if (isLoadedText) {
             if (readingArr.length != 0) {
                 WindowList.readerPause();
@@ -816,6 +837,7 @@ public class Window {
             WindowList.onLoadedTextStateChanged(isLoadedText);
             if (loadingState != 0) WindowList.onProgressChanged(100);
             WindowList.onCurrentWindowChanged(idx, isPrivate);
+            WindowList.onAlertStatusChanged(false);
         } else {
             webView.setVisibility(View.GONE);
             WindowList.onUrlChanged("");
@@ -864,7 +886,7 @@ public class Window {
         if (isPrivate) WindowList.CheckAndIncrementPrivateProfileIdx();
     }
 
-    private boolean isValidUrl(String url) {
+    private boolean isValidUrl(@NonNull String url) {
         try {
             if (url.startsWith("http://") || url.startsWith("https://") || url.isEmpty() || url.startsWith("about:") || url.startsWith("file:"))
                 return true;
@@ -910,5 +932,106 @@ public class Window {
 
     public int getPosition() {
         return position;
+    }
+
+    public boolean isDownloadedPage() {
+        return getUrl().startsWith("file");
+    }
+
+    //Debug
+    private boolean playNextPage() {
+        if (playNextPageState == 0 && !isDownloadedPage()) {
+            TextToSpeechManager.speakSystem(App.Companion.getAppContext().getString(R.string.open_next_page));
+            WindowList.onReadingModeSwitchingRequired(false);
+            if (WindowList.isInForeground()) {
+                return playNextPageClick();
+            } else {
+                playNextPageReload();
+                playNextPageState = 1;
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    private void playNextPageOnPageFinishedDelay() {
+        if (playNextPageState == 1) {
+            playNextPageDelayRunHandler.removeCallbacksAndMessages(null);
+            playNextPageDelayRunHandler.postDelayed(this::playNextPageOnPageFinished, 1000);
+        }
+    }
+
+    private void playNextPageOnPageFinished() {
+        if (playNextPageState == 1) {
+            playNextPageState = 0;
+            if (!isCurrentWindow) return;
+
+            //Message.log("loaded");
+            WindowList.onAlertStatusChanged(true);
+            webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
+                if (!html.equals("null")) {
+                    try {
+                        JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
+                        JSONArray jsonArrayArr = jsonArray.getJSONArray(0);
+                        JSONArray jsonArrayNLM = jsonArray.getJSONArray(1);
+                        String[] arr = new String[jsonArrayArr.length()];
+                        boolean[] nlm = new boolean[arr.length];
+                        for (int i = 0; i < arr.length; i++) {
+                            arr[i] = jsonArrayArr.getString(i);
+                            nlm[i] = jsonArrayNLM.getBoolean(i);
+                        }
+                        getReadingArr(arr, nlm);
+                    } catch (JSONException e) {
+                        setError(e.toString());
+                    }
+                    idx = getCachedIdx();
+                    if (idx >= getReadingArr().length) idx = 0;
+                    setLoadingState(0);
+                    isLoadedText = true;
+                    if (isCurrentWindow) {
+                        WindowList.onAlertStatusChanged(false);
+                        WindowList.onLoadedTextStateChanged(true);
+                    }
+                    playNextPageClick();
+                }
+            });
+        }
+    }
+
+    private int playNextPageFindIdx() {
+        String[] keywords = {"next", "下一"};
+        int nextPageIdx = -1;
+        for (int i = readingArr.length - 1; i >= 0; i--) {
+            for (String keyword : keywords) {
+                if (readingArr[i].toLowerCase().contains(keyword)) {
+                    nextPageIdx = i;
+                    break;
+                }
+            }
+            if (nextPageIdx != -1) break;
+        }
+        return nextPageIdx;
+    }
+
+    private boolean playNextPageClick() {
+        int nextPageIdx = playNextPageFindIdx();
+        if (nextPageIdx != -1) {
+            setIsStartReadingAfterPageLoaded(true);
+            webView.onResume();
+            webView.resumeTimers();
+            JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+            //Message.log("click");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void playNextPageReload() {
+        webView.onResume();
+        webView.resumeTimers();
+        webView.reload();
+        //Message.log("reload");
     }
 }

@@ -73,7 +73,9 @@ public class ReaderForeground extends Service {
     private boolean canPlay = true;
     private AudioManager.AudioPlaybackCallback audioPlaybackCallback;
     private boolean isHoldFocus = false;
+    @androidx.annotation.Nullable
     private CountDownTimer holdFocusTimer;
+    private UtteranceProgressListener utteranceProgressListener;
 
     @Override
     protected void attachBaseContext(@NonNull Context base) {
@@ -84,10 +86,11 @@ public class ReaderForeground extends Service {
     public void onCreate() {
         super.onCreate();
 
-        TextToSpeechManager.initial(new UtteranceProgressListener() {
+        utteranceProgressListener = new UtteranceProgressListener() {
             @Override
-            public void onDone(String utteranceId) {
-                if (!isPause) new Handler(Looper.getMainLooper()).post(() -> read(0));
+            public void onDone(@NonNull String utteranceId) {
+                if (!isPause && utteranceId.equals(TextToSpeechManager.UTTERANCE_TEXT))
+                    new Handler(Looper.getMainLooper()).post(() -> read(0));
             }
 
             @Override
@@ -97,7 +100,9 @@ public class ReaderForeground extends Service {
             @Override
             public void onStart(String utteranceId) {
             }
-        });
+        };
+
+        TextToSpeechManager.initial(utteranceProgressListener);
 
         readerNotification = new ReaderNotification(getBaseContext());
         stateBuilder = new PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS);
@@ -177,22 +182,8 @@ public class ReaderForeground extends Service {
                 break;
             case ACTION_RESUME:
                 //After change language ReaderSettings.tts becomes to null, cause ReaderSetting is reloaded, but Reader is not.
-                if (TextToSpeechManager.isTTSNull()) {
-                    TextToSpeechManager.initial(new UtteranceProgressListener() {
-                        @Override
-                        public void onDone(String utteranceId) {
-                            if (!isPause) new Handler(Looper.getMainLooper()).post(() -> read(0));
-                        }
-
-                        @Override
-                        public void onError(String utteranceId) {
-                        }
-
-                        @Override
-                        public void onStart(String utteranceId) {
-                        }
-                    });
-                }
+                if (TextToSpeechManager.isTTSNull())
+                    TextToSpeechManager.initial(utteranceProgressListener);
 
                 restartMediaPlayerForMediaSession();
 
@@ -272,6 +263,7 @@ public class ReaderForeground extends Service {
             audioManager.unregisterAudioPlaybackCallback(audioPlaybackCallback);
         if (focusRequest != null)
             audioManager.abandonAudioFocusRequest(focusRequest);
+        audioFocusRequest = AudioManager.AUDIOFOCUS_NONE;
         super.onDestroy();
     }
 
@@ -394,23 +386,28 @@ public class ReaderForeground extends Service {
     private void play() {
         if (!WindowList.isValidReadingStatus() || !canPlay) return;
         if (isPause) {
-            if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED && ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
+            if (ReaderSettings.getIsRequireAudioFocusWhenPlay()) {
                 assert focusRequest != null;
-                audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
-                isHoldFocus = true;
-                if (holdFocusTimer != null) holdFocusTimer.cancel();
-                holdFocusTimer = new CountDownTimer(1000, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                    }
+                if (audioFocusRequest != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+                    isHoldFocus = true;
+                    if (holdFocusTimer != null) holdFocusTimer.cancel();
+                    holdFocusTimer = new CountDownTimer(1000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                        }
 
-                    @Override
-                    public void onFinish() {
-                        isHoldFocus = false;
-                        holdFocusTimer = null;
-                    }
-                }.start();
+                        @Override
+                        public void onFinish() {
+                            isHoldFocus = false;
+                            holdFocusTimer = null;
+                        }
+                    }.start();
+                } else {
+                    audioFocusRequest = audioManager.requestAudioFocus(focusRequest);
+                }
             }
+
             isWaiting = false;
             isPause = false;
 

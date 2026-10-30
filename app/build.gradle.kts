@@ -25,7 +25,7 @@ android {
             useSupportLibrary = true
         }
         versionCode = 26091101
-        versionName = "1.5.2"
+        versionName = "1.6.1"
     }
 
     buildTypes {

@@ -1,15 +1,16 @@
 package com.blueberryjoy.reader.utils;
 
-import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.App;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
+import com.blueberryjoy.reader.main.utils.ContentText;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 
 import java.util.ArrayList;
@@ -18,17 +19,15 @@ import java.util.List;
 public class TextToSpeechManager {
     @Nullable
     private static TextToSpeech tts;
-    @Nullable
-    private static Bundle params;
     private static final List<String> engineList = new ArrayList<>();
     private static final List<Voice> voiceList = new ArrayList<>();
     private static UtteranceProgressListener utteranceProgressListener;
+    public static final String UTTERANCE_SYSTEM = "utterance_system";
+    public static final String UTTERANCE_TEXT = "utterance_text";
 
     //Initialized from ReaderForeground.
     public static void initial(UtteranceProgressListener utteranceProgressListener) {
         TextToSpeechManager.utteranceProgressListener = utteranceProgressListener;
-        params = new Bundle();
-        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID);
         initializeTTSEngine();
         initializeTTS();
     }
@@ -79,6 +78,7 @@ public class TextToSpeechManager {
         return tts.getVoice().getName();
     }
 
+    @NonNull
     public static List<Voice> getVoiceList() {
         return voiceList;
     }
@@ -92,8 +92,18 @@ public class TextToSpeechManager {
 
     public static boolean speak(String str) {
         if (tts == null) return false;
-        tts.speak(str, TextToSpeech.QUEUE_FLUSH, params, TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID);
+        str = ContentText.compressRepeatsRegex(str);
+        if (tts.isSpeaking()) {
+            tts.speak(str, TextToSpeech.QUEUE_ADD, null, UTTERANCE_TEXT);
+        } else {
+            tts.speak(str, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_TEXT);
+        }
         return true;
+    }
+
+    public static void speakSystem(String str) {
+        if (tts == null) return;
+        tts.speak(str, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_SYSTEM);
     }
 
     public static void stop() {
@@ -109,6 +119,7 @@ public class TextToSpeechManager {
         return tts == null;
     }
 
+    @NonNull
     public static List<String> getEngineList() {
         initializeTTSEngine();
         return engineList;
@@ -118,7 +129,7 @@ public class TextToSpeechManager {
         return engineList.isEmpty();
     }
 
-    public static void setEngine(OnTTSInitializedListener onTTSInitializedListener, int idx) {
+    public static void setEngine(@NonNull OnTTSInitializedListener onTTSInitializedListener, int idx) {
         String engine = engineList.get(idx);
         if (!engine.equals(ReaderSettings.TTSEngine) && !engine.isEmpty()) {
             if (tts != null)

@@ -188,11 +188,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView listViewHeaderDownload;
     private FrameLayout frameLayoutUrl;
     private ImageView imageViewPrivate;
+    @Nullable
     private Window windowToRemove = null;
     private LinearLayout linearLayoutUrlButton;
     private TextView numberBox;
+    @Nullable
     private WindowsRecyclerViewAdapter recyclerViewAdapter = null;
     private long lastNewWindowTime = 0L;
+    private LinearLayout linearLayoutBottomBar;
 
     public final static String ACTIVITY_RESULT_BOOKMARK = "bookmark";
     public final static String ACTIVITY_RESULT_DOWNLOAD = "download";
@@ -245,6 +248,13 @@ public class MainActivity extends AppCompatActivity {
         ReaderController.unfocused();
         if (WindowList.isReading()) isReadingAfterLockedScreen = true;
         if (dispatchTouchArea.isListViewVisible()) listViewHide();
+        WindowList.setIsInForeground(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        WindowList.setIsInForeground(true);
     }
 
     @SuppressWarnings("EmptyMethod")
@@ -289,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isFrontLayerOn) return true;
         }
+        //TODO
         return super.dispatchTouchEvent(ev);
     }
 
@@ -358,8 +369,10 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("CharsetObjectCanBeUsed")
     private void setWebUrl(@Nullable String url) {
         if (url == null) {
+            Message.log("webUrl: null");
             webUrl.setText("");
         } else {
+            Message.log("webUrl: " + url.substring(0, Math.min(url.length(), 15)));
             try {
                 webUrl.setText(URLDecoder.decode(url, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -496,8 +509,10 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(arrayAdapter);
         if (WindowList.canGoForward()) {
             listViewHeaderForward.setImageResource(R.mipmap.ic_header_forward);
+            listViewHeaderForward.setEnabled(true);
         } else {
             listViewHeaderForward.setImageResource(R.mipmap.ic_header_forward_grey);
+            listViewHeaderForward.setEnabled(false);
         }
         if (!webUrl.getText().toString().startsWith("file")) {
             listViewHeaderDownload.setImageResource(R.mipmap.ic_header_download);
@@ -609,10 +624,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Get from server if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Get from Server", (item, isLongClick) -> volleyGet()));}
 
-        //Download Page
-        if (BuildConfig.DEBUG) {
-            listViewItemList.add(new ListViewItem("Download Page", (item, isLongClick) -> WindowList.download(true)));
-        }
+        //Download Page if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("Download Page", (item, isLongClick) -> WindowList.download(true)));}
 
         //TestLog
         if (BuildConfig.DEBUG) {
@@ -626,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {}));}
+        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -750,12 +762,12 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray idxList = WindowList.getPageIdx();
                         if (idxList != null) {
                             if (isBlockNextIdxChange) {
-                                getCurrentWebView().evaluateJavascript("javascript: if (typeof pageReader !== 'undefined') pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
+                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
                                 isBlockNextIdxChange = false;
                             } else {
-                                getCurrentWebView().evaluateJavascript("javascript: if (typeof pageReader !== 'undefined') pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
+                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
                             }
@@ -873,49 +885,42 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
             if (find.getVisibility() != View.VISIBLE) return insets;
+
             boolean isKeyboardVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
-            if (isKeyboardVisible) {
-                View decorView = getWindow().getDecorView();
-                Rect rect = new Rect();
-                decorView.getWindowVisibleDisplayFrame(rect);
-                find.setTranslationY(rect.height() - find.getHeight());
-            } else {
-                find.setTranslationY(getCurrentWebView().getHeight() + (textView.getVisibility() == View.VISIBLE ? textView.getHeight() : 0) - find.getHeight());
-            }
+            View decorView = getWindow().getDecorView();
+            Rect rect = new Rect();
+            decorView.getWindowVisibleDisplayFrame(rect);
+            float offset = rect.height() - find.getHeight();
+            if (!isKeyboardVisible) offset -= linearLayoutBottomBar.getHeight();
+            find.setTranslationY(offset);
+
             return insets;
         });
     }
 
     private void initializeButtons() {
         prev.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.prev();
         });
         ClickAnimation.INSTANCE.set(prev);
 
         next.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() == 0 && !isRecycleViewWindowsShown() && WindowList.isChangingIdxEnabled())
                 ReaderController.next();
         });
         ClickAnimation.INSTANCE.set(next);
 
         pause.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (!isRecycleViewWindowsShown())
                 WindowList.pause();
         });
         ClickAnimation.INSTANCE.set(pause);
 
-        readingModeButton.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            readingModeSwitch();
-        });
+        readingModeButton.setOnClickListener(v -> readingModeSwitch());
         ClickAnimation.INSTANCE.set(readingModeButton);
 
         setting.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (menuContainer.getVisibility() == View.VISIBLE) {
                 listViewHide();
             } else {
@@ -928,7 +933,6 @@ public class MainActivity extends AppCompatActivity {
         ClickAnimation.INSTANCE.set(setting);
 
         scrollToBottom.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
             if (WindowList.getLoadingState() != 0) return;
             if (scrollPageDirection == -1) {
                 hideAppBarLayout();
@@ -940,6 +944,7 @@ public class MainActivity extends AppCompatActivity {
                 JavaScriptHandler.scrollTo(getCurrentWebView(), scrollHeight);
                 switchScrollButton(false);
             } else {
+                Message.log("Should not reach here.");
                 scrollToCurrentText(getCurrentWebView(), true);
             }
         });
@@ -952,10 +957,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        reloadText.setOnClickListener(v -> {
-            //v.startAnimation(AnimationUtils.loadAnimation(getBaseContext(), R.anim.alpha));
-            WindowList.reloadText(-1, -1, true);
-        });
+        reloadText.setOnClickListener(v -> WindowList.reloadText(-1, -1, true));
         ClickAnimation.INSTANCE.set(reloadText);
 
         numberBox.setOnClickListener(v -> recycleViewWindowsShow());
@@ -1170,6 +1172,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutUrlButton = findViewById(R.id.linearLayoutUrlButton);
         frameLayoutUrl = findViewById(R.id.frameLayoutUrl);
         numberBox = findViewById(R.id.numberBox);
+        linearLayoutBottomBar = findViewById(R.id.linearLayoutBottomBar);
 
         dispatchTouchArea = new DispatchTouchArea();
 
@@ -1368,6 +1371,7 @@ public class MainActivity extends AppCompatActivity {
                 int from = viewHolder.getBindingAdapterPosition();
                 int to = target.getBindingAdapterPosition();
                 WindowList.move(from, to);
+                assert recyclerViewAdapter != null;
                 recyclerViewAdapter.move(from, to);
                 return true;
             }
@@ -1375,6 +1379,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 if (swipeDir == 4) {
+                    assert recyclerViewAdapter != null;
                     Window removedWindow = recyclerViewAdapter.get(viewHolder.getLayoutPosition()).window();
                     if (windowToRemove != null) {
                         windowToRemove.remove();
@@ -1396,6 +1401,7 @@ public class MainActivity extends AppCompatActivity {
             long now = System.currentTimeMillis();
             if (now - lastNewWindowTime < 500) return;
             lastNewWindowTime = now;
+            assert recyclerViewAdapter != null;
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, false));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
@@ -1406,6 +1412,7 @@ public class MainActivity extends AppCompatActivity {
         ClickAnimation.INSTANCE.set(imageButtonAdd);
         ImageView imageButtonAddPrivate = windowsView.findViewById(R.id.imageButtonAddPrivate);
         imageButtonAddPrivate.setOnClickListener((v) -> {
+            assert recyclerViewAdapter != null;
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, true));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
@@ -1537,8 +1544,11 @@ public class MainActivity extends AppCompatActivity {
         View view = getLayoutInflater().inflate(R.layout.dialog_main_about, null);
 
         TextView version = view.findViewById(R.id.textViewVersion);
-        version.setText(String.format("%s%s", getString(R.string.about_version), BuildConfig.VERSION_NAME));
-
+        if (BuildConfig.DEBUG) {
+            version.setText(String.format("%s%s (debug)", getString(R.string.about_version), BuildConfig.VERSION_NAME));
+        } else {
+            version.setText(String.format("%s%s", getString(R.string.about_version), BuildConfig.VERSION_NAME));
+        }
         TextView contact = view.findViewById(R.id.textViewContact);
         contact.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -1567,10 +1577,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkBluetoothDevices() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            List<String> list = getAudioDevices();
-            if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
-        }, 5000);
+        //TODO needs?
+        //new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        //List<String> list = getAudioDevices();
+        //if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
+        //}, 5000);
     }
 
     private void initializeGoogleAds() {

@@ -14,8 +14,11 @@ historyURLs -> insertToTokens
 
 package com.blueberryjoy.reader.history
 
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.blueberryjoy.reader.App
+import com.blueberryjoy.reader.R
 import com.blueberryjoy.reader.sqlite.SQLite
 import com.blueberryjoy.reader.sqlite.history.SQLiteHistory
 import com.blueberryjoy.reader.utils.Message
@@ -31,6 +34,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.stream.Collectors
 
 object BrowsingHistory : ViewModel() {
@@ -114,7 +118,14 @@ object BrowsingHistory : ViewModel() {
     fun getList(): ArrayList<HistoryItem> {
         val items = runBlocking {
             lock.withLock {
-                val formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy")
+                val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
+                Message.log(locale.toString())
+                val pattern = if (locale.language == "zh") {
+                    "yyyy年M月d日"
+                } else {
+                    "MMM dd, yyyy"
+                }
+                val formatter = DateTimeFormatter.ofPattern(pattern, locale)
                 val items = ArrayList<HistoryItem>()
                 var lastDate: LocalDate? = null
                 for (history in historyURLs.getList()) {
@@ -126,8 +137,13 @@ object BrowsingHistory : ViewModel() {
                         items.add(
                             HistoryItem.Header(
                                 when (date) {
-                                    LocalDate.now() -> "Today - ${date.format(formatter)}"
-                                    LocalDate.now().minusDays(1) -> "Yesterday - ${
+                                    LocalDate.now() -> "${
+                                        App.getAppContext().getString(R.string.history_today)
+                                    } - ${date.format(formatter)}"
+
+                                    LocalDate.now().minusDays(1) -> "${
+                                        App.getAppContext().getString(R.string.history_yesterday)
+                                    } - ${
                                         date.format(
                                             formatter
                                         )

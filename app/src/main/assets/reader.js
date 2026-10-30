@@ -1,5 +1,5 @@
-if (typeof pageReader === "undefined") {
-  var pageReader = new (class {
+if (typeof window.pageReader === "undefined") {
+  const readerInstance = new (class {
     constructor() {
       this.addScrollListener();
     }
@@ -38,15 +38,15 @@ if (typeof pageReader === "undefined") {
     processNodeForReading(node) {
       try {
         if (node.nodeType === Node.TEXT_NODE) {
-          var text = node.nodeValue.replace("\n", "").trim();
+          let text = node.nodeValue.replace("\n", "").trim();
           if (text.length > 0) {
-            var textSegments = node.nodeValue
+            const textSegment = node.nodeValue
               .replace("\n", "")
               .split(
                 /(?<=\. )|(?<=。)|(?<=, )|(?<=，)|(?<=\?)|(?<=？)|(?<=!)|(?<=！)/g,
               );
-            if (textSegments.length > 1) {
-              var isNewLine = false;
+            if (textSegment.length > 1) {
+              let isNewLine = false;
               if (
                 this.hasLineBreaker ||
                 this.hasLineBreak(this.previousProcessedNode, node)
@@ -55,9 +55,10 @@ if (typeof pageReader === "undefined") {
                 this.readingModeHTML += "<br><br>";
                 this.hasLineBreaker = false;
               }
-              var segmentContainer = document.createElement("span");
-              for (let t of textSegments) {
-                var segmentElement = document.createElement("span");
+              const segmentContainer = document.createElement("span");
+              let segmentElement;
+              for (let t of textSegment) {
+                segmentElement = document.createElement("span");
                 segmentElement.setAttribute(
                   "style",
                   "background-color: transparent; color: ; display: inline; word-Break: break-word;",
@@ -91,9 +92,9 @@ if (typeof pageReader === "undefined") {
               /* new */
               this.previousProcessedNode = segmentElement;
             } else {
-              var range = document.createRange();
+              const range = document.createRange();
               range.selectNode(node);
-              var segmentElement = document.createElement("span");
+              const segmentElement = document.createElement("span");
               segmentElement.setAttribute(
                 "style",
                 "background-color: transparent; color: ; display: inline; word-Break: break-word;",
@@ -117,10 +118,13 @@ if (typeof pageReader === "undefined") {
             }
           }
         } else if (node.className === "pageReader") {
-          var text = node.innerText.replace("\n", "").trim();
+          let text = node.innerText.replace("\n", "").trim();
           node.id = this.nextElementId++;
           node.style.backgroundColor = "transparent";
-          if (this.hasLineBreaker || this.hasLineBreak(this.previousProcessedNode, node)) {
+          if (
+            this.hasLineBreaker ||
+            this.hasLineBreak(this.previousProcessedNode, node)
+          ) {
             this.lineBreakers.push(true);
             this.readingModeHTML += "<br><br>" + node.outerHTML;
             this.hasLineBreaker = false;
@@ -136,7 +140,7 @@ if (typeof pageReader === "undefined") {
             return;
           }
           if (this.newlineTags.has(node.tagName)) this.hasLineBreaker = true;
-          if (this.isVisible(node)) {
+          if (this.isVisibleNew(node)) {
             node.childNodes.forEach((child) => {
               this.processNodeForReading(child);
               if (this.newlineTags.has(child.tagName))
@@ -151,8 +155,8 @@ if (typeof pageReader === "undefined") {
     isVisible(element) {
       try {
         if (element === null || element.tagName === "A") return true;
-        var style = window.getComputedStyle(element);
-        var rect = element.getBoundingClientRect();
+        const style = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
 
         const visibleStyle =
           style.width !== "0px" &&
@@ -188,6 +192,58 @@ if (typeof pageReader === "undefined") {
         return !outOfPage;
       } catch (err) {
         throw new Error("isVisible: " + err.message);
+      }
+    }
+    isVisibleNew(element) {
+      try {
+        if (!element || element.nodeType !== Node.ELEMENT_NODE) {
+          return false;
+        }
+        let current = element;
+        /* Check this element and all its ancestors. */
+        while (current && current.nodeType === Node.ELEMENT_NODE) {
+          const style = window.getComputedStyle(current);
+          if (
+            style.display === "none" ||
+            style.visibility === "hidden" ||
+            style.visibility === "collapse" ||
+            Number(style.opacity) === 0 ||
+            style.contentVisibility === "hidden"
+          ) {
+            return false;
+          }
+          current = current.parentElement;
+        }
+        /* display: contents has no box of its own. */
+        const style = window.getComputedStyle(element);
+        if (style.display === "contents") {
+          return Array.from(element.children).some(this.isVisibleNew);
+        }
+        /* getClientRects handles inline elements and fragmented layout. */
+        const rects = element.getClientRects();
+        if (rects.length === 0) {
+          return false;
+        }
+        const doc = document.documentElement;
+        const body = document.body;
+        const maxX = Math.max(doc.scrollWidth, body ? body.scrollWidth : 0);
+        const maxY = Math.max(doc.scrollHeight, body ? body.scrollHeight : 0);
+        /* At least one rendered box must have nonzero area. */
+        for (const rect of rects) {
+          if (
+            rect.width > 0 &&
+            rect.height > 0 &&
+            rect.left < maxX &&
+            rect.top < maxY &&
+            rect.right > 0 - (maxX - rect.left) &&
+            rect.bottom > 0 - (maxY - rect.top)
+          ) {
+            return true;
+          }
+        }
+        return false;
+      } catch (err) {
+        throw new Error("isVisibleNew: " + err.message);
       }
     }
     hasLineBreak(previousNode, nextNode) {
@@ -245,12 +301,12 @@ if (typeof pageReader === "undefined") {
           }
         }
         this.highlightedElements = [];
-        var range = document.createRange();
-        var firstElement = null;
-        var lastElement = null;
+        const range = document.createRange();
+        let firstElement = null;
+        let lastElement = null;
         for (let idx of segmentIndexes) {
           idx += this.elementIdOffset;
-          var element = document.getElementById(idx);
+          const element = document.getElementById(idx);
           if (element != null) {
             element.style.background = "yellow";
             element.style.color = "black";
@@ -264,10 +320,11 @@ if (typeof pageReader === "undefined") {
         if (!firstElement) return 0;
         range.setStartBefore(firstElement);
         range.setEndAfter(lastElement);
-        var box = range.getBoundingClientRect();
-        if (this.currentSelectionRange === null) this.currentSelectionRange = range;
-        var res = 0;
-        var yPrv =
+        const box = range.getBoundingClientRect();
+        if (this.currentSelectionRange === null)
+          this.currentSelectionRange = range;
+        let res = 0;
+        let yPrv =
           this.currentSelectionRange.getBoundingClientRect().y +
           window.scrollY -
           initialScrollY;
@@ -288,11 +345,19 @@ if (typeof pageReader === "undefined") {
             box.y + window.scrollY - initialScrollY + box.height >
             this.windowHeight * 0.9
           ) {
-            lastElement.scrollIntoView(false);
+            lastElement.scrollIntoView({
+              behavior: "instant",
+              block: "end",
+              inline: "nearest",
+            });
             window.scrollBy(0, this.windowHeight * 0.1);
             res = 1;
           } else if (box.y + window.scrollY - initialScrollY < 0) {
-            firstElement.scrollIntoView(true);
+            lastElement.scrollIntoView({
+              behavior: "instant",
+              block: "start",
+              inline: "nearest",
+            });
             window.scrollBy(0, -this.windowHeight * 0.1);
             res = -1;
           }
@@ -325,7 +390,9 @@ if (typeof pageReader === "undefined") {
           this.highlightedElements[this.highlightedElements.length - 1]
         ) {
           let rect =
-            this.highlightedElements[this.highlightedElements.length - 1].getBoundingClientRect();
+            this.highlightedElements[
+              this.highlightedElements.length - 1
+            ].getBoundingClientRect();
           window.scrollTo({
             top:
               rect.bottom +
@@ -343,18 +410,20 @@ if (typeof pageReader === "undefined") {
     getElementByPosition(x, y) {
       try {
         y -= window.scrollY;
-        if (
-          document.elementFromPoint(x, y) &&
-          document.elementFromPoint(x, y).className === "pageReader"
-        )
-          return document.elementFromPoint(x, y).id - pageReader.elementIdOffset;
+        let element = document.elementFromPoint(x, y);
+        if (element && element.className === "pageReader" && element.id) {
+          return element.id - pageReader.elementIdOffset;
+        } else {
+          return "null";
+        }
       } catch (err) {
         this.sendErrorMessage("getElementByPosition: " + err.message);
       }
     }
     /* Will Be Called From Java */
     loadContent() {
-      this.addTagToPage();
+      const t = this.addTagToPage();
+      this.sendMessage("Loading time: " + t + "ms");
       return JSON.stringify([this.textSegments, this.lineBreakers]);
     }
     /* Will Be Called From Java */
@@ -373,16 +442,6 @@ if (typeof pageReader === "undefined") {
         return found / (found + missing) >= 0.75;
       } catch (err) {
         this.sendErrorMessage("isExtractedContentStillPresent: " + err.message);
-      }
-    }
-    /* Will Be Called From Java */
-    updateThemeColor(darkMode) {
-      if (darkMode) {
-        document.body.style.backgroundColor = "#121212";
-        document.body.style.color = "#BDBDBD";
-      } else {
-        document.body.style.backgroundColor = "white";
-        document.body.style.color = "black";
       }
     }
     sendErrorMessage(err) {
@@ -406,5 +465,27 @@ if (typeof pageReader === "undefined") {
     sendMessage(message) {
       Android.onMessage(message);
     }
+    /* Will Be Called From Java */
+    performClick(segmentIndexes) {
+      const keywords = ["next", "下一"];
+      for (let idx of segmentIndexes) {
+        idx += this.elementIdOffset;
+        const element = document.getElementById(idx);
+        if (element != null) {
+          const text = element.innerText.toLowerCase();
+          for (let keyword of keywords) {
+            if (text.includes(keyword)) {
+              this.sendMessage("Next Button found: " + element.innerText);
+              element.click();
+              return;
+            }
+          }
+        } else {
+          this.sendMessage("unmatching");
+        }
+      }
+    }
   })();
+
+  window.pageReader = readerInstance;
 }

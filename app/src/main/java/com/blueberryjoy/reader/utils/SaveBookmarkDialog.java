@@ -1,5 +1,6 @@
 package com.blueberryjoy.reader.utils;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import android.annotation.SuppressLint;
@@ -29,6 +30,7 @@ public class SaveBookmarkDialog {
     final String url;
     String title;
     final int idx;
+    @Nullable
     String type;
     ArrayAdapter<String> adapter;
     AutoCompleteTextView autoCompleteTextViewType;

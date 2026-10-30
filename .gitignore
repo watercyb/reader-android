@@ -27,6 +27,7 @@ gradle.properties
 /.report
 /audio
 /image
+/.resources
 
 # files
 ani.exe

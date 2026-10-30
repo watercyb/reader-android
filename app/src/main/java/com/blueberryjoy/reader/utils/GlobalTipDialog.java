@@ -11,14 +11,18 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 
 public class GlobalTipDialog {
 
+    @Nullable
     private static Dialog currentDialog;
 
-    public static void show(Context context, View view, String content, int id, int x, int y, int gravity, boolean isFirst) {
+    public static void show(@NonNull Context context, @Nullable View view, String content, int id, int x, int y, int gravity, boolean isFirst) {
         if (ReaderSettings.getTips(id)) return;
         if (currentDialog != null && currentDialog.isShowing()) dismiss();
 
@@ -56,7 +60,7 @@ public class GlobalTipDialog {
             shake(view, isFirst);
     }
 
-    public static void show(Context context, View[] views, String[] content, int[] ids, int[] xs, int[] ys, int[] gravities, int idx, boolean isFirst) {
+    public static void show(@NonNull Context context, View[] views, String[] content, @NonNull int[] ids, int[] xs, int[] ys, int[] gravities, int idx, boolean isFirst) {
         if (ReaderSettings.getTips(ids[idx])) {
             if (idx < ids.length - 1)
                 show(context, views, content, ids, xs, ys, gravities, idx + 1, isFirst);

@@ -54,6 +54,7 @@ public class ReaderSettings {
     */
     private static long tips = 0;
     private static boolean isShowWelcome;
+    private static int reduceRepeatText = 5;
 
     public static void initial() {
         SharedPreferences sharedPref = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE);
@@ -77,6 +78,7 @@ public class ReaderSettings {
         isBlockAds = sharedPref.getBoolean("isBlockAds", true);
         tips = sharedPref.getLong("tips", 0);
         isShowWelcome = sharedPref.getBoolean("isShowWelcome", true);
+        reduceRepeatText = sharedPref.getInt("reduceRepeatText", 5);
     }
 
     @Nullable
@@ -94,7 +96,10 @@ public class ReaderSettings {
         App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putString("voiceName", voiceName).apply();
     }
 
+    @NonNull
     public static String getVoice() {
+        if (voiceName == null)
+            voiceName = App.Companion.getAppContext().getSharedPreferences("data", MODE_PRIVATE).getString("voiceName", "en-US-language");
         return voiceName;
     }
 
@@ -193,7 +198,8 @@ public class ReaderSettings {
         }
     }
 
-    public static String purseLang(String lang) {
+    @NonNull
+    public static String purseLang(@NonNull String lang) {
         if (lang.startsWith("zh")) {
             String langTag = Locale.getDefault().toLanguageTag();
             if (langTag.contains("Hant")) return "zh-TW";
@@ -266,8 +272,20 @@ public class ReaderSettings {
         App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putBoolean("isShowWelcome", isShowWelcome).apply();
     }
 
+    @NonNull
     public static String getVoiceName() {
         if (voiceName == null) return "";
         return voiceName;
+    }
+
+    public static int getReduceRepeatText() {
+        return reduceRepeatText;
+    }
+
+    public static void saveReduceRepeatText(int reduceRepeatText) {
+        if (ReaderSettings.reduceRepeatText != reduceRepeatText) {
+            ReaderSettings.reduceRepeatText = reduceRepeatText;
+            App.Companion.getAppContext().getSharedPreferences("data", 0).edit().putInt("reduceRepeatText", reduceRepeatText).apply();
+        }
     }
 }

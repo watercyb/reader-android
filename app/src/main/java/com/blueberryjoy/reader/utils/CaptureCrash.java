@@ -20,7 +20,7 @@ import java.util.Locale;
 
 public class CaptureCrash implements Thread.UncaughtExceptionHandler {
 
-    public CaptureCrash(Context context) {
+    public CaptureCrash(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder

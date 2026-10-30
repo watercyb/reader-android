@@ -35,12 +35,20 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.textView.setText(windowsRecyclerViewItems.get(position).item());
         holder.imageView.setImageBitmap(windowsRecyclerViewItems.get(position).icon());
-        if (windowsRecyclerViewItems.get(position).isPrivate())
-            holder.imageViewBadge.setVisibility(View.VISIBLE);
+        if (windowsRecyclerViewItems.get(position).isPrivate()) {
+            holder.imageViewBadgePrivate.setVisibility(View.VISIBLE);
+        } else {
+            holder.imageViewBadgePrivate.setVisibility(View.GONE);
+        }
         if (windowsRecyclerViewItems.get(position).window().getIsCurrentWindow()) {
             holder.linearLayout.setBackgroundResource(R.color.page_current_background);
         } else {
             holder.linearLayout.setBackgroundColor(Color.TRANSPARENT);
+        }
+        if (windowsRecyclerViewItems.get(position).isDownloadedPage()) {
+            holder.imageViewBadgeDownloaded.setVisibility(View.VISIBLE);
+        } else {
+            holder.imageViewBadgeDownloaded.setVisibility(View.GONE);
         }
     }
 
@@ -53,14 +61,16 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView textView;
         final ImageView imageView;
-        final ImageView imageViewBadge;
+        final ImageView imageViewBadgePrivate;
+        final ImageView imageViewBadgeDownloaded;
         final LinearLayout linearLayout;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
             imageView = itemView.findViewById(R.id.imageView);
-            imageViewBadge = itemView.findViewById(R.id.imageViewBadge);
+            imageViewBadgePrivate = itemView.findViewById(R.id.imageViewBadgePrivate);
+            imageViewBadgeDownloaded = itemView.findViewById(R.id.imageViewBadgeDownloaded);
             linearLayout = itemView.findViewById(R.id.linearLayout);
             itemView.setOnClickListener(this);
         }

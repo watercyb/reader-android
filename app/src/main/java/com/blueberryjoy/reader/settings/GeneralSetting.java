@@ -34,6 +34,9 @@ public class GeneralSetting extends AppCompatActivity {
     private Spinner lang;
     private final String[] langNames = new String[]{"English", "中文(zh-CN)", "中文(zh-TW)"};
     private final String[] langCodes = new String[]{"en", "zh", "zh-TW"};
+    Spinner reduceRepeatThreshold;
+    private String[] reduceRepeatThresholdNames;
+    private final int[] reduceRepeatThresholdCodes = new int[]{3, 4, 5, 6, 7, 8, Integer.MAX_VALUE / 2};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,8 @@ public class GeneralSetting extends AppCompatActivity {
 
         isChanged = new boolean[2];
 
+        reduceRepeatThresholdNames = new String[]{getString(R.string.general_setting_reduce_repeat_three), getString(R.string.general_setting_reduce_repeat_four), getString(R.string.general_setting_reduce_repeat_five), getString(R.string.general_setting_reduce_repeat_six), getString(R.string.general_setting_reduce_repeat_seven), getString(R.string.general_setting_reduce_repeat_eight), getString(R.string.general_setting_reduce_repeat_never)};
+
         CheckBox readingBox = findViewById(R.id.readingBox);
         CheckBox notification = findViewById(R.id.notification);
         CheckBox audioFocusChanged = findViewById(R.id.audioFocusChanged);
@@ -59,6 +64,7 @@ public class GeneralSetting extends AppCompatActivity {
         CheckBox blockAds = findViewById(R.id.blockAds);
         TextView resetTips = findViewById(R.id.resetTips);
         TextView clearBrowsingData = findViewById(R.id.clearBrowsingData);
+        reduceRepeatThreshold = findViewById(R.id.reduceRepeatThreshold);
 
         readingBox.setChecked(ReaderSettings.getIsShowReadingText());
         notification.setChecked(ReaderSettings.getIsShowContentInNotification());
@@ -74,6 +80,7 @@ public class GeneralSetting extends AppCompatActivity {
         blockAds.setChecked(ReaderSettings.getIsBlockAds());
 
         initialLang();
+        initialReduceRepeat();
 
         readingBox.setOnClickListener(v -> {
             ReaderSettings.saveIsShowReadingText(readingBox.isChecked());
@@ -120,15 +127,12 @@ public class GeneralSetting extends AppCompatActivity {
             Message.toastMSG(getString(R.string.general_setting_reset_tips_text));
         });
 
-        clearBrowsingData.setOnClickListener(v -> new AlertDialog.Builder(this)
-                .setTitle(R.string.general_setting_clear_browsing_data_title)
-                .setMessage(getString(R.string.general_setting_clear_browsing_data_message) + "\n\n" + getString(R.string.general_setting_clear_browsing_data_history_note))
-                .setNegativeButton(R.string.button_cancel, null)
-                .setPositiveButton(R.string.general_setting_clear, (dialog, which) -> {
-                    clearBrowsingData();
-                    Message.toastMSG(getString(R.string.general_setting_browsing_data_cleared));
-                })
-                .show());
+        clearBrowsingData.setOnClickListener(v -> new AlertDialog.Builder(this).setTitle(R.string.general_setting_clear_browsing_data_title).setMessage(getString(R.string.general_setting_clear_browsing_data_message) + "\n\n" + getString(R.string.general_setting_clear_browsing_data_history_note)).setNegativeButton(R.string.button_cancel, null).setPositiveButton(R.string.general_setting_clear, (dialog, which) -> {
+            clearBrowsingData();
+            Message.toastMSG(getString(R.string.general_setting_browsing_data_cleared));
+        }).show());
+
+        //reduceRepeatText.setOnClickListener(v -> ReaderSettings.saveIsReduceRepeatText(reduceRepeatText.isChecked()));
 
         initializeAd();
     }
@@ -174,6 +178,30 @@ public class GeneralSetting extends AppCompatActivity {
         cookieManager.removeAllCookies(null);
         cookieManager.flush();
         WebStorage.getInstance().deleteAllData();
+    }
+
+
+    private void initialReduceRepeat() {
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, reduceRepeatThresholdNames);
+        arrayAdapter.setDropDownViewResource(R.layout.general_setting_spinner_item);
+        reduceRepeatThreshold.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ReaderSettings.saveReduceRepeatText(reduceRepeatThresholdCodes[(int) id]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        reduceRepeatThreshold.setAdapter(arrayAdapter);
+        int threshold = ReaderSettings.getReduceRepeatText();
+        for (int i = 0; i < reduceRepeatThresholdCodes.length; i++) {
+            if (reduceRepeatThresholdCodes[i] == threshold) {
+                reduceRepeatThreshold.setSelection(i);
+                break;
+            }
+        }
     }
 
     private void initializeAd() {
