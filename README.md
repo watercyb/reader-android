@@ -2,7 +2,7 @@
 
 An Android application that turns web pages into spoken content using text-to-speech technology. It provides a customizable reading experience with background playback, multilingual support, and tools for managing web content.
 
-**Version:** 1.5.2
+**Version:** 1.6.1
 
 ## Features
 
