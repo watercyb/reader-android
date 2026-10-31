@@ -124,11 +124,10 @@ public class FileStorage {
             File file = new File(dir + "/downloads/" + idx + '@' + FileStorage.fileNameValidation(title) + '@' + FileStorage.urlToFilename(url) + ".html");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file, isAppend));
             StringBuilder SB = new StringBuilder();
-            SB.append("<title>").append(title).append("</title>");
             for (String str : readingArr) {
                 SB.append(str).append("<br>");
             }
-            outputStreamWriter.write(SB.toString());
+            outputStreamWriter.write(createHtmlPage(title, SB.toString()));
             outputStreamWriter.close();
             Message.toastMSG(context.getString(R.string.message_text_downloaded));
         } catch (IOException e) {
@@ -486,5 +485,60 @@ public class FileStorage {
             }
         }
         return JSCode.replaceFirst(target, num);
+    }
+
+    public static String createHtmlPage(String title, String content) {
+        return "<!DOCTYPE html>" +
+                "<html lang=\"zh-CN\">" +
+                "<head>" +
+                "<meta charset=\"UTF-8\">" +
+                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
+                "<meta name=\"format-detection\" content=\"telephone=no\">" +
+                "<title>" + title + "</title>" +
+
+                "<style>" +
+                "* { box-sizing: border-box; }" +
+
+                "html { -webkit-text-size-adjust: 100%; }" +
+
+                "body {" +
+                "   margin: 0;" +
+                "   padding: 16px;" +
+                "   background: #fff;" +
+                "   color: #222;" +
+                "   font-family: system-ui, sans-serif;" +
+                "   font-size: 18px;" +
+                "   line-height: 1.9;" +
+                "   overflow-wrap: break-word;" +
+                "}" +
+
+                ".container {" +
+                "   max-width: 800px;" +
+                "   margin: 0 auto;" +
+                "}" +
+
+                "h1 {" +
+                "   font-size: 1.3em;" +
+                "   line-height: 1.5;" +
+                "   margin: 0 0 1em;" +
+                "}" +
+
+                "@media (max-width: 600px) {" +
+                "   body {" +
+                "       padding: 12px 16px;" +
+                "       font-size: 17px;" +
+                "       line-height: 1.85;" +
+                "   }" +
+                "}" +
+                "</style>" +
+
+                "</head>" +
+                "<body>" +
+                "<div class=\"container\">" +
+                "<h1>" + title + "</h1>" +
+                "<div class=\"content\">" + content + "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
     }
 }
