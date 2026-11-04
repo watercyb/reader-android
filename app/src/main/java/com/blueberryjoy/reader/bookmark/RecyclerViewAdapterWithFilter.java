@@ -79,6 +79,11 @@ public class RecyclerViewAdapterWithFilter extends RecyclerView.Adapter<Recycler
                 } else {
                     ((ViewHolder) holder).category.setVisibility(View.GONE);
                 }
+                if (bookmarkItem.getLink().startsWith("file")) {
+                    ((ViewHolder) holder).imageViewBadgeDownloaded.setVisibility(View.VISIBLE);
+                } else {
+                    ((ViewHolder) holder).imageViewBadgeDownloaded.setVisibility(View.GONE);
+                }
             }
             holder.itemView.setOnClickListener(view -> {
                 if (itemclickListener != null) itemclickListener.onItemClick(actualIndex, true);
@@ -142,12 +147,14 @@ public class RecyclerViewAdapterWithFilter extends RecyclerView.Adapter<Recycler
         final TextView textView;
         final ImageView imageView;
         final View category;
+        final ImageView imageViewBadgeDownloaded;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
             imageView = itemView.findViewById(R.id.imageView);
             category = itemView.findViewById(R.id.category);
+            imageViewBadgeDownloaded = itemView.findViewById(R.id.imageViewBadgeDownloaded);
         }
     }
 
