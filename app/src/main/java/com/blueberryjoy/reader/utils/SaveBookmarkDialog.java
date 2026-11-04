@@ -37,7 +37,7 @@ public class SaveBookmarkDialog {
     final SaveBookmarkListener saveBookmarkListener;
     final int dialogType; // 0: add, 1: update divider, 2: update bookmark
 
-    public SaveBookmarkDialog(Window window, HashSet<String> types, String url, String title, int idx, String type, SaveBookmarkListener saveBookmarkListener, int dialogType) {
+    public SaveBookmarkDialog(Window window, HashSet<String> types, String url, String title, int idx, @Nullable String type, SaveBookmarkListener saveBookmarkListener, int dialogType) {
         this.window = window;
         this.url = url;
         this.title = title;

@@ -158,6 +158,7 @@ public class Bookmark extends AppCompatActivity {
                     showUrlMenu(view, originalIndex, x, y);
                 } else {
                     BookmarkItem divider = bookmarkList.get(originalIndex);
+                    assert divider != null;
                     new SaveBookmarkDialog(Bookmark.this.getWindow(), bookmarkList.getTypes(), null, null, -1, divider.getType(), (url, title, idx, type) -> {
                         bookmarkList.updateDivider(divider, type);
                         recyclerViewAdapter.getFilter().filter(filter.getText().toString());
@@ -198,6 +199,7 @@ public class Bookmark extends AppCompatActivity {
                     int filteredIdx = viewHolder.getLayoutPosition(); // index in displayed (filtered) list
                     int originalIdx = recyclerViewAdapter.displayIndexes.get(filteredIdx); // true index in original list
                     deleted = bookmarkList.get(originalIdx);
+                    assert deleted != null;
                     deleted.setOriIdx(originalIdx);
                     recyclerViewAdapter.remove(filteredIdx);
                     bookmarkList.updateDividerCount(deleted.getType(), -1);

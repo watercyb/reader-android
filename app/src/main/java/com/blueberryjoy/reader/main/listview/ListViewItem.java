@@ -17,7 +17,7 @@ public class ListViewItem {
         this.getEnable = null;
     }
 
-    public ListViewItem(String title, ListViewAction action, ListViewTitleProvider getTitle, ListViewEnableProvider getEnable) {
+    public ListViewItem(String title, ListViewAction action, @Nullable ListViewTitleProvider getTitle, @Nullable ListViewEnableProvider getEnable) {
         this.title = title;
         this.action = action;
         this.getTitle = getTitle;

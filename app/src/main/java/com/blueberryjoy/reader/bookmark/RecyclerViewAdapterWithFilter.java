@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import android.view.View;
 import android.widget.ImageView;
@@ -61,7 +62,7 @@ public class RecyclerViewAdapterWithFilter extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemViewType(int position) {
-        return bookmarkList.get(displayIndexes.get(position)).getItem() == null ? TYPE_DIVIDER : TYPE_ITEM;
+        return Objects.requireNonNull(bookmarkList.get(displayIndexes.get(position))).getItem() == null ? TYPE_DIVIDER : TYPE_ITEM;
     }
 
     @Override

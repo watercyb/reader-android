@@ -38,6 +38,7 @@ public class GlobalTipDialog {
 
         btnCancel.setOnClickListener(v -> {
             ReaderSettings.saveTips(id);
+            assert currentDialog != null;
             currentDialog.dismiss();
         });
 
@@ -81,6 +82,7 @@ public class GlobalTipDialog {
 
         btnCancel.setOnClickListener(v -> {
             ReaderSettings.saveTips(ids[idx]);
+            assert currentDialog != null;
             currentDialog.dismiss();
             if (idx < ids.length - 1)
                 show(context, views, content, ids, xs, ys, gravities, idx + 1, false);

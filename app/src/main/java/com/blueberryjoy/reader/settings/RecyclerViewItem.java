@@ -18,7 +18,7 @@ public class RecyclerViewItem {
     final int voiceIdx;
     int count;
 
-    public RecyclerViewItem(@NonNull Voice voice, Bitmap icon, int voiceIdx, int count) {
+    public RecyclerViewItem(@NonNull Voice voice, @Nullable Bitmap icon, int voiceIdx, int count) {
         locale = voice.getLocale().toString();
         category = locale.split("_")[0];
         name = voice.getName();
