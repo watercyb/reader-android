@@ -121,7 +121,7 @@ public class FileStorage {
     public static void DownloadPage(@NonNull Context context, @NonNull String url, String title, @NonNull String[] readingArr, int idx, boolean isAppend) {
         try {
             FileStorage.checkDirExist(dir + "/downloads/");
-            File file = new File(dir + "/downloads/" + idx + '@' + FileStorage.fileNameValidation(title) + '@' + FileStorage.urlToFilename(url) + ".html");
+            File file = new File(dir + "/downloads/" + (idx + 1) + '@' + FileStorage.fileNameValidation(title) + '@' + FileStorage.urlToFilename(url) + ".html");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(new FileOutputStream(file, isAppend));
             StringBuilder SB = new StringBuilder();
             for (String str : readingArr) {
