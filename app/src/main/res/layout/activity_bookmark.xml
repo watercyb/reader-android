@@ -36,14 +36,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/imageButton1"
+            android:id="@+id/imageButtonExport"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:contentDescription="@string/des_export_bookmark"
             app:srcCompat="@mipmap/ic_bookmark_export" />
 
         <ImageView
-            android:id="@+id/imageButton2"
+            android:id="@+id/imageButtonImport"
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:contentDescription="@string/des_import_bookmark"

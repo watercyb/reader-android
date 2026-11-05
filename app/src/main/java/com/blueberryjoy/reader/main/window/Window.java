@@ -104,6 +104,25 @@ public class Window {
         }
     }
 
+    public Window(@NonNull MyWebView webView, @NonNull String url, int idx, boolean isPrivate, int position, String state) {
+        Page page = SQLitePage.createPage(url, idx, false, isPrivate, position, state);
+        this.webView = webView;
+        id = page.id;
+        this.idx = page.idx;
+        nextIdx = page.idx;
+        this.isPrivate = page.isPrivate;
+        this.position = position;
+        windowIndexCache = new WindowIndexCache(10);
+
+        initializeWebView();
+        if (!url.equals("about:newtab")) {
+            byte[] data = Base64.decode(page.state, Base64.DEFAULT);
+            if (data.length < 10) webView.loadUrl(page.url);
+            addPageToCache(page.url, idx, "", getWebView().getState());
+            webView.setState(page.state);
+        }
+    }
+
     public Window(@NonNull MyWebView webView, @NonNull Page page) {
         this.webView = webView;
         id = page.id;

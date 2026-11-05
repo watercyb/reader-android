@@ -106,6 +106,16 @@ public class WindowList {
         return window.getRecyclerViewNode();
     }
 
+    @NonNull
+    public static WindowsRecyclerViewNode createAndInsert(Page page) {
+        MyWebView webView = createWebView(false);
+        Window window = new Window(webView, page.url, page.idx, false, list.size(), page.state);
+        list.add(window);
+        WindowList.onWindowNumberChanged(list.size());
+        return window.getRecyclerViewNode();
+    }
+
+
     public static boolean removeWindow(@NonNull Window window) {
         int idx = -1;
         for (int i = 0; i < list.size(); i++) {
@@ -521,5 +531,9 @@ public class WindowList {
 
     public static boolean isInForeground() {
         return isInForeground;
+    }
+
+    public static List<Window> getList() {
+        return list;
     }
 }

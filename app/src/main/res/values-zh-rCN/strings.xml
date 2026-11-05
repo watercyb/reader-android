@@ -53,7 +53,7 @@
     <string name="error_text_failed_save_file">无法保存文件。</string>
     <string name="message_done">完成。</string>
     <string name="error_text_no_bookmarks_found">没有找到任何书签。</string>
-    <string name="message_text_bookmarks_exported_to">书签已导出到</string>
+    <string name="message_text_bookmarks_exported_to">书签已导出到%1$s.</string>
     <string name="error_text_unable_retrieve_file_name">无法取得文件名。</string>
     <string name="notification_button_pause">暂停</string>
     <string name="notification_button_play">播放</string>
@@ -73,9 +73,9 @@
     <string name="menu_load_text_reload">重新加载文字</string>
     <string name="general_setting_skip_url">阅读时跳过网址</string>
     <string name="button_ok">确定</string>
-    <string name="bookmark_text_import">请在下一页选择已保存的书签文件进行导入。</string>
-    <string name="bookmark_text_export">请在下一页保存或覆盖书签文件。</string>
-    <string name="bookmark_title_export">导出</string>
+    <string name="bookmark_text_import">请在下一个界面选择已保存的书签文件进行导入。</string>
+    <string name="bookmark_text_export">请在下一个界面保存或覆盖书签文件。</string>
+    <string name="bookmark_title_export">导出书签</string>
     <string name="bookmark_deleted_item">已删除: %1$s</string>
     <string name="message_text_bookmark_restored">书签已恢复。</string>
     <string name="undo">撤销</string>
@@ -238,6 +238,13 @@
     <string name="general_setting_reduce_repeat_six">6次</string>
     <string name="general_setting_reduce_repeat_seven">7次</string>
     <string name="general_setting_reduce_repeat_eight">8次</string>
+    <string name="window_title_export">导出标签页</string>
+    <string name="window_title_import">导入标签页</string>
+    <string name="window_text_export">简体中文： 请在下一个界面保存或覆盖标签页文件。</string>
+    <string name="window_text_import">请在下一个界面选择要导入的已保存标签页文件</string>
+    <string name="message_text_pages_exported_to">书签已导出到%1$s。</string>
+    <string name="error_text_no_pages_found">没有找到任何标签页。</string>
+    <string name="message_text_pages_saved">已导入标签页。</string>
 
 
 </resources>

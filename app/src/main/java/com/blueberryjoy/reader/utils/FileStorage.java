@@ -18,6 +18,9 @@ import com.blueberryjoy.reader.bookmark.BookmarkItem;
 import com.blueberryjoy.reader.bookmark.BookmarkList;
 import com.blueberryjoy.reader.downloads.DownloadsRecyclerViewItems;
 import com.blueberryjoy.reader.downloads.DownloadsRecyclerViewNode;
+import com.blueberryjoy.reader.main.window.Window;
+import com.blueberryjoy.reader.main.window.WindowList;
+import com.blueberryjoy.reader.sqlite.page.Page;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -341,7 +344,7 @@ public class FileStorage {
                 outputStreamWriter.flush();
                 outputStream.close();
             }
-            Message.toastMSG(App.Companion.getAppContext().getString(R.string.message_text_bookmarks_exported_to) + getNameFromUri(context, uri) + ".");
+            Message.toastMSG(App.Companion.getAppContext().getString(R.string.message_text_bookmarks_exported_to, getNameFromUri(context, uri)));
         } catch (IOException e) {
             Message.toastErr(App.Companion.getAppContext().getString(R.string.error_text_failed_save_file));
         }
@@ -488,57 +491,87 @@ public class FileStorage {
     }
 
     public static String createHtmlPage(String title, String content) {
-        return "<!DOCTYPE html>" +
-                "<html lang=\"zh-CN\">" +
-                "<head>" +
-                "<meta charset=\"UTF-8\">" +
-                "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" +
-                "<meta name=\"format-detection\" content=\"telephone=no\">" +
-                "<title>" + title + "</title>" +
+        return "<!DOCTYPE html>" + "<html lang=\"zh-CN\">" + "<head>" + "<meta charset=\"UTF-8\">" + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" + "<meta name=\"format-detection\" content=\"telephone=no\">" + "<title>" + title + "</title>" +
 
-                "<style>" +
-                "* { box-sizing: border-box; }" +
+                "<style>" + "* { box-sizing: border-box; }" +
 
                 "html { -webkit-text-size-adjust: 100%; }" +
 
-                "body {" +
-                "   margin: 0;" +
-                "   padding: 16px;" +
-                "   background: #fff;" +
-                "   color: #222;" +
-                "   font-family: system-ui, sans-serif;" +
-                "   font-size: 18px;" +
-                "   line-height: 1.9;" +
-                "   overflow-wrap: break-word;" +
-                "}" +
+                "body {" + "   margin: 0;" + "   padding: 16px;" + "   background: #fff;" + "   color: #222;" + "   font-family: system-ui, sans-serif;" + "   font-size: 18px;" + "   line-height: 1.9;" + "   overflow-wrap: break-word;" + "}" +
 
-                ".container {" +
-                "   max-width: 800px;" +
-                "   margin: 0 auto;" +
-                "}" +
+                ".container {" + "   max-width: 800px;" + "   margin: 0 auto;" + "}" +
 
-                "h1 {" +
-                "   font-size: 1.3em;" +
-                "   line-height: 1.5;" +
-                "   margin: 0 0 1em;" +
-                "}" +
+                "h1 {" + "   font-size: 1.3em;" + "   line-height: 1.5;" + "   margin: 0 0 1em;" + "}" +
 
-                "@media (max-width: 600px) {" +
-                "   body {" +
-                "       padding: 12px 16px;" +
-                "       font-size: 17px;" +
-                "       line-height: 1.85;" +
-                "   }" +
-                "}" +
-                "</style>" +
+                "@media (max-width: 600px) {" + "   body {" + "       padding: 12px 16px;" + "       font-size: 17px;" + "       line-height: 1.85;" + "   }" + "}" + "</style>" +
 
-                "</head>" +
-                "<body>" +
-                "<div class=\"container\">" +
-                "<h1>" + title + "</h1>" +
-                "<div class=\"content\">" + content + "</div>" +
-                "</div>" +
-                "</body>" +
-                "</html>";
+                "</head>" + "<body>" + "<div class=\"container\">" + "<h1>" + title + "</h1>" + "<div class=\"content\">" + content + "</div>" + "</div>" + "</body>" + "</html>";
+    }
+
+    public static void exportWindows(@NonNull Context context, @NonNull Uri uri) {
+        try {
+            JSONArray jsonArray = new JSONArray();
+            for (Window window : WindowList.getList()) {
+                JSONObject jsonObject = getJSONFromWindow(window);
+                if (jsonObject != null) jsonArray.put(jsonObject);
+            }
+            App.Companion.getAppContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            OutputStream outputStream = App.Companion.getAppContext().getContentResolver().openOutputStream(uri, "rwt");
+            if (outputStream != null) {
+                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8);
+                outputStreamWriter.write(jsonArray.toString());
+                outputStreamWriter.flush();
+                outputStream.close();
+            }
+            Message.toastMSG(App.Companion.getAppContext().getString(R.string.message_text_pages_exported_to, getNameFromUri(context, uri)));
+        } catch (IOException e) {
+            Message.toastErr(App.Companion.getAppContext().getString(R.string.error_text_failed_save_file));
+        }
+    }
+
+    @NonNull
+    public static List<Page> importWindows(@NonNull Uri uri) {
+        try {
+            InputStream inputStream = App.Companion.getAppContext().getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                char[] buffer = new char[1024];
+                StringBuilder SB = new StringBuilder();
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                int size = inputStreamReader.read(buffer, 0, buffer.length);
+                while (size >= 0) {
+                    SB.append(buffer, 0, size);
+                    size = inputStreamReader.read(buffer, 0, buffer.length);
+                }
+                inputStream.close();
+                JSONArray jsonArrayFromFile = new JSONArray(SB.toString());
+                List<Page> pages = new ArrayList<>();
+                for (int i = 0; i < jsonArrayFromFile.length(); i++) {
+                    JSONObject jsonObject = jsonArrayFromFile.getJSONObject(i);
+                    if (jsonObject.length() == 3 && jsonObject.has("url") && jsonObject.get("url") instanceof String && jsonObject.has("idx") && jsonObject.get("idx") instanceof Integer && jsonObject.has("state") && jsonObject.get("state") instanceof String)
+                        pages.add(new Page(jsonObject.getString("url"), jsonObject.getInt("idx"), false, jsonObject.getString("state"), false, -1));
+                }
+                if (pages.isEmpty())
+                    Message.toastErr(App.Companion.getAppContext().getString(R.string.error_text_no_pages_found));
+                return pages;
+            }
+        } catch (IOException e) {
+            Message.toastErr(App.Companion.getAppContext().getString(R.string.error_text_unable_access_file));
+        } catch (JSONException e) {
+            Message.toastErr(App.Companion.getAppContext().getString(R.string.error_text_invalid_format));
+        }
+        return new ArrayList<>();
+    }
+
+    private static JSONObject getJSONFromWindow(Window window) {
+        if (window.isPrivate()) return null;
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("url", window.getUrl());
+            jsonObject.put("idx", window.getIdx());
+            jsonObject.put("state", window.getWebView().getState());
+            return jsonObject;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

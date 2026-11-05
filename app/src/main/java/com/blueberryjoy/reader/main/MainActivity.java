@@ -14,8 +14,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.media.AudioDeviceInfo;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -76,6 +74,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.blueberryjoy.reader.App;
 import com.blueberryjoy.reader.history.History;
 import com.blueberryjoy.reader.history.HistorySuggestionAdapter;
 import com.blueberryjoy.reader.history.HistoryUrl;
@@ -89,6 +88,7 @@ import com.blueberryjoy.reader.main.utils.JavaScriptHandler;
 import com.blueberryjoy.reader.main.utils.MainActivityProvider;
 import com.blueberryjoy.reader.main.utils.ReaderController;
 import com.blueberryjoy.reader.main.utils.WindowListener;
+import com.blueberryjoy.reader.sqlite.page.Page;
 import com.blueberryjoy.reader.utils.ClickAnimation;
 import com.blueberryjoy.reader.utils.SaveBookmarkDialog;
 import com.blueberryjoy.reader.sqlite.SQLite;
@@ -202,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
     public final static String ACTIVITY_RESULT_HISTORY = "history";
     public final static String ACTIVITY_RESULT_GENERAL_SETTING = "generalSetting";
 
+    private ActivityResultLauncher<Intent> startActivityIntentImport;
+    private ActivityResultLauncher<Intent> startActivityIntentExport;
+
     @SuppressLint({"ClickableViewAccessibility", "DefaultUncaughtExceptionDelegation"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -299,7 +302,6 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isFrontLayerOn) return true;
         }
-        //TODO
         return super.dispatchTouchEvent(ev);
     }
 
@@ -733,10 +735,8 @@ public class MainActivity extends AppCompatActivity {
             BluetoothProfile.ServiceListener profileListener = new BluetoothProfile.ServiceListener() {
                 @Override
                 public void onServiceConnected(int profile, @NonNull BluetoothProfile proxy) {
-                    if (profile == BluetoothProfile.A2DP) {
+                    if (profile == BluetoothProfile.A2DP)
                         proxy.getConnectedDevices().stream().map(BluetoothDevice::getAddress).forEach(bluetoothDevices::add);
-                        checkBluetoothDevices();
-                    }
                 }
 
 
@@ -811,7 +811,6 @@ public class MainActivity extends AppCompatActivity {
                     case MessageBluetooth.ACTION_CONNECT -> {
                         String connectedDevice = ((MessageBluetooth) message).message();
                         if (connectedDevice != null) bluetoothDevices.add(connectedDevice);
-                        checkBluetoothDevices();
                     }
                 }
             }
@@ -912,8 +911,7 @@ public class MainActivity extends AppCompatActivity {
         ClickAnimation.INSTANCE.set(next);
 
         pause.setOnClickListener(v -> {
-            if (!isRecycleViewWindowsShown())
-                WindowList.pause();
+            if (!isRecycleViewWindowsShown()) WindowList.pause();
         });
         ClickAnimation.INSTANCE.set(pause);
 
@@ -1196,6 +1194,29 @@ public class MainActivity extends AppCompatActivity {
             if (progressBar.getVisibility() == View.VISIBLE)
                 progressBar.setTranslationY(appBarLayout.getHeight() + offset - (float) progressBar.getHeight() / 2);
         });
+
+        startActivityIntentImport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getData();
+                if (uri != null) {
+                    List<Page> pages = FileStorage.importWindows(uri);
+                    if (!pages.isEmpty()) {
+                        for (Page page : pages) {
+                            assert recyclerViewAdapter != null;
+                            recyclerViewAdapter.add(WindowList.createAndInsert(page));
+                        }
+                        Message.toastMSG(App.Companion.getAppContext().getString(R.string.message_text_pages_saved));
+                    }
+                }
+            }
+        });
+
+        startActivityIntentExport = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                Uri uri = result.getData().getData();
+                if (uri != null) FileStorage.exportWindows(getApplicationContext(), uri);
+            }
+        });
     }
 
     private void initializeWindowList() {
@@ -1421,6 +1442,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         ClickAnimation.INSTANCE.set(imageButtonAddPrivate);
+
+        ImageView exportButton = findViewById(R.id.imageButtonExport);
+        exportButton.setOnClickListener((v) -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setTitle(getString(R.string.window_title_export))
+                    .setMessage(getString(R.string.window_text_export))
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "pages.txt")));
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        });
+        ClickAnimation.INSTANCE.set(exportButton);
+        ImageView importButton = findViewById(R.id.imageButtonImport);
+        importButton.setOnClickListener((v) -> {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            alertDialogBuilder.setTitle(getString(R.string.window_title_import))
+                    .setMessage(getString(R.string.window_text_import))
+                    .setCancelable(false)
+                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE)));
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        });
+        ClickAnimation.INSTANCE.set(importButton);
     }
 
     private void initializeRecycleViewWindowsPopup(@NonNull WindowsRecyclerViewAdapter recyclerViewAdapter, @NonNull Window removedWindow) {
@@ -1558,30 +1602,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         new AlertDialog.Builder(this).setView(view).setPositiveButton(android.R.string.ok, null).show();
-    }
-
-    @Nullable
-    private List<String> getAudioDevices() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
-            List<String> res = new ArrayList<>();
-            for (AudioDeviceInfo device : devices) {
-                String address = device.getAddress();
-                if (!address.isEmpty()) res.add(address);
-            }
-            return res;
-        } else {
-            return null;
-        }
-    }
-
-    private void checkBluetoothDevices() {
-        //TODO needs?
-        //new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        //List<String> list = getAudioDevices();
-        //if (list != null) bluetoothDevices.removeIf(item -> !list.contains(item));
-        //}, 5000);
     }
 
     private void initializeGoogleAds() {

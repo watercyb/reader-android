@@ -82,8 +82,8 @@ public class Bookmark extends AppCompatActivity {
 
         ImageView addButton = findViewById(R.id.imageButton);
         bookmark = findViewById(R.id.recyclerView);
-        ImageView exportButton = findViewById(R.id.imageButton1);
-        ImageView importButton = findViewById(R.id.imageButton2);
+        ImageView exportButton = findViewById(R.id.imageButtonExport);
+        ImageView importButton = findViewById(R.id.imageButtonImport);
         filter = findViewById(R.id.filter);
         ImageView searchButton = findViewById(R.id.imageButton3);
         LinearLayout linearLayout = findViewById(R.id.linearLayout);

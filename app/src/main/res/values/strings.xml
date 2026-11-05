@@ -42,7 +42,7 @@
     <string name="bookmark_text_rewrite">Overwrite</string>
     <string name="bookmark_text_append">Append</string>
     <string name="button_cancel">Cancel</string>
-    <string name="bookmark_title_import">Import</string>
+    <string name="bookmark_title_import">Import bookmarks</string>
     <string name="error_title_no_tts">No TTS engine is found</string>
     <string name="error_text_no_tts">Please download Speech Recognition &#038; Synthesis from Play Store.</string>
     <string name="button_close">Close</string>
@@ -58,11 +58,11 @@
     <string name="error_text_unable_locate_file">Unable to locate the file.</string>
     <string name="error_text_unable_access_file">Unable to access the file.</string>
     <string name="error_text_unsupported_file_format">Unsupported file format.</string>
-    <string name="message_text_bookmark_saved">Bookmark saved.</string>
+    <string name="message_text_bookmark_saved">Bookmarks saved.</string>
     <string name="error_text_failed_save_file">Failed to save the file.</string>
     <string name="message_done">Done.</string>
     <string name="error_text_no_bookmarks_found">No bookmarks were found.</string>
-    <string name="message_text_bookmarks_exported_to">Bookmarks have been exported to</string>
+    <string name="message_text_bookmarks_exported_to">Bookmarks have been exported to %1$s.</string>
     <string name="error_text_unable_retrieve_file_name">Unable to retrieve the file name.</string>
     <string name="notification_button_pause">PAUSE</string>
     <string name="notification_button_play">PLAY</string>
@@ -84,9 +84,9 @@
     <string name="button_ok">OK</string>
     <string name="bookmark_text_import">Please select a saved bookmark file on the next page to import.</string>
     <string name="bookmark_text_export">Please save or overwrite the bookmark file on the next page.</string>
-    <string name="bookmark_title_export">Export</string>
+    <string name="bookmark_title_export">Export bookmarks</string>
     <string name="bookmark_deleted_item">Deleted: %1$s</string>
-    <string name="message_text_bookmark_restored">Bookmark restored.</string>
+    <string name="message_text_bookmark_restored">Bookmarks restored.</string>
     <string name="undo">Undo</string>
     <string name="message_text_download_restored">Download file restored.</string>
     <string name="error_text_unable_restore_file">Unable to restore file.</string>
@@ -156,7 +156,7 @@
     <string name="popup_menu_edit">Edit Bookmark</string>
     <string name="message_text_type_updated">Category updated.</string>
     <string name="error_text_unable_update_type">Unable to update category.</string>
-    <string name="message_text_bookmark_updated">Bookmark updated.</string>
+    <string name="message_text_bookmark_updated">Bookmarks updated.</string>
     <string name="error_text_unable_update_bookmark">Unable to update bookmark.</string>
     <string name="error_text_bookmark_invalid_format">Some bookmarks have an invalid format and were skipped.</string>
     <string name="language_ar">Arabic</string>
@@ -250,5 +250,12 @@
     <string name="general_setting_reduce_repeat_seven">7 times</string>
     <string name="general_setting_reduce_repeat_eight">8 times</string>
     <string name="general_setting_reduce_repeat_three">3 times</string>
+    <string name="window_title_export">Export pages</string>
+    <string name="window_title_import">Import pages</string>
+    <string name="window_text_export">Please save or overwrite the page file on the next screen.</string>
+    <string name="window_text_import">Please select a saved page file on the next screen to import.</string>
+    <string name="message_text_pages_exported_to">Pages have been exported to %1$s.</string>
+    <string name="error_text_no_pages_found">No pages were found.</string>
+    <string name="message_text_pages_saved">Pages imported.</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

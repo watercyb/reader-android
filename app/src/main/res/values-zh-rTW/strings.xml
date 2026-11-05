@@ -53,7 +53,7 @@
     <string name="error_text_failed_save_file">無法保存文件。</string>
     <string name="message_done">完成。</string>
     <string name="error_text_no_bookmarks_found">沒有找到任何書籤。</string>
-    <string name="message_text_bookmarks_exported_to">書籤已匯出至</string>
+    <string name="message_text_bookmarks_exported_to">書籤已匯出至%1$s.</string>
     <string name="error_text_unable_retrieve_file_name">無法取得文件名。</string>
     <string name="notification_button_pause">暫停</string>
     <string name="notification_button_play">播放</string>
@@ -73,9 +73,9 @@
     <string name="menu_load_text_reload">重新載入文字</string>
     <string name="general_setting_skip_url">閱讀時跳過網址</string>
     <string name="button_ok">確定</string>
-    <string name="bookmark_text_import">請在下一頁選擇已儲存的書籤檔案進行匯入。</string>
-    <string name="bookmark_text_export">請在下一頁儲存或覆蓋書籤檔案。</string>
-    <string name="bookmark_title_export">匯出</string>
+    <string name="bookmark_text_import">請在下一個畫面選擇已儲存的書籤檔案進行匯入。</string>
+    <string name="bookmark_text_export">請在下一個畫面儲存或覆蓋書籤檔案。</string>
+    <string name="bookmark_title_export">匯出書籤</string>
     <string name="bookmark_deleted_item">已刪除: %1$s</string>
     <string name="message_text_bookmark_restored">書籤已恢復。</string>
     <string name="undo">復原</string>
@@ -240,6 +240,13 @@
     <string name="general_setting_reduce_repeat_six">6次</string>
     <string name="general_setting_reduce_repeat_seven">7次</string>
     <string name="general_setting_reduce_repeat_eight">8次</string>
+    <string name="window_title_export">匯出分頁</string>
+    <string name="window_title_import">匯入分頁</string>
+    <string name="window_text_export">請在下一個畫面儲存或覆寫分頁檔案。</string>
+    <string name="window_text_import">請在下一個畫面選擇要匯入的已儲存分頁檔案。</string>
+    <string name="message_text_pages_exported_to">書籤已匯出至%1$s。</string>
+    <string name="error_text_no_pages_found">沒有找到任何分頁。</string>
+    <string name="message_text_pages_saved">已匯入分頁。</string>
 
 
 </resources>

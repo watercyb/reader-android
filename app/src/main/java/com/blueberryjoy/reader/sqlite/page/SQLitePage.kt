@@ -93,6 +93,19 @@ object SQLitePage : ViewModel() {
     }
 
     @JvmStatic
+    fun createPage(
+        url: String, idx: Int, isCurrent: Boolean, isPrivate: Boolean, position: Int, state: String
+    ): Page {
+        val pages = runBlocking {
+            val page = Page(url, idx, isCurrent, state, isPrivate, position)
+            val id: Long = SQLite.getDb().pageDao().insert(page)
+            page.id = id.toInt()
+            return@runBlocking page
+        }
+        return pages
+    }
+
+    @JvmStatic
     fun delete(id: Int) {
         viewModelScope.launch(Dispatchers.IO) { SQLite.getDb().pageDao().deletePage(id) }
     }
