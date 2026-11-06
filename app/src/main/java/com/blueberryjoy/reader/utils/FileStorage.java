@@ -490,6 +490,7 @@ public class FileStorage {
         return JSCode.replaceFirst(target, num);
     }
 
+    @NonNull
     public static String createHtmlPage(String title, String content) {
         return "<!DOCTYPE html>" + "<html lang=\"zh-CN\">" + "<head>" + "<meta charset=\"UTF-8\">" + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" + "<meta name=\"format-detection\" content=\"telephone=no\">" + "<title>" + title + "</title>" +
 
@@ -562,7 +563,8 @@ public class FileStorage {
         return new ArrayList<>();
     }
 
-    private static JSONObject getJSONFromWindow(Window window) {
+    @Nullable
+    private static JSONObject getJSONFromWindow(@NonNull Window window) {
         if (window.isPrivate()) return null;
         try {
             JSONObject jsonObject = new JSONObject();

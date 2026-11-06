@@ -107,7 +107,7 @@ public class WindowList {
     }
 
     @NonNull
-    public static WindowsRecyclerViewNode createAndInsert(Page page) {
+    public static WindowsRecyclerViewNode createAndInsert(@NonNull Page page) {
         MyWebView webView = createWebView(false);
         Window window = new Window(webView, page.url, page.idx, false, list.size(), page.state);
         list.add(window);
@@ -533,6 +533,7 @@ public class WindowList {
         return isInForeground;
     }
 
+    @NonNull
     public static List<Window> getList() {
         return list;
     }

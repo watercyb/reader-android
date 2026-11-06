@@ -104,7 +104,7 @@ public class Window {
         }
     }
 
-    public Window(@NonNull MyWebView webView, @NonNull String url, int idx, boolean isPrivate, int position, String state) {
+    public Window(@NonNull MyWebView webView, @NonNull String url, int idx, boolean isPrivate, int position, @NonNull String state) {
         Page page = SQLitePage.createPage(url, idx, false, isPrivate, position, state);
         this.webView = webView;
         id = page.id;

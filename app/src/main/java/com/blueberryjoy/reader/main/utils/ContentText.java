@@ -35,7 +35,7 @@ public class ContentText {
     }
 
     @NonNull
-    private static String replaceSeparatedSequences(@NonNull String s, int threshold, Pattern pattern) {
+    private static String replaceSeparatedSequences(@NonNull String s, int threshold, @NonNull Pattern pattern) {
         Matcher matcher = pattern.matcher(s);
         StringBuilder result = new StringBuilder();
         int lastEnd = 0;
@@ -71,7 +71,7 @@ public class ContentText {
     }
 
     @NonNull
-    private static String replaceAdjacentSequences(@NonNull String s, int threshold, Pattern pattern) {
+    private static String replaceAdjacentSequences(@NonNull String s, int threshold, @NonNull Pattern pattern) {
         Matcher matcher = pattern.matcher(s);
         StringBuilder result = new StringBuilder();
         int lastEnd = 0;
