@@ -273,7 +273,7 @@ public class Bookmark extends AppCompatActivity {
         int[] xs = {0, 0};
         int[] ys = {32, 64};
         int[] gravities = {Gravity.TOP | Gravity.END, Gravity.TOP | Gravity.START};
-        String[] contents = {getString(R.string.tip_import_export_bookmark), getString(R.string.tip_bookmark_new_tab)};
+        String[] contents = {getString(R.string.tip_bookmark_import_export), getString(R.string.tip_bookmark_new_tab)};
         GlobalTipDialog.show(Bookmark.this, views, contents, ids, xs, ys, gravities, 0, true);
 
         initializeAd();

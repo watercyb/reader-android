@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView next;
     private ImageView prev;
     private ImageView reloadText;
-    private LinearLayout linearLayout;
+    private LinearLayout linearLayoutAppbar;
     private ImageView scrollToBottom;
     private ImageView pause;
     private Button copy;
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
     private void webUrlHide() {
         webUrl.clearFocus();
         webUrl.setSingleLine(true);
-        linearLayout.setVisibility(View.GONE);
+        linearLayoutAppbar.setVisibility(View.GONE);
         setWebUrl(WindowList.getUrl());
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(webUrl.getWindowToken(), 0);
@@ -1082,11 +1082,11 @@ public class MainActivity extends AppCompatActivity {
             if (hasFocus) {
                 if (dispatchTouchArea.isWebUrlVisible()) return;
                 webUrl.setSingleLine(false);
-                linearLayout.setVisibility(View.VISIBLE);
+                linearLayoutAppbar.setVisibility(View.VISIBLE);
                 recyclerViewHistory.setVisibility(View.VISIBLE);
                 ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(webUrl, 0);
                 dispatchTouchArea.add(webUrl);
-                dispatchTouchArea.add(linearLayout);
+                dispatchTouchArea.add(linearLayoutAppbar);
                 dispatchTouchArea.add(recyclerViewHistory);
                 dispatchTouchArea.setWebUrlVisible(true);
                 hideUrlButton();
@@ -1151,7 +1151,7 @@ public class MainActivity extends AppCompatActivity {
         next = findViewById(R.id.buttonNext);
         prev = findViewById(R.id.buttonPrev);
         reloadText = findViewById(R.id.buttonReloadText);
-        linearLayout = findViewById(R.id.linearLayoutAppbar);
+        linearLayoutAppbar = findViewById(R.id.linearLayoutAppbar);
         scrollToBottom = findViewById(R.id.buttonScroll);
         pause = findViewById(R.id.buttonPlay);
         copy = findViewById(R.id.buttonCopy);
@@ -1465,6 +1465,15 @@ public class MainActivity extends AppCompatActivity {
             alertDialog.show();
         });
         ClickAnimation.INSTANCE.set(importButton);
+
+        LinearLayout linearLayoutExportImport = windowsView.findViewById(R.id.linearLayoutExportImport);
+        View[] views = {imageButtonAdd, imageButtonAddPrivate, linearLayoutExportImport};
+        int[] ids = {15, 16, 14};
+        int[] xs = {0, 32, 64};
+        int[] ys = {32, 32, 32};
+        int[] gravities = {Gravity.TOP | Gravity.END, Gravity.TOP | Gravity.END, Gravity.TOP | Gravity.END};
+        String[] contents = {getString(R.string.tip_window_new_page), getString(R.string.tip_window_new_private_page), getString(R.string.tip_window_import_export)};
+        GlobalTipDialog.show(MainActivity.this, views, contents, ids, xs, ys, gravities, 0, true);
     }
 
     private void initializeRecycleViewWindowsPopup(@NonNull WindowsRecyclerViewAdapter recyclerViewAdapter, @NonNull Window removedWindow) {

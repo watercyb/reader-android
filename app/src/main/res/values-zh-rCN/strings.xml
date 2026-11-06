@@ -97,7 +97,7 @@
     <string name="tip_enter_url">输入网址或搜索关键词。</string>
     <string name="tip_play_button">页面加载完成后，点击“播放”开始朗读。</string>
     <string name="tips">提示</string>
-    <string name="tip_import_export_bookmark">点击箭头可导入或导出书签。</string>
+    <string name="tip_bookmark_import_export">点击箭头可导入或导出书签。</string>
     <string name="tip_bookmark_new_tab">长按书签可打开菜单。</string>
     <string name="tip_download_new_tab">长按已下载内容可打开菜单。</string>
     <string name="tip_reload">内容不匹配时，请使用“刷新”更新页面。</string>
@@ -245,6 +245,9 @@
     <string name="message_text_pages_exported_to">书签已导出到%1$s。</string>
     <string name="error_text_no_pages_found">没有找到任何标签页。</string>
     <string name="message_text_pages_saved">已导入标签页。</string>
+    <string name="tip_window_import_export">点击箭头可导入或导出标签页。</string>
+    <string name="tip_window_new_page">点击以打开新标签页。</string>
+    <string name="tip_window_new_private_page">点击以打开新的无痕标签页。</string>
 
 
 </resources>

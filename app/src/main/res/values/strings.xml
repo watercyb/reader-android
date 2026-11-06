@@ -107,7 +107,7 @@
     <string name="tip_enter_url">Enter a URL or search keywords to start.</string>
     <string name="tip_play_button">Tap Play after the page loads to start reading.</string>
     <string name="tips">Tips</string>
-    <string name="tip_import_export_bookmark">Click the arrows to import or export bookmarks.</string>
+    <string name="tip_bookmark_import_export">Click the arrows to import or export bookmarks.</string>
     <string name="tip_bookmark_new_tab">Long-press a bookmark to open the menu.</string>
     <string name="tip_download_new_tab">Long-press a downloaded page to open the menu.</string>
     <string name="tip_reload">Content not matching? Tap Reload to refresh the page.</string>
@@ -257,5 +257,8 @@
     <string name="message_text_pages_exported_to">Pages have been exported to %1$s.</string>
     <string name="error_text_no_pages_found">No pages were found.</string>
     <string name="message_text_pages_saved">Pages imported.</string>
+    <string name="tip_window_import_export">Click the arrows to import or export pages.</string>
+    <string name="tip_window_new_page">Click to open a new page.</string>
+    <string name="tip_window_new_private_page">Click to open a new private page.</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

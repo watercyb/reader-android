@@ -39,7 +39,7 @@ public class ReaderSettings {
     /*
     0: url
     1: play button
-    2: import_export_bookmark
+    2: import or export bookmarks
     3: bookmark open in new tab
     4: download open in new tab
     5: reload
@@ -51,6 +51,9 @@ public class ReaderSettings {
     11: delete suggestion
     12: scroll to text
     13: text not matching.
+    14: import or export tabs
+    15: new tab
+    16: new private tab
     */
     private static long tips = 0;
     private static boolean isShowWelcome;

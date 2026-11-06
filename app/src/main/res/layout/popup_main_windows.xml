@@ -38,7 +38,7 @@
         app:srcCompat="@mipmap/ic_new_tab" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/linearLayoutExportImport"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/imageButtonAddPrivate"

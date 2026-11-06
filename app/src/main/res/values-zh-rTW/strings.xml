@@ -97,7 +97,7 @@
     <string name="tip_enter_url">輸入網址或搜尋關鍵字。</string>
     <string name="tip_play_button">頁面載入完成後，點選「播放」開始朗讀。</string>
     <string name="tips">提示</string>
-    <string name="tip_import_export_bookmark">點選箭頭即可匯入或匯出書籤。</string>
+    <string name="tip_bookmark_import_export">點選箭頭即可匯入或匯出書籤。</string>
     <string name="tip_bookmark_new_tab">長按書籤可開啟選單。</string>
     <string name="tip_download_new_tab">長按已下載內容可開啟選單。</string>
     <string name="tip_reload">內容不一致時，請使用「重新整理」更新頁面。</string>
@@ -247,6 +247,9 @@
     <string name="message_text_pages_exported_to">書籤已匯出至%1$s。</string>
     <string name="error_text_no_pages_found">沒有找到任何分頁。</string>
     <string name="message_text_pages_saved">已匯入分頁。</string>
+    <string name="tip_window_import_export">點選箭頭即可匯入或匯出分頁。</string>
+    <string name="tip_window_new_page">點擊以開啟新分頁。</string>
+    <string name="tip_window_new_private_page">點擊以開啟新的無痕分頁。</string>
 
 
 </resources>
