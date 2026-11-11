@@ -1349,6 +1349,14 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScroll(int position) {
                 switchScrollButton(position < 99);
             }
+
+            @Override
+            public void onTitleChanged(MyWebView webView, String title) {
+                if (isRecycleViewWindowsShown()) {
+                    if (recyclerViewAdapter != null)
+                        recyclerViewAdapter.updateTitle(webView, title);
+                }
+            }
         };
 
         WindowList.initializeWindowList(mainActivityProvider, windowListener);
@@ -1375,12 +1383,13 @@ public class MainActivity extends AppCompatActivity {
         set.applyTo(main);
         ReaderController.canPlay(false);
 
+        //TODO
         WindowsRecyclerViewItems windowsRecyclerViewItems = WindowList.getWindowsRecyclerViewItems();
         RecyclerView recyclerView = windowsView.findViewById(R.id.recyclerViewWindows);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewAdapter = new WindowsRecyclerViewAdapter(this, windowsRecyclerViewItems);
         recyclerViewAdapter.setClickListener((position) -> {
-            WindowList.switchWindow(windowsRecyclerViewItems.get(position).window());
+            WindowList.switchWindow(windowsRecyclerViewItems.get(position).getWindow());
             recycleViewWindowsHide();
         });
         recyclerView.setAdapter(recyclerViewAdapter);
@@ -1401,7 +1410,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int swipeDir) {
                 if (swipeDir == 4) {
                     assert recyclerViewAdapter != null;
-                    Window removedWindow = recyclerViewAdapter.get(viewHolder.getLayoutPosition()).window();
+                    Window removedWindow = recyclerViewAdapter.get(viewHolder.getLayoutPosition()).getWindow();
                     if (windowToRemove != null) {
                         windowToRemove.remove();
                         windowToRemove = null;
@@ -1426,7 +1435,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, false));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
-                WindowList.switchWindow(windowsRecyclerViewNode.window());
+                WindowList.switchWindow(windowsRecyclerViewNode.getWindow());
                 recycleViewWindowsHide();
             }
         });
@@ -1437,7 +1446,7 @@ public class MainActivity extends AppCompatActivity {
             recyclerViewAdapter.add(WindowList.createAndInsert("about:newtab", 0, false, true));
             WindowsRecyclerViewNode windowsRecyclerViewNode = windowsRecyclerViewItems.getLast();
             if (windowsRecyclerViewNode != null) {
-                WindowList.switchWindow(windowsRecyclerViewNode.window());
+                WindowList.switchWindow(windowsRecyclerViewNode.getWindow());
                 recycleViewWindowsHide();
             }
         });
@@ -1446,10 +1455,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView exportButton = findViewById(R.id.imageButtonExport);
         exportButton.setOnClickListener((v) -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle(getString(R.string.window_title_export))
-                    .setMessage(getString(R.string.window_text_export))
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "pages.txt")));
+            alertDialogBuilder.setTitle(getString(R.string.window_title_export)).setMessage(getString(R.string.window_text_export)).setCancelable(false).setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentExport.launch(new Intent(Intent.ACTION_CREATE_DOCUMENT).setType("text/plain").putExtra(Intent.EXTRA_TITLE, "pages.txt")));
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         });
@@ -1457,10 +1463,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView importButton = findViewById(R.id.imageButtonImport);
         importButton.setOnClickListener((v) -> {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            alertDialogBuilder.setTitle(getString(R.string.window_title_import))
-                    .setMessage(getString(R.string.window_text_import))
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE)));
+            alertDialogBuilder.setTitle(getString(R.string.window_title_import)).setMessage(getString(R.string.window_text_import)).setCancelable(false).setPositiveButton(getString(R.string.button_ok), (dialog, id) -> startActivityIntentImport.launch(new Intent(Intent.ACTION_GET_CONTENT).setType("*/*").addCategory(Intent.CATEGORY_OPENABLE)));
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         });
@@ -1525,7 +1528,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void recycleViewWindowsHide() {
-        if (WindowList.getCurrentWindow() == null)
+        if (WindowList.getCurrentWindow() == null && !WindowList.setFirstWindowAsCurrentWindow())
             WindowList.createAndInsert("about:newtab", 0, false, false);
         ((ConstraintLayout) findViewById(R.id.main)).removeView(this.windowsView);
         this.windowsView = null;

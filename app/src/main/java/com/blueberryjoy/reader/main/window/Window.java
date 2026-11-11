@@ -120,6 +120,13 @@ public class Window {
             if (data.length < 10) webView.loadUrl(page.url);
             addPageToCache(page.url, idx, "", getWebView().getState());
             webView.setState(page.state);
+            String webViewUrl = webView.getUrl();
+            if (webViewUrl == null) {
+                webView.loadUrl(url);
+                //TODO
+                setLoadingState(1);
+                Message.log("Cannot load page state, load url instead.");
+            }
         }
     }
 
@@ -589,6 +596,7 @@ public class Window {
             public void onReceivedTitle(WebView view, @NonNull String title) {
                 if (!isPrivate)
                     new Handler(Looper.getMainLooper()).postDelayed(() -> BrowsingHistory.INSTANCE.debouncedInsert(getUrl(), title), 1000);
+                WindowList.onTitleChanged(webView, title);
             }
         });
 
@@ -887,6 +895,7 @@ public class Window {
     @NonNull
     public WindowsRecyclerViewNode getRecyclerViewNode() {
         String title = getTitle();
+        Message.log("loadingState: " + loadingState);
         if (title == null || title.isEmpty()) {
             if (getUrl().isEmpty()) {
                 title = App.Companion.getAppContext().getString(R.string.window_title);

@@ -147,15 +147,26 @@ public class WindowList {
     public static void setCurrentWindow(int idx) {
         currentWindow = null;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getIsCurrentWindow()) {
+            if (list.get(i).getIsCurrentWindow())
                 list.get(i).setIsCurrentWindow(false, i);
-            }
         }
         if (idx >= 0 && idx < list.size()) {
             currentWindow = list.get(idx);
             currentWindow.setIsCurrentWindow(true, idx);
             updateMediaTitle();
         }
+    }
+
+    public static boolean setFirstWindowAsCurrentWindow() {
+        if (list.isEmpty()) return false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getIsCurrentWindow())
+                list.get(i).setIsCurrentWindow(false, i);
+        }
+        currentWindow = list.get(0);
+        currentWindow.setIsCurrentWindow(true, 0);
+        updateMediaTitle();
+        return true;
     }
 
     public static void checkAndSetCurrentWindow() {
@@ -536,5 +547,9 @@ public class WindowList {
     @NonNull
     public static List<Window> getList() {
         return list;
+    }
+
+    public static void onTitleChanged(MyWebView webView, String title) {
+        if (WindowListener != null) WindowListener.onTitleChanged(webView, title);
     }
 }

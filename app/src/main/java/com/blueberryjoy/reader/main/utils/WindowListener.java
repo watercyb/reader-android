@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 
+import com.blueberryjoy.reader.main.webview.MyWebView;
+
 public interface WindowListener {
     void onProgressChanged(int newProgress);
 
@@ -34,4 +36,6 @@ public interface WindowListener {
     void onTextNotMatching();
 
     void onPageScroll(int position);
+
+    void onTitleChanged(MyWebView webView, String title);
 }

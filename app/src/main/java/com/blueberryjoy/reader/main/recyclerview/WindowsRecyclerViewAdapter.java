@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.blueberryjoy.reader.R;
+import com.blueberryjoy.reader.main.webview.MyWebView;
 
 public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecyclerViewAdapter.ViewHolder> {
     private final WindowsRecyclerViewItems windowsRecyclerViewItems;
@@ -33,14 +34,14 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(windowsRecyclerViewItems.get(position).item());
-        holder.imageView.setImageBitmap(windowsRecyclerViewItems.get(position).icon());
+        holder.textView.setText(windowsRecyclerViewItems.get(position).getItem());
+        holder.imageView.setImageBitmap(windowsRecyclerViewItems.get(position).getIcon());
         if (windowsRecyclerViewItems.get(position).isPrivate()) {
             holder.imageViewBadgePrivate.setVisibility(View.VISIBLE);
         } else {
             holder.imageViewBadgePrivate.setVisibility(View.GONE);
         }
-        if (windowsRecyclerViewItems.get(position).window().getIsCurrentWindow()) {
+        if (windowsRecyclerViewItems.get(position).getWindow().getIsCurrentWindow()) {
             holder.linearLayout.setBackgroundResource(R.color.page_current_background);
         } else {
             holder.linearLayout.setBackgroundColor(Color.TRANSPARENT);
@@ -112,5 +113,10 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
     public void move(int from, int to) {
         windowsRecyclerViewItems.move(from, to);
         notifyItemMoved(from, to);
+    }
+
+    public void updateTitle(MyWebView webView, String title) {
+        int idx = windowsRecyclerViewItems.updateTitle(webView, title);
+        if (idx >= 0 && idx < windowsRecyclerViewItems.size()) notifyItemChanged(idx);
     }
 }
