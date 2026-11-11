@@ -7,7 +7,7 @@ import com.blueberryjoy.reader.main.window.Window;
 public class WindowsRecyclerViewNode {
     String item;
     Bitmap icon;
-    Window window;
+    final Window window;
 
     public WindowsRecyclerViewNode(String item, Bitmap icon, Window window) {
         this.item = item;
@@ -33,6 +33,10 @@ public class WindowsRecyclerViewNode {
 
     public Bitmap getIcon() {
         return icon;
+    }
+
+    public void setIcon(Bitmap icon) {
+        this.icon = icon;
     }
 
     public Window getWindow() {

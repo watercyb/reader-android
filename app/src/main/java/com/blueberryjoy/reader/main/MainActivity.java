@@ -371,10 +371,8 @@ public class MainActivity extends AppCompatActivity {
     @SuppressWarnings("CharsetObjectCanBeUsed")
     private void setWebUrl(@Nullable String url) {
         if (url == null) {
-            Message.log("webUrl: null");
             webUrl.setText("");
         } else {
-            Message.log("webUrl: " + url.substring(0, Math.min(url.length(), 15)));
             try {
                 webUrl.setText(URLDecoder.decode(url, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -1252,7 +1250,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onReceivedIcon(@NonNull String url, @NonNull Bitmap icon) {
-                FileStorage.saveFavicon(icon, url);
+                new Thread(() -> {
+                    FileStorage.saveFavicon(icon, url);
+                    new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                        if (recyclerViewAdapter != null)
+                            recyclerViewAdapter.updateIcon(url);
+                    });
+                }).start();
             }
 
             @Override
@@ -1352,10 +1356,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTitleChanged(MyWebView webView, String title) {
-                if (isRecycleViewWindowsShown()) {
-                    if (recyclerViewAdapter != null)
+                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                    if (isRecycleViewWindowsShown() && recyclerViewAdapter != null)
                         recyclerViewAdapter.updateTitle(webView, title);
-                }
+                });
             }
         };
 
@@ -1383,7 +1387,6 @@ public class MainActivity extends AppCompatActivity {
         set.applyTo(main);
         ReaderController.canPlay(false);
 
-        //TODO
         WindowsRecyclerViewItems windowsRecyclerViewItems = WindowList.getWindowsRecyclerViewItems();
         RecyclerView recyclerView = windowsView.findViewById(R.id.recyclerViewWindows);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

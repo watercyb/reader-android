@@ -123,7 +123,6 @@ public class Window {
             String webViewUrl = webView.getUrl();
             if (webViewUrl == null) {
                 webView.loadUrl(url);
-                //TODO
                 setLoadingState(1);
                 Message.log("Cannot load page state, load url instead.");
             }
@@ -391,7 +390,6 @@ public class Window {
             @Override
             @JavascriptInterface
             public void onMessage(@NonNull String message) {
-                Message.log("Page message: " + message);
                 switch (message) {
                     case WebViewJSInterface.ACTION_UNMATCHING,
                          WebViewJSInterface.ACTION_MUTATION -> {
@@ -587,7 +585,7 @@ public class Window {
             @Override
             public void onReceivedIcon(@NonNull WebView view, @NonNull Bitmap icon) {
                 super.onReceivedIcon(view, icon);
-                if (!isCurrentWindow) return;
+                //TODO if (!isCurrentWindow) return;
                 String url = view.getUrl();
                 if (url != null) WindowList.onReceivedIcon(url, icon);
             }
@@ -895,7 +893,6 @@ public class Window {
     @NonNull
     public WindowsRecyclerViewNode getRecyclerViewNode() {
         String title = getTitle();
-        Message.log("loadingState: " + loadingState);
         if (title == null || title.isEmpty()) {
             if (getUrl().isEmpty()) {
                 title = App.Companion.getAppContext().getString(R.string.window_title);

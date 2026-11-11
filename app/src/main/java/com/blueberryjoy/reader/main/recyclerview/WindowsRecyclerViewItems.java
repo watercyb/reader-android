@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.main.webview.MyWebView;
+import com.blueberryjoy.reader.utils.Favicon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +54,17 @@ public class WindowsRecyclerViewItems {
             WindowsRecyclerViewNode item = items.get(i);
             if (item.getWindow().getWebView() == webView) {
                 item.setItem(title);
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int updateIcon(@NonNull String url) {
+        for (int i = 0; i < items.size(); i++) {
+            WindowsRecyclerViewNode item = items.get(i);
+            if (item.getWindow().getUrl().equals(url)) {
+                item.setIcon(Favicon.getIconFromUrl(url));
                 return i;
             }
         }

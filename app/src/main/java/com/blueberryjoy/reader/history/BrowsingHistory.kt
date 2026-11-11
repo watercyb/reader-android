@@ -119,7 +119,6 @@ object BrowsingHistory : ViewModel() {
         val items = runBlocking {
             lock.withLock {
                 val locale = AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.getDefault()
-                Message.log(locale.toString())
                 val pattern = if (locale.language == "zh") {
                     "yyyy年M月d日"
                 } else {

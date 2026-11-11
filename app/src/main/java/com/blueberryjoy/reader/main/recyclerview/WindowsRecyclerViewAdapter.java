@@ -119,4 +119,9 @@ public class WindowsRecyclerViewAdapter extends RecyclerView.Adapter<WindowsRecy
         int idx = windowsRecyclerViewItems.updateTitle(webView, title);
         if (idx >= 0 && idx < windowsRecyclerViewItems.size()) notifyItemChanged(idx);
     }
+
+    public void updateIcon(@NonNull String url) {
+        int idx = windowsRecyclerViewItems.updateIcon(url);
+        if (idx >= 0 && idx < windowsRecyclerViewItems.size()) notifyItemChanged(idx);
+    }
 }

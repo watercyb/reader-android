@@ -423,7 +423,6 @@ if (typeof window.pageReader === "undefined") {
     /* Will Be Called From Java */
     loadContent() {
       const t = this.addTagToPage();
-      this.sendMessage("Loading time: " + t + "ms");
       return JSON.stringify([this.textSegments, this.lineBreakers]);
     }
     /* Will Be Called From Java */
