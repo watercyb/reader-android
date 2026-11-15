@@ -1,5 +1,6 @@
 package com.blueberryjoy.reader.utils;
 
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -7,8 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.blueberryjoy.reader.App;
-import com.blueberryjoy.reader.R;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 public class Favicon {
@@ -17,9 +19,7 @@ public class Favicon {
 
     public static void initial() {
         icons.clear();
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 1;
-        icons.put("null", BitmapFactory.decodeResource(App.Companion.getAppContext().getResources(), R.mipmap.ic_favicon, options));
+        icons.put("null", getDefaultFavicon());
     }
 
     public static void setIcon(String k, Bitmap bitmap) {
@@ -32,6 +32,7 @@ public class Favicon {
             return icons.get(k);
         } else {
             Bitmap bitmap = FileStorage.getIconFromFile(k);
+            if (bitmap == null) return icons.get("null");
             setIcon(k, bitmap);
             return bitmap;
         }
@@ -41,5 +42,14 @@ public class Favicon {
     public static Bitmap getIconFromUrl(@NonNull String url) {
         String k = FileStorage.urlToFilename(url);
         return getIconFromK(k);
+    }
+
+    public static Bitmap getDefaultFavicon() {
+        AssetManager assetManager = App.Companion.getAppContext().getResources().getAssets();
+        try (InputStream inputStream = assetManager.open("fav.png")) {
+            return BitmapFactory.decodeStream(inputStream);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }
