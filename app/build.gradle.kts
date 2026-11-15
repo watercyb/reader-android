@@ -24,7 +24,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        versionCode = 26110501
+        versionCode = 26111301
         versionName = "1.6.2"
     }
 
