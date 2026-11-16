@@ -486,7 +486,7 @@ if (typeof window.pageReader === "undefined") {
         }
         test() {
             try {
-                this.sendErrorMessage(JSON.stringify(window.__findClickables()));
+                this.sendErrorMessage(window.__findClickables().items.length);
             } catch (err) {
                 this.sendErrorMessage("test: " + err.message);
             }
