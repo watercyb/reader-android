@@ -1045,7 +1045,8 @@ public class Window {
             setIsStartReadingAfterPageLoaded(true);
             webView.onResume();
             webView.resumeTimers();
-            JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+            //JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
+            JavaScriptHandler.searchAndPerformClick(webView);
             //Message.log("click");
             return true;
         } else {

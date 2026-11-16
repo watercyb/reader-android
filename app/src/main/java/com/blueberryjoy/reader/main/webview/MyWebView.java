@@ -19,6 +19,10 @@ import androidx.webkit.WebViewFeature;
 import com.blueberryjoy.reader.App;
 import com.blueberryjoy.reader.main.utils.JavaScriptHandler;
 import com.blueberryjoy.reader.main.window.WindowList;
+import com.blueberryjoy.reader.utils.FileStorage;
+import com.blueberryjoy.reader.utils.Message;
+
+import java.util.HashSet;
 
 public class MyWebView extends NestedScrollWebView {
     private int idx = -1;
@@ -124,6 +128,14 @@ public class MyWebView extends NestedScrollWebView {
         };
 
         scale = getResources().getDisplayMetrics().density;
+
+        HashSet<String> set = new HashSet<>();
+        set.add("*");
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
+            WebViewCompat.addDocumentStartJavaScript(this, FileStorage.getJSCode("test.js"), set);
+        } else {
+            Message.log("Cannot inject DOCUMENT_START_SCRIPT");
+        }
     }
 
     public void setScaleFactor(float scale) {

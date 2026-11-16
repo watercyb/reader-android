@@ -491,6 +491,26 @@ public class FileStorage {
     }
 
     @NonNull
+    public static String getJSCode(@NonNull String filename) {
+        try {
+            InputStream stream = App.Companion.getAppContext().getAssets().open(filename);
+            InputStreamReader inputStreamReader = new InputStreamReader(stream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String line;
+            StringBuilder SB = new StringBuilder();
+            while ((line = bufferedReader.readLine()) != null) {
+                SB.append(line).append(System.lineSeparator());
+            }
+            bufferedReader.close();
+            inputStreamReader.close();
+            stream.close();
+            return SB.toString();
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    @NonNull
     public static String createHtmlPage(String title, String content) {
         return "<!DOCTYPE html>" + "<html lang=\"zh-CN\">" + "<head>" + "<meta charset=\"UTF-8\">" + "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">" + "<meta name=\"format-detection\" content=\"telephone=no\">" + "<title>" + title + "</title>" +
 

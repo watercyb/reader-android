@@ -45,4 +45,8 @@ public class JavaScriptHandler {
     public static void performClick(@NonNull MyWebView webView, JSONArray idxList) {
         webView.loadUrl("javascript: if (window.pageReader) window.pageReader.performClick(" + idxList + ");");
     }
+
+    public static void searchAndPerformClick(@NonNull MyWebView webView) {
+        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.searchAndPerformClick();");
+    }
 }

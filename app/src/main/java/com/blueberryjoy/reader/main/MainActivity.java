@@ -638,7 +638,10 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
+        //Test
+        if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {
+            WindowList.getCurrentWindow().getWebView().loadUrl("javascript: if (window.pageReader) window.pageReader.test();");
+        })); }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
