@@ -132,7 +132,7 @@ public class MyWebView extends NestedScrollWebView {
         HashSet<String> set = new HashSet<>();
         set.add("*");
         if (WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) {
-            WebViewCompat.addDocumentStartJavaScript(this, FileStorage.getJSCode("test.js"), set);
+            WebViewCompat.addDocumentStartJavaScript(this, FileStorage.getJSCode("tracker.js"), set);
         } else {
             Message.log("Cannot inject DOCUMENT_START_SCRIPT");
         }
