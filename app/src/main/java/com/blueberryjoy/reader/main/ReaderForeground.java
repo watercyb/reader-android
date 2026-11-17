@@ -41,6 +41,7 @@ import com.blueberryjoy.reader.main.message.MessageNode;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
 import com.blueberryjoy.reader.main.utils.ReaderNotification;
+import com.blueberryjoy.reader.utils.Message;
 import com.blueberryjoy.reader.utils.TextToSpeechManager;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 import com.blueberryjoy.reader.main.window.WindowList;
@@ -75,7 +76,7 @@ public class ReaderForeground extends Service {
     private boolean isHoldFocus = false;
     @androidx.annotation.Nullable
     private CountDownTimer holdFocusTimer;
-    private UtteranceProgressListener utteranceProgressListener;
+    private TextToSpeechManager.OnUtteranceProgressListener onUtteranceProgressListener;
 
     @Override
     protected void attachBaseContext(@NonNull Context base) {
@@ -86,23 +87,12 @@ public class ReaderForeground extends Service {
     public void onCreate() {
         super.onCreate();
 
-        utteranceProgressListener = new UtteranceProgressListener() {
-            @Override
-            public void onDone(@NonNull String utteranceId) {
-                if (!isPause && utteranceId.equals(TextToSpeechManager.UTTERANCE_TEXT))
-                    new Handler(Looper.getMainLooper()).post(() -> read(0));
-            }
-
-            @Override
-            public void onError(String utteranceId) {
-            }
-
-            @Override
-            public void onStart(String utteranceId) {
-            }
+        onUtteranceProgressListener = utteranceId -> {
+            if (!isPause && utteranceId.equals(TextToSpeechManager.UTTERANCE_TEXT))
+                new Handler(Looper.getMainLooper()).post(() -> read(0));
         };
 
-        TextToSpeechManager.initial(utteranceProgressListener);
+        TextToSpeechManager.initial(onUtteranceProgressListener);
 
         readerNotification = new ReaderNotification(getBaseContext());
         stateBuilder = new PlaybackState.Builder().setActions(PlaybackState.ACTION_PLAY | PlaybackState.ACTION_PAUSE | PlaybackState.ACTION_PLAY_PAUSE | PlaybackState.ACTION_SKIP_TO_NEXT | PlaybackState.ACTION_SKIP_TO_PREVIOUS);
@@ -170,7 +160,9 @@ public class ReaderForeground extends Service {
                 }
                 break;
             case ACTION_PREV:
-                prev();
+                //TODO
+                WindowList.getCurrentWindow().playNextPageClick();
+                //prev();
                 break;
             case ACTION_NEXT:
                 next();
@@ -183,7 +175,7 @@ public class ReaderForeground extends Service {
             case ACTION_RESUME:
                 //After change language ReaderSettings.tts becomes to null, cause ReaderSetting is reloaded, but Reader is not.
                 if (TextToSpeechManager.isTTSNull())
-                    TextToSpeechManager.initial(utteranceProgressListener);
+                    TextToSpeechManager.initial(onUtteranceProgressListener);
 
                 restartMediaPlayerForMediaSession();
 
@@ -425,6 +417,8 @@ public class ReaderForeground extends Service {
     }
 
     private void pause() {
+        //TODO
+        Message.log("pause: " + isPause);
         if (!isPause) {
             isPause = true;
             TextToSpeechManager.stop();

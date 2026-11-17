@@ -1,5 +1,7 @@
 package com.blueberryjoy.reader.utils;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
@@ -22,12 +24,27 @@ public class TextToSpeechManager {
     private static final List<String> engineList = new ArrayList<>();
     private static final List<Voice> voiceList = new ArrayList<>();
     private static UtteranceProgressListener utteranceProgressListener;
+    private static OnUtteranceProgressListener onUtteranceProgressListener;
     public static final String UTTERANCE_SYSTEM = "utterance_system";
     public static final String UTTERANCE_TEXT = "utterance_text";
 
     //Initialized from ReaderForeground.
-    public static void initial(UtteranceProgressListener utteranceProgressListener) {
-        TextToSpeechManager.utteranceProgressListener = utteranceProgressListener;
+    public static void initial(OnUtteranceProgressListener onUtteranceProgressListener) {
+        TextToSpeechManager.onUtteranceProgressListener = onUtteranceProgressListener;
+        TextToSpeechManager.utteranceProgressListener = new UtteranceProgressListener() {
+            @Override
+            public void onDone(@NonNull String utteranceId) {
+                onUtteranceProgressListener.onDone(utteranceId);
+            }
+
+            @Override
+            public void onError(String utteranceId) {
+            }
+
+            @Override
+            public void onStart(String utteranceId) {
+            }
+        };
         initializeTTSEngine();
         initializeTTS();
     }
@@ -168,5 +185,9 @@ public class TextToSpeechManager {
 
     public interface OnTTSInitializedListener {
         void onTTSInitialized();
+    }
+
+    public interface OnUtteranceProgressListener {
+        void onDone(String utteranceId);
     }
 }
