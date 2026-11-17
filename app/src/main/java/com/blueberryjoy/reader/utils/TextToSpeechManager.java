@@ -27,6 +27,7 @@ public class TextToSpeechManager {
     private static OnUtteranceProgressListener onUtteranceProgressListener;
     public static final String UTTERANCE_SYSTEM = "utterance_system";
     public static final String UTTERANCE_TEXT = "utterance_text";
+    private static boolean isSystemTTS = false;
 
     //Initialized from ReaderForeground.
     public static void initial(OnUtteranceProgressListener onUtteranceProgressListener) {
@@ -35,14 +36,19 @@ public class TextToSpeechManager {
             @Override
             public void onDone(@NonNull String utteranceId) {
                 onUtteranceProgressListener.onDone(utteranceId);
+                if (utteranceId.equals(UTTERANCE_SYSTEM))
+                    isSystemTTS = false;
             }
 
             @Override
             public void onError(String utteranceId) {
+                if (utteranceId.equals(UTTERANCE_SYSTEM))
+                    isSystemTTS = false;
             }
 
             @Override
             public void onStart(String utteranceId) {
+                isSystemTTS = utteranceId.equals(UTTERANCE_SYSTEM);
             }
         };
         initializeTTSEngine();
@@ -123,8 +129,9 @@ public class TextToSpeechManager {
         tts.speak(str, TextToSpeech.QUEUE_FLUSH, null, UTTERANCE_SYSTEM);
     }
 
-    public static void stop() {
-        if (tts != null) tts.stop();
+    public static void stop(boolean force) {
+        Message.log("isSystemTTS: " + isSystemTTS);
+        if (tts != null && (!isSystemTTS || force)) tts.stop();
     }
 
     public static void setTTSListener() {
