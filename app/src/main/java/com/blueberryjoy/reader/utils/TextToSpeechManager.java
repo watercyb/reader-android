@@ -1,7 +1,5 @@
 package com.blueberryjoy.reader.utils;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.UtteranceProgressListener;
 import android.speech.tts.Voice;
@@ -24,14 +22,12 @@ public class TextToSpeechManager {
     private static final List<String> engineList = new ArrayList<>();
     private static final List<Voice> voiceList = new ArrayList<>();
     private static UtteranceProgressListener utteranceProgressListener;
-    private static OnUtteranceProgressListener onUtteranceProgressListener;
     public static final String UTTERANCE_SYSTEM = "utterance_system";
     public static final String UTTERANCE_TEXT = "utterance_text";
     private static boolean isSystemTTS = false;
 
     //Initialized from ReaderForeground.
     public static void initial(OnUtteranceProgressListener onUtteranceProgressListener) {
-        TextToSpeechManager.onUtteranceProgressListener = onUtteranceProgressListener;
         TextToSpeechManager.utteranceProgressListener = new UtteranceProgressListener() {
             @Override
             public void onDone(@NonNull String utteranceId) {
