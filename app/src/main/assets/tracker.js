@@ -2,6 +2,7 @@
     const tracked = new WeakSet();
     let delegated = false; /* click listener on document/window/body */
     const EVENTS = new Set(['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend']);
+    const keywords = ["next", "下一"];
 
     const orig = EventTarget.prototype.addEventListener;
     EventTarget.prototype.addEventListener = function (type, fn, opts) {
@@ -54,4 +55,26 @@
         }
         return { delegated, items: out };
     };
+
+    window.__clickNextPage = () => {
+        const list = window.__findClickables().items;
+        for (let item of list) {
+            const text = item.text.toLowerCase();
+            for (let keyword of keywords) {
+                if (text.includes(keyword)) {
+                    sendMessage("Next Button found: " + item.text);
+                    item.element.click()
+                    return;
+                }
+            }
+        }
+    }
+
+    function sendErrorMessage(err) {
+        Android.onError(err);
+    }
+
+    function sendMessage(message) {
+        Android.onMessage(message);
+    }
 })();

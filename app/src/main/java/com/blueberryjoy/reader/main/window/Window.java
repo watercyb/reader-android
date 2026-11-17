@@ -983,75 +983,23 @@ public class Window {
     private void playNextPageOnPageFinishedDelay() {
         if (playNextPageState == 1) {
             playNextPageDelayRunHandler.removeCallbacksAndMessages(null);
-            playNextPageDelayRunHandler.postDelayed(this::playNextPageOnPageFinished, 1000);
-        }
-    }
-
-    private void playNextPageOnPageFinished() {
-        if (playNextPageState == 1) {
-            playNextPageState = 0;
-            if (!isCurrentWindow) return;
-
-            //Message.log("loaded");
-            WindowList.onAlertStatusChanged(true);
-            webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
-                if (!html.equals("null")) {
-                    try {
-                        JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
-                        JSONArray jsonArrayArr = jsonArray.getJSONArray(0);
-                        JSONArray jsonArrayNLM = jsonArray.getJSONArray(1);
-                        String[] arr = new String[jsonArrayArr.length()];
-                        boolean[] nlm = new boolean[arr.length];
-                        for (int i = 0; i < arr.length; i++) {
-                            arr[i] = jsonArrayArr.getString(i);
-                            nlm[i] = jsonArrayNLM.getBoolean(i);
-                        }
-                        getReadingArr(arr, nlm);
-                    } catch (JSONException e) {
-                        setError(e.toString());
-                    }
-                    idx = getCachedIdx();
-                    if (idx >= getReadingArr().length) idx = 0;
-                    setLoadingState(0);
-                    isLoadedText = true;
-                    if (isCurrentWindow) {
-                        WindowList.onAlertStatusChanged(false);
-                        WindowList.onLoadedTextStateChanged(true);
-                    }
+            playNextPageDelayRunHandler.postDelayed(() -> {
+                if (playNextPageState == 1) {
+                    playNextPageState = 0;
+                    if (!isCurrentWindow) return;
                     playNextPageClick();
                 }
-            });
+            }, 1000);
         }
-    }
-
-    private int playNextPageFindIdx() {
-        String[] keywords = {"next", "下一"};
-        int nextPageIdx = -1;
-        for (int i = readingArr.length - 1; i >= 0; i--) {
-            for (String keyword : keywords) {
-                if (readingArr[i].toLowerCase().contains(keyword)) {
-                    nextPageIdx = i;
-                    break;
-                }
-            }
-            if (nextPageIdx != -1) break;
-        }
-        return nextPageIdx;
     }
 
     private boolean playNextPageClick() {
-        int nextPageIdx = playNextPageFindIdx();
-        if (nextPageIdx != -1) {
-            setIsStartReadingAfterPageLoaded(true);
-            webView.onResume();
-            webView.resumeTimers();
-            //JavaScriptHandler.performClick(webView, getPageIdx(nextPageIdx));
-            JavaScriptHandler.searchAndPerformClick(webView);
-            //Message.log("click");
-            return true;
-        } else {
-            return false;
-        }
+        setIsStartReadingAfterPageLoaded(true);
+        webView.onResume();
+        webView.resumeTimers();
+        JavaScriptHandler.searchAndPerformClick(webView);
+        //Message.log("click");
+        return true;
     }
 
     private void playNextPageReload() {

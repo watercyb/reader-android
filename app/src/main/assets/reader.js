@@ -465,44 +465,11 @@ if (typeof window.pageReader === "undefined") {
             Android.onMessage(message);
         }
         /* Will Be Called From Java */
-        performClick(segmentIndexes) {
-            const keywords = ["next", "下一"];
-            for (let idx of segmentIndexes) {
-                idx += this.elementIdOffset;
-                const element = document.getElementById(idx);
-                if (element != null) {
-                    const text = element.innerText.toLowerCase();
-                    for (let keyword of keywords) {
-                        if (text.includes(keyword)) {
-                            this.sendMessage("Next Button found: " + element.innerText);
-                            element.click();
-                            return;
-                        }
-                    }
-                } else {
-                    this.sendMessage("unmatching");
-                }
-            }
-        }
         test() {
             try {
                 this.sendErrorMessage(window.__findClickables().items.length);
             } catch (err) {
                 this.sendErrorMessage("test: " + err.message);
-            }
-        }
-        searchAndPerformClick() {
-            const keywords = ["next", "下一"];
-            const list=window.__findClickables().items;
-            for (let item of list) {
-                const text = item.text.toLowerCase();
-                for (let keyword of keywords) {
-                    if (text.includes(keyword)) {
-                        this.sendMessage("Next Button found: " + item.text);
-                        item.element.click();
-                        return;
-                    }
-                }
             }
         }
     })();

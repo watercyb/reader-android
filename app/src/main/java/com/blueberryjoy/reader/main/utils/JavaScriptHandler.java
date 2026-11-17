@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 
 import com.blueberryjoy.reader.main.webview.MyWebView;
 
-import org.json.JSONArray;
-
 public class JavaScriptHandler {
 
     public static void updateWindowHeight(@NonNull MyWebView webView) {
@@ -42,11 +40,7 @@ public class JavaScriptHandler {
         webView.loadUrl("javascript: window.scrollTo({top: " + height + ", behavior: \"smooth\"})");
     }
 
-    public static void performClick(@NonNull MyWebView webView, JSONArray idxList) {
-        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.performClick(" + idxList + ");");
-    }
-
     public static void searchAndPerformClick(@NonNull MyWebView webView) {
-        webView.loadUrl("javascript: if (window.pageReader) window.pageReader.searchAndPerformClick();");
+        webView.loadUrl("javascript: window.__clickNextPage();");
     }
 }
