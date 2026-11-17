@@ -203,6 +203,12 @@ public class VoiceSetting extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+    @Override
+    public void onDestroy() {
+        TextToSpeechManager.stop(true);
+        super.onDestroy();
+    }
+
     private void initializeVoiceList() {
         textView.setText(ReaderSettings.getVoice());
         voices.setLayoutManager(new LinearLayoutManager(this));

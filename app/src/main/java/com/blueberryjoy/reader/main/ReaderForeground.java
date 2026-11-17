@@ -411,7 +411,7 @@ public class ReaderForeground extends Service {
 
     private void stop() {
         isPause = true;
-        TextToSpeechManager.stop();
+        TextToSpeechManager.stop(false);
         WindowList.resetNextIdx();
         updateActionPause();
     }
@@ -421,7 +421,7 @@ public class ReaderForeground extends Service {
         Message.log("pause: " + isPause);
         if (!isPause) {
             isPause = true;
-            TextToSpeechManager.stop();
+            TextToSpeechManager.stop(false);
             WindowList.resetNextIdx();
             updateActionPause();
             ActivityManager.getMyMemoryState(process);
@@ -437,7 +437,7 @@ public class ReaderForeground extends Service {
         if (WindowList.getLoadingState() != 0) return;
         if (!isPause) {
             if (isNextOrPrevCoolingDown) return;
-            TextToSpeechManager.stop();
+            TextToSpeechManager.stop(false);
             isNextOrPrevCoolingDown = true;
             nextOrPrevCooldownTimer.start();
             read(0);
@@ -451,7 +451,7 @@ public class ReaderForeground extends Service {
         if (WindowList.getLoadingState() != 0) return;
         if (!isPause) {
             if (isNextOrPrevCoolingDown) return;
-            TextToSpeechManager.stop();
+            TextToSpeechManager.stop(false);
             isNextOrPrevCoolingDown = true;
             nextOrPrevCooldownTimer.start();
             WindowList.idxDecForPrv();
