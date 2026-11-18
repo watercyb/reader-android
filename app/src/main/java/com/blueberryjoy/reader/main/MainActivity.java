@@ -397,6 +397,18 @@ public class MainActivity extends AppCompatActivity {
     private void readingMode() {
         if (!WindowList.isLoadedText()) WindowList.getArrFromPage(false, false, false, -1, -1, -1);
         MyWebView webView = WindowList.getWebView();
+
+        JavaScriptHandler.getReadingModeHTML(webView, result -> JavaScriptHandler.setReadingModeHTML(webViewReading, result, _result -> {
+            setTextViewVisibility(false);
+            webViewReading.setVisibility(View.VISIBLE);
+            swipeRefresh.setVisibility(View.INVISIBLE);
+            addToPage(webViewReading);
+            refreshWithoutStop();
+            isReadingMode = true;
+            readingModeButton.setImageResource(R.mipmap.ic_readingmode_reading);
+            webViewReading.updateThemeColor();
+        }));
+        /*
         webView.evaluateJavascript("(function() {return pageReader.readingModeHTML; })();", html -> {
             //The returned HTML is JSONString with \", no need to change format when insert to new page.
             webViewReading.evaluateJavascript("(function() { document.documentElement.innerHTML=" + html + "; })();", _html -> {
@@ -410,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
                 webViewReading.updateThemeColor();
             });
         });
+        */
     }
 
     private void switchScrollButton(boolean toBottom) {
@@ -638,10 +651,7 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test
-        if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {
-            WindowList.getCurrentWindow().getWebView().loadUrl("javascript: if (window.pageReader) window.pageReader.test();");
-        })); }
+        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -763,14 +773,24 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray idxList = WindowList.getPageIdx();
                         if (idxList != null) {
                             if (isBlockNextIdxChange) {
+                                JavaScriptHandler.updateHighlightAndScroll(getCurrentWebView(), 0, idxList, getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor(), result -> {
+                                    if (result.equals("1")) hideAppBarLayout();
+                                });
+                                /*
                                 getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
+                                */
                                 isBlockNextIdxChange = false;
                             } else {
+                                JavaScriptHandler.updateHighlightAndScroll(getCurrentWebView(), direction, idxList, getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor(), result -> {
+                                    if (result.equals("1")) hideAppBarLayout();
+                                });
+                                /*
                                 getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
                                     if (html.equals("1")) hideAppBarLayout();
                                 });
+                                */
                             }
                             textView.scrollTo(0, 0);
                             if (WindowList.isValidReadingStatus())
@@ -1237,6 +1257,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public MyWebView createWebView(boolean isPrivate) {
                 return createWebview(isPrivate);
+            }
+
+            //TODO
+            @Override
+            public Context getMainContext() {
+                return MainActivity.this;
             }
         };
 

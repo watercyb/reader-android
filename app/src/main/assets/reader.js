@@ -34,6 +34,7 @@ if (typeof window.pageReader === "undefined") {
         scrollUpdateTimeout;
         /* new */
         textMutationObservers = new Map();
+        clickableElement = null;
 
         processNodeForReading(node) {
             try {
@@ -465,11 +466,33 @@ if (typeof window.pageReader === "undefined") {
             Android.onMessage(message);
         }
         /* Will Be Called From Java */
-        test() {
+        getElementAndClickableByPosition(x, y) {
             try {
-                this.sendErrorMessage(window.__findClickables().items.length);
+                y -= window.scrollY;
+                let element = document.elementFromPoint(x, y);
+                if (element.className === "pageReader") element = element.parentElement;
+
+                let res = "null,";
+                if (element && element.className === "pageReader" && element.id)
+                    res = (element.id - pageReader.elementIdOffset) + ',';
+                if (window.__isClickable(element)) {
+                    res += 1;
+                    this.clickableElement = element;
+                } else {
+                    res += 0;
+                }
+                return res;
             } catch (err) {
-                this.sendErrorMessage("test: " + err.message);
+                this.sendErrorMessage("getElementAndClickableByPosition: " + err.message);
+            }
+        }
+        /* Will Be Called From Java */
+        clickElement() {
+            try {
+                if (this.clickableElement)
+                    this.clickableElement.click();
+            } catch (err) {
+                this.sendErrorMessage("clickElement: " + err.message);
             }
         }
     })();

@@ -6,10 +6,13 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Parcel;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Base64;
 import android.view.GestureDetector;
+import android.view.InputDevice;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 import android.webkit.WebSettings;
 
 import androidx.annotation.NonNull;
@@ -30,6 +33,7 @@ public class MyWebView extends NestedScrollWebView {
     private int touched_x = 0;
     private int touched_y = 0;
     private float scale = 1;
+    private final int[] touchedPosition = new int[4];
 
     public OnDoubleTapListener onDoubleTapListener;
     private GestureDetector gestureDetector;
@@ -57,6 +61,21 @@ public class MyWebView extends NestedScrollWebView {
             case (MotionEvent.ACTION_DOWN):
                 touched_x = (int) ((event.getX() + getScrollX()) / getScaleFactor());
                 touched_y = (int) ((event.getY() + getScrollY()) / getScaleFactor());
+
+                JavaScriptHandler.getElementByPosition(this, touched_x, touched_y, result -> {
+                    if (result.equals("null")) return;
+                    int id;
+                    try {
+                        id = Integer.parseInt(result);
+                    } catch (Exception e) {
+                        id = -1;
+                    }
+                    if (id >= 0) {
+                        idx = id;
+                        timer.start();
+                    }
+                });
+                /*
                 evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementByPosition(x,y); })(" + touched_x + ", " + touched_y + ");", html -> {
                     if (html.equals("null")) return;
                     int id;
@@ -70,6 +89,13 @@ public class MyWebView extends NestedScrollWebView {
                         timer.start();
                     }
                 });
+                */
+
+                touchedPosition[0] = (int) event.getX();
+                touchedPosition[1] = (int) event.getY();
+                touchedPosition[2] = touched_x;
+                touchedPosition[3] = touched_y;
+
                 break;
             case (MotionEvent.ACTION_UP):
                 performClick();
@@ -178,5 +204,35 @@ public class MyWebView extends NestedScrollWebView {
         Bundle bundle = Bundle.CREATOR.createFromParcel(parcel);
         parcel.recycle();
         this.restoreState(bundle);
+    }
+
+    public int[] getTouchedPosition() {
+        return touchedPosition;
+    }
+
+    public void performDoubleTap(int idx, int x, int y) {
+        if (onDoubleTapListener != null)
+            onDoubleTapListener.onDoubleTap(idx, x, y);
+    }
+
+    public void longClickAt(int x, int y) {
+        long holdMs = ViewConfiguration.getLongPressTimeout() + 200L;
+        final long downTime = SystemClock.uptimeMillis();
+
+        MotionEvent down = MotionEvent.obtain(downTime, downTime, MotionEvent.ACTION_DOWN, x, y, 0);
+        down.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+        dispatchTouchEvent(down);
+        down.recycle();
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                long upTime = SystemClock.uptimeMillis();
+                MotionEvent up = MotionEvent.obtain(downTime, upTime, MotionEvent.ACTION_UP, x, y, 0);
+                up.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+                dispatchTouchEvent(up);
+                up.recycle();
+            }
+        }, holdMs);
     }
 }
