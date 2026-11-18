@@ -40,6 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.main.MainActivity;
+import com.blueberryjoy.reader.utils.AdjustMenuWidth;
 import com.blueberryjoy.reader.utils.ClickAnimation;
 import com.blueberryjoy.reader.utils.GlobalTipDialog;
 import com.blueberryjoy.reader.utils.FileStorage;
@@ -407,6 +408,7 @@ public class Bookmark extends AppCompatActivity {
             }
             popupWindow.dismiss();
         }, 2).show());
+        AdjustMenuWidth.adjust(menuView.findViewById(R.id.linearLayout));
         popupWindow.showAtLocation(anchor, Gravity.TOP | Gravity.START, (int) x, (int) y);
     }
 

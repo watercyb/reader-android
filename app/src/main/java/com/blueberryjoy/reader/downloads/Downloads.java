@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.blueberryjoy.reader.R;
 import com.blueberryjoy.reader.main.MainActivity;
+import com.blueberryjoy.reader.utils.AdjustMenuWidth;
 import com.blueberryjoy.reader.utils.FileStorage;
 import com.blueberryjoy.reader.utils.GlobalTipDialog;
 import com.blueberryjoy.reader.utils.Message;
@@ -206,28 +207,22 @@ public class Downloads extends AppCompatActivity {
     private void showUrlMenu(View anchor, int originalIndex, float x, float y) {
         LayoutInflater inflater = LayoutInflater.from(this);
         @SuppressLint("InflateParams") View menuView = inflater.inflate(R.layout.popup_url_menu, null);
-
         PopupWindow popupWindow = new PopupWindow(menuView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
         menuView.findViewById(R.id.textCopyUrl).setVisibility(View.GONE);
         menuView.findViewById(R.id.textCopyUrlBorder).setVisibility(View.GONE);
-
         menuView.findViewById(R.id.textOpen).setOnClickListener(view -> {
             openUrl(originalIndex, false);
             popupWindow.dismiss();
         });
-
         menuView.findViewById(R.id.textOpenNewWindow).setOnClickListener(view -> {
             openUrl(originalIndex, true);
             popupWindow.dismiss();
         });
-
         menuView.findViewById(R.id.textOpenChrome).setVisibility(View.GONE);
         menuView.findViewById(R.id.textOpenNewWindowBorder).setVisibility(View.GONE);
-
         menuView.findViewById(R.id.textEditBorder).setVisibility(View.GONE);
         menuView.findViewById(R.id.textEdit).setVisibility(View.GONE);
-
+        AdjustMenuWidth.adjust(menuView.findViewById(R.id.linearLayout));
         popupWindow.showAtLocation(anchor, Gravity.TOP | Gravity.START, (int) x, (int) y);
     }
 

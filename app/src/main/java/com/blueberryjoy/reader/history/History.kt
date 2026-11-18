@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -32,6 +33,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.blueberryjoy.reader.R
 import com.blueberryjoy.reader.main.MainActivity
+import com.blueberryjoy.reader.utils.AdjustMenuWidth
 import com.blueberryjoy.reader.utils.ClickAnimation
 import com.blueberryjoy.reader.utils.GlobalTipDialog
 import com.blueberryjoy.reader.utils.Message
@@ -250,39 +252,33 @@ class History : AppCompatActivity() {
     @SuppressLint("InflateParams")
     private fun showUrlMenu(anchor: View, url: String, x: Float, y: Float) {
         val menuView = layoutInflater.inflate(R.layout.popup_url_menu, null)
-
         val popupWindow = PopupWindow(
             menuView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
         )
-
         menuView.findViewById<TextView>(R.id.textCopyUrl).setOnClickListener {
             val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             clipboard.setPrimaryClip(ClipData.newPlainText("URL", url))
             popupWindow.dismiss()
         }
-
         menuView.findViewById<TextView>(R.id.textOpen).setOnClickListener {
             openUrl(url, false)
             popupWindow.dismiss()
         }
-
         menuView.findViewById<TextView>(R.id.textOpenNewWindow).setOnClickListener {
             openUrl(url, true)
             popupWindow.dismiss()
         }
-
         menuView.findViewById<TextView>(R.id.textOpenChrome).setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             startActivity(intent)
             popupWindow.dismiss()
         }
-
         menuView.findViewById<View>(R.id.textEditBorder).visibility = View.GONE
         menuView.findViewById<TextView>(R.id.textEdit).visibility = View.GONE
-
+        AdjustMenuWidth.adjust(menuView.findViewById(R.id.linearLayout))
         popupWindow.showAtLocation(
             anchor,
             Gravity.TOP or Gravity.START,
