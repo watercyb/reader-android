@@ -32,7 +32,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.speech.tts.UtteranceProgressListener;
 
 import androidx.annotation.NonNull;
 
@@ -41,7 +40,6 @@ import com.blueberryjoy.reader.main.message.MessageNode;
 import com.blueberryjoy.reader.main.message.MessageReader;
 import com.blueberryjoy.reader.main.message.MessageSender;
 import com.blueberryjoy.reader.main.utils.ReaderNotification;
-import com.blueberryjoy.reader.utils.Message;
 import com.blueberryjoy.reader.utils.TextToSpeechManager;
 import com.blueberryjoy.reader.settings.ReaderSettings;
 import com.blueberryjoy.reader.main.window.WindowList;
@@ -160,9 +158,7 @@ public class ReaderForeground extends Service {
                 }
                 break;
             case ACTION_PREV:
-                //TODO
-                WindowList.getCurrentWindow().playNextPageClick();
-                //prev();
+                prev();
                 break;
             case ACTION_NEXT:
                 next();
@@ -417,8 +413,6 @@ public class ReaderForeground extends Service {
     }
 
     private void pause() {
-        //TODO
-        Message.log("pause: " + isPause);
         if (!isPause) {
             isPause = true;
             TextToSpeechManager.stop(false);

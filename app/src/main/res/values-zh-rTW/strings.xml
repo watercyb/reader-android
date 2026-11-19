@@ -250,6 +250,9 @@
     <string name="tip_window_import_export">點選箭頭即可匯入或匯出分頁。</string>
     <string name="tip_window_new_page">點擊以開啟新分頁。</string>
     <string name="tip_window_new_private_page">點擊以開啟新的無痕分頁。</string>
+    <string name="popup_menu_read">朗讀</string>
+    <string name="popup_menu_select_text">選取文字</string>
+    <string name="popup_menu_load_and_read">載入並朗讀</string>
 
 
 </resources>

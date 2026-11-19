@@ -77,4 +77,9 @@
     function sendMessage(message) {
         Android.onMessage(message);
     }
+
+    window.__isClickable = (el) => {
+        return tracked.has(el) || el.matches(NATIVE) || (getComputedStyle(el).cursor === 'pointer' && el.parentElement &&
+            getComputedStyle(el.parentElement).cursor !== 'pointer')
+    }
 })();

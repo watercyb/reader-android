@@ -413,9 +413,9 @@ if (typeof window.pageReader === "undefined") {
                 y -= window.scrollY;
                 let element = document.elementFromPoint(x, y);
                 if (element && element.className === "pageReader" && element.id) {
-                    return element.id - pageReader.elementIdOffset;
+                    return { idx: element.id - pageReader.elementIdOffset };
                 } else {
-                    return "null";
+                    return { idx: -1 };
                 }
             } catch (err) {
                 this.sendErrorMessage("getElementByPosition: " + err.message);
@@ -470,16 +470,20 @@ if (typeof window.pageReader === "undefined") {
             try {
                 y -= window.scrollY;
                 let element = document.elementFromPoint(x, y);
+                let res = {};
+                if (element && element.className === "pageReader" && element.id) {
+                    res.idx = element.id - pageReader.elementIdOffset;
+                } else {
+                    res.idx = -1;
+                }
+
                 if (element.className === "pageReader") element = element.parentElement;
 
-                let res = "null,";
-                if (element && element.className === "pageReader" && element.id)
-                    res = (element.id - pageReader.elementIdOffset) + ',';
                 if (window.__isClickable(element)) {
-                    res += 1;
+                    res.clickable = true;
                     this.clickableElement = element;
                 } else {
-                    res += 0;
+                    res.clickable = false;
                 }
                 return res;
             } catch (err) {

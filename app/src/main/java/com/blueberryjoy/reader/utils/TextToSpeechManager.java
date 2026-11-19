@@ -126,7 +126,6 @@ public class TextToSpeechManager {
     }
 
     public static void stop(boolean force) {
-        Message.log("isSystemTTS: " + isSystemTTS);
         if (tts != null && (!isSystemTTS || force)) tts.stop();
     }
 

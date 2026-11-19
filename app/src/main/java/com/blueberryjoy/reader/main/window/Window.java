@@ -24,9 +24,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,6 +50,7 @@ import com.blueberryjoy.reader.utils.TextToSpeechManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -681,26 +680,25 @@ public class Window {
             int type = res.getType();
             String link = res.getExtra();
 
-            if ((type == WebView.HitTestResult.SRC_ANCHOR_TYPE || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) && link != null && !link.equals(lastLongPressedLink)) {
-                //lastLongPressedLink = link;
-                //if (isCurrentWindow) WindowList.onLongClick(lastLongPressedLink, isPrivate);
-                //v.postDelayed(() -> lastLongPressedLink = null, 500);
-            }
-
             //TODO
+            //if ((type == WebView.HitTestResult.SRC_ANCHOR_TYPE || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) && link != null && !link.equals(lastLongPressedLink)) {
+            //lastLongPressedLink = link;
+            //if (isCurrentWindow) WindowList.onLongClick(lastLongPressedLink, isPrivate);
+            //v.postDelayed(() -> lastLongPressedLink = null, 500);
+            //}
+
             int[] position = ((MyWebView) v).getTouchedPosition();
             JavaScriptHandler.getElementAndClickableByPosition(webView, position[2], position[3], result -> {
-                if (result.length() < 5) return;
-                result = result.substring(1, result.length() - 1);
-                int idx = -1;
-                String[] strs = result.split(",");
-                if (strs.length == 2) {
-                    try {
-                        idx = Integer.parseInt(strs[0]);
-                    } catch (Exception ignored) {
-                    }
+                int idx;
+                boolean isLink;
+                try {
+                    JSONObject jsonObject = new JSONObject(result);
+                    idx = jsonObject.getInt("idx");
+                    isLink = jsonObject.getBoolean("clickable");
+                } catch (JSONException ignored) {
+                    return;
                 }
-                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, strs[1]);
+                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, isLink);
             });
             /*
             ((WebView) v).evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementAndClickableByPosition(x,y); })(" + position[2] + ", " + position[3] + ");", html -> {
@@ -757,7 +755,21 @@ public class Window {
 
                         @Override
                         public void onFinish() {
-                            readPosition(finalIdx, isMoveToIdx, isSamePage, doubleClicked_x, doubleClicked_y);
+                            //readPosition(finalIdx, isMoveToIdx, isSamePage, doubleClicked_x, doubleClicked_y);
+                            JavaScriptHandler.getElementByPosition(webView, doubleClicked_x, doubleClicked_y, result -> {
+                                if (!isCurrentWindow) return;
+                                WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
+                                int nextIdx;
+                                try {
+                                    nextIdx = new JSONObject(result).getInt("idx");
+                                } catch (JSONException ignored) {
+                                    nextIdx = -1;
+                                }
+                                //TODO simplify if.
+                                if (nextIdx == -1) return;
+                                nextIdx = getReadingIdx(nextIdx);
+                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
+                            });
                             /*
                             webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
                                 if (!isCurrentWindow) return;
@@ -872,10 +884,12 @@ public class Window {
             if (result.equals("null")) return;
             int nextIdx;
             try {
-                nextIdx = Integer.parseInt(result);
-            } catch (Exception e) {
-                return;
+                nextIdx = new JSONObject(result).getInt("idx");
+            } catch (JSONException ignored) {
+                nextIdx = -1;
             }
+            //TODO simplify if.
+            if (nextIdx == -1) return;
             nextIdx = getReadingIdx(nextIdx);
             if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
         });
@@ -1156,15 +1170,29 @@ public class Window {
         return getUrl().startsWith("file");
     }
 
-    private void showLongClickMenu(MyWebView webView, Context context, int[] position, int idx, String link, String clickable) {
+    private void showLongClickMenu(MyWebView webView, Context context, int[] position, int idx, String link, boolean clickable) {
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View menuView = inflater.inflate(R.layout.popup_page_menu, null);
         PopupWindow popupWindow = new PopupWindow(menuView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        menuView.findViewById(R.id.textRead).setOnClickListener(view -> {
-            webView.performDoubleTap(idx, position[2], position[3]);
-            popupWindow.dismiss();
-        });
-        if (clickable.equals("1")) {
+        if (isLoadedText) {
+            if (idx >= 0) {
+                menuView.findViewById(R.id.textRead).setOnClickListener(view -> {
+                    webView.performDoubleTap(idx, position[2], position[3]);
+                    popupWindow.dismiss();
+                });
+            } else {
+                menuView.findViewById(R.id.textRead).setVisibility(View.GONE);
+                menuView.findViewById(R.id.textReadBorder).setVisibility(View.GONE);
+            }
+            menuView.findViewById(R.id.textLoadAndRead).setVisibility(View.GONE);
+        } else {
+            menuView.findViewById(R.id.textLoadAndRead).setOnClickListener(view -> {
+                webView.performDoubleTap(idx, position[2], position[3]);
+                popupWindow.dismiss();
+            });
+            menuView.findViewById(R.id.textRead).setVisibility(View.GONE);
+        }
+        if (clickable) {
             menuView.findViewById(R.id.textOpen).setOnClickListener(view -> {
                 JavaScriptHandler.clickElement(webView);
                 popupWindow.dismiss();
@@ -1212,12 +1240,6 @@ public class Window {
             if (WindowList.isInForeground()) {
                 playNextPageClick();
             } else {
-                //TODO
-                //webView.onResume();
-                //webView.resumeTimers();
-                //webView.requestLayout();
-                //webView.invalidate();
-                //new Handler(Looper.getMainLooper()).postDelayed(this::playNextPageClick, 2000);
                 playNextPageReload();
                 playNextPageState = 1;
             }

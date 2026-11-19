@@ -260,5 +260,8 @@
     <string name="tip_window_import_export">Click the arrows to import or export pages.</string>
     <string name="tip_window_new_page">Click to open a new page.</string>
     <string name="tip_window_new_private_page">Click to open a new private page.</string>
+    <string name="popup_menu_read">Read</string>
+    <string name="popup_menu_select_text">Select Text</string>
+    <string name="popup_menu_load_and_read">Load &amp; Read</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

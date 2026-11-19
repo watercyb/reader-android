@@ -25,6 +25,9 @@ import com.blueberryjoy.reader.main.window.WindowList;
 import com.blueberryjoy.reader.utils.FileStorage;
 import com.blueberryjoy.reader.utils.Message;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashSet;
 
 public class MyWebView extends NestedScrollWebView {
@@ -63,11 +66,10 @@ public class MyWebView extends NestedScrollWebView {
                 touched_y = (int) ((event.getY() + getScrollY()) / getScaleFactor());
 
                 JavaScriptHandler.getElementByPosition(this, touched_x, touched_y, result -> {
-                    if (result.equals("null")) return;
                     int id;
                     try {
-                        id = Integer.parseInt(result);
-                    } catch (Exception e) {
+                        id = new JSONObject(result).getInt("idx");
+                    } catch (JSONException ignored) {
                         id = -1;
                     }
                     if (id >= 0) {
@@ -173,8 +175,7 @@ public class MyWebView extends NestedScrollWebView {
     }
 
     public void updateThemeColor() {
-        int currentNightMode = App.Companion.getAppContext().getResources().getConfiguration().uiMode &
-                Configuration.UI_MODE_NIGHT_MASK;
+        int currentNightMode = App.Companion.getAppContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         switch (currentNightMode) {
             case Configuration.UI_MODE_NIGHT_NO:
                 JavaScriptHandler.updateThemeColor(this, false);
@@ -211,8 +212,7 @@ public class MyWebView extends NestedScrollWebView {
     }
 
     public void performDoubleTap(int idx, int x, int y) {
-        if (onDoubleTapListener != null)
-            onDoubleTapListener.onDoubleTap(idx, x, y);
+        if (onDoubleTapListener != null) onDoubleTapListener.onDoubleTap(idx, x, y);
     }
 
     public void longClickAt(int x, int y) {

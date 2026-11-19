@@ -1259,7 +1259,6 @@ public class MainActivity extends AppCompatActivity {
                 return createWebview(isPrivate);
             }
 
-            //TODO
             @Override
             public Context getMainContext() {
                 return MainActivity.this;
@@ -1342,10 +1341,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onLongClick(@NonNull String url, boolean isPrivate) {
-                new AlertDialog.Builder(MainActivity.this).setTitle(getString(R.string.message_title_open_new_tab)).setMessage(url).setPositiveButton(getString(R.string.message_button_open), (dialog, id) -> {
-                    WindowList.createAndInsert(url, 0, false, isPrivate);
-                    Message.toastMSG(getString(R.string.message_text_link_opened));
-                }).setCancelable(true).show();
+                WindowList.createAndInsert(url, 0, false, isPrivate);
+                Message.toastMSG(getString(R.string.message_text_link_opened));
             }
 
             @Override

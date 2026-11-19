@@ -248,6 +248,9 @@
     <string name="tip_window_import_export">点击箭头可导入或导出标签页。</string>
     <string name="tip_window_new_page">点击以打开新标签页。</string>
     <string name="tip_window_new_private_page">点击以打开新的无痕标签页。</string>
+    <string name="popup_menu_read">朗读</string>
+    <string name="popup_menu_select_text">选择文字</string>
+    <string name="popup_menu_load_and_read">加载并朗读</string>
 
 
 </resources>
