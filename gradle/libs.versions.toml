@@ -17,17 +17,17 @@ extensionMediasession = "2.19.1"
 volley = "1.2.1"
 nestedwebview = "0.22"
 kotlin = "2.3.21"
-lifecycleRuntimeKtx = "2.11.0"
+lifecycleRuntimeKtx = "2.11.1"
 nestedscrollwebview = "0.2.0"
 googleServices = "4.6.0"
 playServicesAds = "25.5.0"
 composeCompiler = "1.0.0-alpha03"
-material3 = "1.5.0-rc01"
+material3 = "1.5.0"
 localbroadcastmanager = "1.1.0"
 roomRuntime = "2.8.5"
 roomCompiler = "2.8.5"
 activityCompose = "1.13.0"
-composeBom = "2026.09.00"
+composeBom = "2026.11.01"
 activityKtx = "1.13.0"
 kotlin-metadata = "2.3.21"
 webkit = "1.18.0"
@@ -58,14 +58,14 @@ ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.12.1" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version = "1.13.0" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 nestedscrollwebview = { group = "com.telefonica", name = "nestedscrollwebview", version.ref = "nestedscrollwebview" }
 google-services = { group = "com.google.gms", name = "google-services", version.ref = "googleServices" }
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 compose-compiler = { group = "androidx.compose", name = "compose-compiler", version.ref = "composeCompiler" }
-ui-android = { group = "androidx.compose.ui", name = "ui-android", version = "1.12.1" }
+ui-android = { group = "androidx.compose.ui", name = "ui-android", version = "1.13.0" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "localbroadcastmanager" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntime" }

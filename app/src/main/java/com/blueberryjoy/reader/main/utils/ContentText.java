@@ -9,16 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ContentText {
-
-    // Repeated sequences without separators, e.g. 你好你好你好...
-    private static final Pattern SEQUENCE_REPEAT = Pattern.compile("(.{1,}?)(?:\\1){4,}", Pattern.DOTALL);
-    //private static final Pattern SEQUENCE_REPEAT = Pattern.compile("(.+)\\1{4,}", Pattern.DOTALL);
-
-    // Repeated sequences separated by whitespace or common commas,
-    // e.g. let's go, let's go, let's go...
-    private static final Pattern SEPARATED_SEQUENCE_REPEAT = Pattern.compile("(.{2,}?)(?:[,，、\\s]+\\1){4,}", Pattern.DOTALL);
-
-
     @Nullable
     public static String compressRepeatsRegex(@Nullable String s) {
         int threshold = ReaderSettings.getReduceRepeatText();
