@@ -80,8 +80,6 @@ public class Window {
     private boolean isStartReadingAfterPageLoaded = false;
     private boolean isCurrentWindow = false;
     private final Handler delayRunHandler = new Handler(Looper.getMainLooper());
-    @Nullable
-    private String lastLongPressedLink = null;
     private boolean isDesktopMode = false;
     private final boolean isPrivate;
     private int removedWindowIdx = -1;
@@ -435,17 +433,6 @@ public class Window {
                             Message.log("afterSamePageLoaded different url: same content");
                     }
                 });
-                /*
-                webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
-                    if (!html.equals("true")) {
-                        if (isCurrentWindow)
-                            Message.log("afterSamePageLoaded different url: different content");
-                    } else {
-                        if (isCurrentWindow)
-                            Message.log("afterSamePageLoaded different url: same content");
-                    }
-                });
-                */
                 if (isReading && isCurrentWindow) WindowList.readerPause();
                 isLoadedText = false;
                 if (isCurrentWindow) WindowList.onLoadedTextStateChanged(false);
@@ -497,11 +484,6 @@ public class Window {
                 JavaScriptHandler.checkFrameTag(webView, result -> {
                     if (isCurrentWindow) WindowList.onSwipeRefreshRequired(!result.equals("true"));
                 });
-                /*
-                webView.evaluateJavascript("(function() { return document.body.innerHTML.includes('\\u003Cframe'); })();", (html) -> {
-                    if (isCurrentWindow) WindowList.onSwipeRefreshRequired(!html.equals("true"));
-                });
-                */
                 //Close "loading..." tag everytime when page is changed.
                 WindowList.onAlertStatusChanged(false);
                 //Debug playNextPage
@@ -514,33 +496,8 @@ public class Window {
                         WindowList.onResetTextBoxRequired();
                     }
                     //Additional check on the page contents, if matched -> same page.
-                    JavaScriptHandler.isExtractedContentStillPresent(webView, new JavaScriptHandler.JsResultCallback() {
-                        @Override
-                        public void onResult(String result) {
-                            if (windowIndexCache.checkTitle(webView.getTitle()) && result.equals("true")) {
-                                //Same page.
-                                //if (isCurrentWindow) Message.log("Same page: " + url + " newTitle: " + webView.getTitle());
-                                runTask(afterSamePageLoaded, true);
-                            } else {
-                                //Different page.
-                                //if (isCurrentWindow) Message.log("Different: " + url + " newTitle: " + webView.getTitle());
-                                if (isReading && isCurrentWindow) {
-                                    WindowList.readerPause();
-                                }
-                                isLoadedText = false;
-                                if (isCurrentWindow) WindowList.onLoadedTextStateChanged(false);
-                                if (ReaderSettings.getIsReloadPageAfterJS()) {
-                                    runTask(() -> webViewLoadUrl(null), true);
-                                } else {
-                                    clearPageIdx();
-                                    runTask(afterNewPageLoaded, true);
-                                }
-                            }
-                        }
-                    });
-                    /*
-                    webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", html -> {
-                        if (windowIndexCache.checkTitle(webView.getTitle()) && html.equals("true")) {
+                    JavaScriptHandler.isExtractedContentStillPresent(webView, result -> {
+                        if (windowIndexCache.checkTitle(webView.getTitle()) && result.equals("true")) {
                             //Same page.
                             //if (isCurrentWindow) Message.log("Same page: " + url + " newTitle: " + webView.getTitle());
                             runTask(afterSamePageLoaded, true);
@@ -560,7 +517,6 @@ public class Window {
                             }
                         }
                     });
-                    */
                 } else if (getLoadingState() == 2 || getLoadingState() == 1) {
                     //if (isCurrentWindow) Message.log("doUpdateVisitedHistory: forward/backward or normal: " + url + " newTitle: " + webView.getTitle());
                     setLoadingState(-1);
@@ -650,6 +606,11 @@ public class Window {
         });
 
         webView.onDoubleTapListener = (idx, x, y) -> {
+            //Idx, x, and y are all -1, when there is a single click on empty webview (background).
+            if (idx == -1 && x == -1 && y == -1) {
+                WindowList.onAppBarLayoutRequired();
+                return;
+            }
             if (getLoadingState() != 0 || !isCurrentWindow) return;
             if (isLoadedText && idx >= 0) {
                 idx = getReadingIdx(idx);
@@ -672,20 +633,14 @@ public class Window {
         webView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> JavaScriptHandler.updateWindowHeight(webView));
 
         webView.setOnLongClickListener(v -> {
-            if (skipNextLongClick) {
+            Message.log("hasNoUrl: " + webView.hasNoUrl());
+            if (webView.hasNoUrl()) return true;
+            if (skipNextLongClick || webView.hasNoUrl()) {
                 skipNextLongClick = false;
                 return false;
             }
             WebView.HitTestResult res = ((WebView) v).getHitTestResult();
-            int type = res.getType();
             String link = res.getExtra();
-
-            //TODO
-            //if ((type == WebView.HitTestResult.SRC_ANCHOR_TYPE || type == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) && link != null && !link.equals(lastLongPressedLink)) {
-            //lastLongPressedLink = link;
-            //if (isCurrentWindow) WindowList.onLongClick(lastLongPressedLink, isPrivate);
-            //v.postDelayed(() -> lastLongPressedLink = null, 500);
-            //}
 
             int[] position = ((MyWebView) v).getTouchedPosition();
             JavaScriptHandler.getElementAndClickableByPosition(webView, position[2], position[3], result -> {
@@ -700,21 +655,6 @@ public class Window {
                 }
                 showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, isLink);
             });
-            /*
-            ((WebView) v).evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementAndClickableByPosition(x,y); })(" + position[2] + ", " + position[3] + ");", html -> {
-                if (html.length() < 5) return;
-                html = html.substring(1, html.length() - 1);
-                int idx = -1;
-                String[] strs = html.split(",");
-                if (strs.length == 2) {
-                    try {
-                        idx = Integer.parseInt(strs[0]);
-                    } catch (Exception ignored) {
-                    }
-                }
-                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, strs[1]);
-            });
-            */
             return true;
         });
     }
@@ -765,26 +705,11 @@ public class Window {
                                 } catch (JSONException ignored) {
                                     nextIdx = -1;
                                 }
-                                //TODO simplify if.
-                                if (nextIdx == -1) return;
-                                nextIdx = getReadingIdx(nextIdx);
-                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
-                            });
-                            /*
-                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
-                                if (!isCurrentWindow) return;
-                                WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
-                                if (idx.equals("null")) return;
-                                int nextIdx;
-                                try {
-                                    nextIdx = Integer.parseInt(idx);
-                                } catch (Exception e) {
-                                    return;
+                                if (nextIdx >= 0) {
+                                    nextIdx = getReadingIdx(nextIdx);
+                                    WindowList.updateIdx(nextIdx);
                                 }
-                                nextIdx = getReadingIdx(nextIdx);
-                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
                             });
-                            */
                         }
                     }.start();
                 } else {
@@ -807,107 +732,6 @@ public class Window {
                 webViewLoadUrl(null);
             }
         });
-        /*
-        webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", html -> {
-            if (!html.equals("null")) {
-                try {
-                    JSONArray jsonArray = new JSONArray(getStrFromHTML(html));
-                    JSONArray jsonArrayArr = jsonArray.getJSONArray(0);
-                    JSONArray jsonArrayNLM = jsonArray.getJSONArray(1);
-                    String[] arr = new String[jsonArrayArr.length()];
-                    boolean[] nlm = new boolean[arr.length];
-                    for (int i = 0; i < arr.length; i++) {
-                        arr[i] = jsonArrayArr.getString(i);
-                        nlm[i] = jsonArrayNLM.getBoolean(i);
-                    }
-                    getReadingArr(arr, nlm);
-                } catch (JSONException e) {
-                    setError(e.toString());
-                }
-                int idx = getCachedIdx();
-                if (idx >= getReadingArr().length) idx = 0;
-                //Need delay on some website, which has pop-up layer on double-clicking.
-                if (doubleClicked_x >= 0) {
-                    int finalIdx = idx;
-                    new CountDownTimer(300, 300) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            readPosition(finalIdx, isMoveToIdx, isSamePage, doubleClicked_x, doubleClicked_y);
-
-                            webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
-                                if (!isCurrentWindow) return;
-                                WindowList.readerInitial(finalIdx, isMoveToIdx, isSamePage);
-                                if (idx.equals("null")) return;
-                                int nextIdx;
-                                try {
-                                    nextIdx = Integer.parseInt(idx);
-                                } catch (Exception e) {
-                                    return;
-                                }
-                                nextIdx = getReadingIdx(nextIdx);
-                                if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
-                            });
-
-                        }
-                    }.start();
-                } else {
-                    if (!isCurrentWindow) return;
-                    WindowList.readerInitial(idx, isMoveToIdx, isSamePage);
-                    if (isPlayAfterLoad && !isReading) WindowList.readerPause();
-                    if (isDownloadPageAfterLoad == 0) {
-                        FileStorage.DownloadPage(App.Companion.getAppContext(), Objects.requireNonNull(webView.getUrl()), webView.getTitle(), readingArr, idx, false);
-                    } else if (isDownloadPageAfterLoad == 1) {
-                        FileStorage.DownloadPage(App.Companion.getAppContext(), "", "download", readingArr, idx, true);
-                    }
-                }
-                setLoadingState(0);
-                isLoadedText = true;
-                if (isCurrentWindow) {
-                    WindowList.onAlertStatusChanged(false);
-                    WindowList.onLoadedTextStateChanged(true);
-                }
-            } else {
-                webViewLoadUrl(null);
-            }
-        });
-        */
-    }
-
-    private void readPosition(int oriIdx, boolean isMoveToIdx, boolean isSamePage, int doubleClicked_x, int doubleClicked_y) {
-        JavaScriptHandler.getElementByPosition(webView, doubleClicked_x, doubleClicked_y, result -> {
-            if (!isCurrentWindow) return;
-            WindowList.readerInitial(oriIdx, isMoveToIdx, isSamePage);
-            if (result.equals("null")) return;
-            int nextIdx;
-            try {
-                nextIdx = new JSONObject(result).getInt("idx");
-            } catch (JSONException ignored) {
-                nextIdx = -1;
-            }
-            //TODO simplify if.
-            if (nextIdx == -1) return;
-            nextIdx = getReadingIdx(nextIdx);
-            if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
-        });
-        /*
-        webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + doubleClicked_x + ", " + doubleClicked_y + ");", idx -> {
-            if (!isCurrentWindow) return;
-            WindowList.readerInitial(oriIdx, isMoveToIdx, isSamePage);
-            if (idx.equals("null")) return;
-            int nextIdx;
-            try {
-                nextIdx = Integer.parseInt(idx);
-            } catch (Exception e) {
-                return;
-            }
-            nextIdx = getReadingIdx(nextIdx);
-            if (nextIdx >= 0) WindowList.updateIdx(nextIdx);
-        });
-        */
     }
 
     private void clearPageIdx() {
@@ -1060,7 +884,6 @@ public class Window {
     }
 
     public void setIsCurrentWindow(boolean isCurrentWindow, int idx) {
-        if (this.isCurrentWindow == isCurrentWindow) return;
         this.isCurrentWindow = isCurrentWindow;
         if (isCurrentWindow) {
             webView.setVisibility(View.VISIBLE);
@@ -1170,7 +993,7 @@ public class Window {
         return getUrl().startsWith("file");
     }
 
-    private void showLongClickMenu(MyWebView webView, Context context, int[] position, int idx, String link, boolean clickable) {
+    private void showLongClickMenu(@NonNull MyWebView webView, @NonNull Context context, int[] position, int idx, @Nullable String link, boolean clickable) {
         LayoutInflater inflater = LayoutInflater.from(context);
         @SuppressLint("InflateParams") View menuView = inflater.inflate(R.layout.popup_page_menu, null);
         PopupWindow popupWindow = new PopupWindow(menuView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);

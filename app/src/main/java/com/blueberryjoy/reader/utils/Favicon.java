@@ -44,6 +44,7 @@ public class Favicon {
         return getIconFromK(k);
     }
 
+    @Nullable
     public static Bitmap getDefaultFavicon() {
         AssetManager assetManager = App.Companion.getAppContext().getResources().getAssets();
         try (InputStream inputStream = assetManager.open("fav.png")) {

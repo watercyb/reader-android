@@ -5,8 +5,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 public class AdjustMenuWidth {
-    public static void adjust(LinearLayout menu) {
+    public static void adjust(@NonNull LinearLayout menu) {
         int maxWidth = 0;
 
         for (int i = 0; i < menu.getChildCount(); i++) {

@@ -54,35 +54,35 @@ public class JavaScriptHandler {
         webView.loadUrl("javascript: if (window.pageReader) window.pageReader.clickElement();");
     }
 
-    public static void isExtractedContentStillPresent(@NonNull MyWebView webView, JsResultCallback callback) {
+    public static void isExtractedContentStillPresent(@NonNull MyWebView webView, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.isExtractedContentStillPresent(); } else { return false;} })();", callback::onResult);
     }
 
-    public static void checkFrameTag(@NonNull MyWebView webView, JsResultCallback callback) {
+    public static void checkFrameTag(@NonNull MyWebView webView, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function() { return document.body.innerHTML.includes('\\u003Cframe'); })();", callback::onResult);
     }
 
-    public static void getElementAndClickableByPosition(@NonNull MyWebView webView, int x, int y, JsResultCallback callback) {
+    public static void getElementAndClickableByPosition(@NonNull MyWebView webView, int x, int y, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function(x,y) { if (typeof pageReader !== 'undefined') return pageReader.getElementAndClickableByPosition(x,y); })(" + x + ", " + y + ");", callback::onResult);
     }
 
-    public static void loadContent(@NonNull MyWebView webView, JsResultCallback callback) {
+    public static void loadContent(@NonNull MyWebView webView, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.loadContent(); } })();", callback::onResult);
     }
 
-    public static void getElementByPosition(@NonNull MyWebView webView, int x, int y, JsResultCallback callback) {
+    public static void getElementByPosition(@NonNull MyWebView webView, int x, int y, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function(x,y) { if (window.pageReader) return window.pageReader.getElementByPosition(x,y); })(" + x + ", " + y + ");", callback::onResult);
     }
 
-    public static void getReadingModeHTML(@NonNull MyWebView webView, JsResultCallback callback) {
+    public static void getReadingModeHTML(@NonNull MyWebView webView, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function() {return pageReader.readingModeHTML; })();", callback::onResult);
     }
 
-    public static void setReadingModeHTML(@NonNull MyWebView webView, String html, JsResultCallback callback) {
+    public static void setReadingModeHTML(@NonNull MyWebView webView, String html, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("(function() { document.documentElement.innerHTML=" + html + "; })();", callback::onResult);
     }
 
-    public static void updateHighlightAndScroll(@NonNull MyWebView webView, int direction, JSONArray idxList, float y, JsResultCallback callback) {
+    public static void updateHighlightAndScroll(@NonNull MyWebView webView, int direction, JSONArray idxList, float y, @NonNull JsResultCallback callback) {
         webView.evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + y + ");", callback::onResult);
     }
 

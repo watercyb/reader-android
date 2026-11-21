@@ -89,8 +89,6 @@
     <string name="window_title">新分頁</string>
     <string name="window_deleted_item">已刪除: %1$s</string>
     <string name="message_text_window_restored">分頁已恢復。</string>
-    <string name="message_title_open_new_tab">在新分頁開啟？</string>
-    <string name="message_button_open">開啟</string>
     <string name="message_text_link_opened">連結已在新分頁開啟</string>
     <string name="tabs">分頁</string>
     <string name="no_show_again">不再顯示</string>
@@ -253,6 +251,12 @@
     <string name="popup_menu_read">朗讀</string>
     <string name="popup_menu_select_text">選取文字</string>
     <string name="popup_menu_load_and_read">載入並朗讀</string>
+    <string name="empty_page_title_private">無痕瀏覽</string>
+    <string name="empty_page_title">歡迎使用網頁閲讀器</string>
+    <string name="empty_page_text_private_1">私密瀏覽網頁，不儲存瀏覽</string>
+    <string name="empty_page_text_private_2">記錄。</string>
+    <string name="empty_page_text">探索網路，享受瀏覽樂趣。</string>
+    <string name="empty_page_hint">輸入網址或搜尋內容以開始瀏覽。</string>
 
 
 </resources>

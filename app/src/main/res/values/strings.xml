@@ -99,8 +99,6 @@
     <string name="window_title">new page</string>
     <string name="window_deleted_item">Deleted: %1$s</string>
     <string name="message_text_window_restored">Tab restored.</string>
-    <string name="message_title_open_new_tab">Open in a new tab?</string>
-    <string name="message_button_open">Open</string>
     <string name="message_text_link_opened">Link opened in new tab</string>
     <string name="tabs">Tabs</string>
     <string name="no_show_again">Don\'t Show Again</string>
@@ -263,5 +261,11 @@
     <string name="popup_menu_read">Read</string>
     <string name="popup_menu_select_text">Select Text</string>
     <string name="popup_menu_load_and_read">Load &amp; Read</string>
+    <string name="empty_page_title_private">Private Browsing</string>
+    <string name="empty_page_title">Welcome to Web Reader</string>
+    <string name="empty_page_text_private_1">Browse privately without saving your</string>
+    <string name="empty_page_text_private_2">browsing history.</string>
+    <string name="empty_page_text">Discover and enjoy the web.</string>
+    <string name="empty_page_hint">Enter a URL or search to get started.</string>
     <!-- Strings used for fragments for navigation -->
 </resources>

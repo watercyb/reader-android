@@ -11,6 +11,5 @@ public interface MainActivityProvider {
 
     MyWebView createWebView(boolean isPrivate);
 
-    //TODO
     Context getMainContext();
 }

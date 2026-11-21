@@ -89,8 +89,6 @@
     <string name="window_title">新标签页</string>
     <string name="window_deleted_item">已删除: %1$s</string>
     <string name="message_text_window_restored">标签页已恢复。</string>
-    <string name="message_title_open_new_tab">在新标签页打开？</string>
-    <string name="message_button_open">打开</string>
     <string name="message_text_link_opened">链接已在新标签页打开</string>
     <string name="tabs">标签页</string>
     <string name="no_show_again">不再显示</string>
@@ -251,6 +249,12 @@
     <string name="popup_menu_read">朗读</string>
     <string name="popup_menu_select_text">选择文字</string>
     <string name="popup_menu_load_and_read">加载并朗读</string>
+    <string name="empty_page_title_private">无痕浏览</string>
+    <string name="empty_page_title">欢迎使用网页阅读器</string>
+    <string name="empty_page_text_private_1">私密浏览网页，不保存浏览</string>
+    <string name="empty_page_text_private_2">历史记录。</string>
+    <string name="empty_page_text">探索网络，享受浏览乐趣。</string>
+    <string name="empty_page_hint">输入网址或搜索内容以开始浏览。</string>
 
 
 </resources>

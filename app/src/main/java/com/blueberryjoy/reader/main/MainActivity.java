@@ -408,21 +408,6 @@ public class MainActivity extends AppCompatActivity {
             readingModeButton.setImageResource(R.mipmap.ic_readingmode_reading);
             webViewReading.updateThemeColor();
         }));
-        /*
-        webView.evaluateJavascript("(function() {return pageReader.readingModeHTML; })();", html -> {
-            //The returned HTML is JSONString with \", no need to change format when insert to new page.
-            webViewReading.evaluateJavascript("(function() { document.documentElement.innerHTML=" + html + "; })();", _html -> {
-                setTextViewVisibility(false);
-                webViewReading.setVisibility(View.VISIBLE);
-                swipeRefresh.setVisibility(View.INVISIBLE);
-                addToPage(webViewReading);
-                refreshWithoutStop();
-                isReadingMode = true;
-                readingModeButton.setImageResource(R.mipmap.ic_readingmode_reading);
-                webViewReading.updateThemeColor();
-            });
-        });
-        */
     }
 
     private void switchScrollButton(boolean toBottom) {
@@ -776,21 +761,11 @@ public class MainActivity extends AppCompatActivity {
                                 JavaScriptHandler.updateHighlightAndScroll(getCurrentWebView(), 0, idxList, getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor(), result -> {
                                     if (result.equals("1")) hideAppBarLayout();
                                 });
-                                /*
-                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + 0 + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
-                                    if (html.equals("1")) hideAppBarLayout();
-                                });
-                                */
                                 isBlockNextIdxChange = false;
                             } else {
                                 JavaScriptHandler.updateHighlightAndScroll(getCurrentWebView(), direction, idxList, getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor(), result -> {
                                     if (result.equals("1")) hideAppBarLayout();
                                 });
-                                /*
-                                getCurrentWebView().evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + getCurrentWebView().getScrollY() / getCurrentWebView().getScaleFactor() + ");", html -> {
-                                    if (html.equals("1")) hideAppBarLayout();
-                                });
-                                */
                             }
                             textView.scrollTo(0, 0);
                             if (WindowList.isValidReadingStatus())
@@ -1259,6 +1234,7 @@ public class MainActivity extends AppCompatActivity {
                 return createWebview(isPrivate);
             }
 
+            @NonNull
             @Override
             public Context getMainContext() {
                 return MainActivity.this;
@@ -1357,9 +1333,10 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCurrentWindowChanged(int idx, boolean isPrivate) {
-                if (recyclerViewAdapter == null) return;
-                int size = recyclerViewAdapter.getItemCount();
-                if (idx >= 0 && idx < size) recyclerViewAdapter.notifyItemChanged(idx);
+                if (recyclerViewAdapter != null) {
+                    int size = recyclerViewAdapter.getItemCount();
+                    if (idx >= 0 && idx < size) recyclerViewAdapter.notifyItemChanged(idx);
+                }
                 if (isPrivate) {
                     imageViewPrivate.setVisibility(View.VISIBLE);
                 } else {
