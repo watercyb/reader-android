@@ -47,6 +47,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -390,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(webUrl.getWindowToken(), 0);
         appBarLayout.requestFocus();
         recyclerViewHistory.setVisibility(View.GONE);
+        enableAppBarScroll(true);
         dispatchTouchArea.setWebUrlVisible(false);
         showUrlButton();
     }
@@ -636,7 +638,14 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
+        //Test
+        if (BuildConfig.DEBUG) {
+            listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {
+                RelativeLayout relativeLayout = findViewById(R.id.relativeLayout);
+                AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) relativeLayout.getLayoutParams();
+                Message.log("appBarLayout: " + params.getScrollFlags() + ", " + (AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP));
+            }));
+        }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -1080,6 +1089,7 @@ public class MainActivity extends AppCompatActivity {
                 webUrl.setSingleLine(false);
                 linearLayoutAppbar.setVisibility(View.VISIBLE);
                 recyclerViewHistory.setVisibility(View.VISIBLE);
+                enableAppBarScroll(false);
                 ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(webUrl, 0);
                 dispatchTouchArea.add(webUrl);
                 dispatchTouchArea.add(linearLayoutAppbar);
@@ -1257,8 +1267,7 @@ public class MainActivity extends AppCompatActivity {
                 new Thread(() -> {
                     FileStorage.saveFavicon(icon, url);
                     new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                        if (recyclerViewAdapter != null)
-                            recyclerViewAdapter.updateIcon(url);
+                        if (recyclerViewAdapter != null) recyclerViewAdapter.updateIcon(url);
                     });
                 }).start();
             }
@@ -1625,6 +1634,16 @@ public class MainActivity extends AppCompatActivity {
     private void initializeGoogleAds() {
         new Thread(() -> MobileAds.initialize(this, initializationStatus -> {
         })).start();
+    }
+
+    private void enableAppBarScroll(boolean enable) {
+        RelativeLayout relativeLayout = findViewById(R.id.relativeLayout);
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) relativeLayout.getLayoutParams();
+        if (enable) {
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP);
+        } else {
+            params.setScrollFlags(0);
+        }
     }
 
     //test code
