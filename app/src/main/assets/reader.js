@@ -479,9 +479,13 @@ if (typeof window.pageReader === "undefined") {
 
                 if (element.className === "pageReader") element = element.parentElement;
 
-                if (window.__isClickable(element)) {
+                res.link = "";
+                const link = element.closest('a[href]');
+                if (window.__isClickable(element) || link) {
                     res.clickable = true;
                     this.clickableElement = element;
+                    if (link)
+                        res.link = link.href;
                 } else {
                     res.clickable = false;
                 }

@@ -633,27 +633,31 @@ public class Window {
         webView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> JavaScriptHandler.updateWindowHeight(webView));
 
         webView.setOnLongClickListener(v -> {
-            Message.log("hasNoUrl: " + webView.hasNoUrl());
             if (webView.hasNoUrl()) return true;
             if (skipNextLongClick || webView.hasNoUrl()) {
                 skipNextLongClick = false;
                 return false;
             }
-            WebView.HitTestResult res = ((WebView) v).getHitTestResult();
-            String link = res.getExtra();
+            //TODO
+            //WebView.HitTestResult res = ((WebView) v).getHitTestResult();
+            //String link = res.getExtra();
 
             int[] position = ((MyWebView) v).getTouchedPosition();
             JavaScriptHandler.getElementAndClickableByPosition(webView, position[2], position[3], result -> {
+                Message.log("result: " + result);
                 int idx;
                 boolean isLink;
+                //TODO
+                String link1;
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     idx = jsonObject.getInt("idx");
                     isLink = jsonObject.getBoolean("clickable");
+                    link1 = jsonObject.getString("link");
                 } catch (JSONException ignored) {
                     return;
                 }
-                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, isLink);
+                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link1, isLink);
             });
             return true;
         });
@@ -1024,7 +1028,7 @@ public class Window {
             menuView.findViewById(R.id.textOpen).setVisibility(View.GONE);
             menuView.findViewById(R.id.textReadBorder).setVisibility(View.GONE);
         }
-        if (link != null) {
+        if (link != null && !link.isEmpty()) {
             menuView.findViewById(R.id.textOpenNewWindow).setOnClickListener(view -> {
                 WindowList.onLongClick(link, isPrivate);
                 popupWindow.dismiss();
