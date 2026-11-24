@@ -470,24 +470,18 @@ if (typeof window.pageReader === "undefined") {
             try {
                 y -= window.scrollY;
                 let element = document.elementFromPoint(x, y);
-                let res = {};
-                if (element && element.className === "pageReader" && element.id) {
+                let res = { idx: -1, clickable: false, link: "" };
+                if (element && element.className === "pageReader" && element.id)
                     res.idx = element.id - pageReader.elementIdOffset;
-                } else {
-                    res.idx = -1;
-                }
 
                 if (element.className === "pageReader") element = element.parentElement;
 
-                res.link = "";
                 const link = element.closest('a[href]');
                 if (window.__isClickable(element) || link) {
                     res.clickable = true;
                     this.clickableElement = element;
                     if (link)
                         res.link = link.href;
-                } else {
-                    res.clickable = false;
                 }
                 return res;
             } catch (err) {
