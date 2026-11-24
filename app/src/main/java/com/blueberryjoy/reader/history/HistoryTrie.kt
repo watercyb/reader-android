@@ -1,7 +1,5 @@
 package com.blueberryjoy.reader.history
 
-import com.blueberryjoy.reader.utils.Message
-
 class HistoryTrie {
     private val root = HistoryTrieNode()
     var size = 0

@@ -234,7 +234,7 @@ public class MyWebView extends NestedScrollWebView {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
 
         if (!hasNoUrl()) return;
@@ -250,7 +250,7 @@ public class MyWebView extends NestedScrollWebView {
         return currentUrl == null || currentUrl.trim().isEmpty();
     }
 
-    private void setPrivateBackground(Canvas canvas) {
+    private void setPrivateBackground(@NonNull Canvas canvas) {
         boolean isDarkMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         int backgroundColor = isDarkMode ? Color.rgb(24, 27, 33) : Color.rgb(242, 243, 245);
         int titleColor = isDarkMode ? Color.WHITE : Color.rgb(48, 52, 59);
@@ -296,7 +296,7 @@ public class MyWebView extends NestedScrollWebView {
         canvas.drawText(App.Companion.getAppContext().getString(R.string.empty_page_hint), centerX, textY + lineHeight * 3f, paint);
     }
 
-    public void setNormalBackground(Canvas canvas) {
+    public void setNormalBackground(@NonNull Canvas canvas) {
         boolean isDarkMode = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
         int backgroundColor = isDarkMode ? Color.rgb(30, 33, 40) : Color.rgb(255, 255, 255);
         int titleColor = isDarkMode ? Color.WHITE : Color.rgb(48, 52, 59);

@@ -647,17 +647,16 @@ public class Window {
                 Message.log("result: " + result);
                 int idx;
                 boolean isLink;
-                //TODO
-                String link1;
+                String link;
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     idx = jsonObject.getInt("idx");
                     isLink = jsonObject.getBoolean("clickable");
-                    link1 = jsonObject.getString("link");
+                    link = jsonObject.getString("link");
                 } catch (JSONException ignored) {
                     return;
                 }
-                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link1, isLink);
+                showLongClickMenu((MyWebView) v, WindowList.getMainActivityProvider().getMainContext(), position, idx, link, isLink);
             });
             return true;
         });
