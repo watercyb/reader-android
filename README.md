@@ -45,6 +45,62 @@ An Android application that turns web pages into spoken content using text-to-sp
 
 ## Screenshots
 
+### Browsing Experience
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/main.png" width="200" alt="Main browsing screen" />
+      <br />
+      <b>Main Screen</b>
+    </td>
+    <td align="center">
+      <img src="images/tabs.png" width="200" alt="Multi-tab management" />
+      <br />
+      <b>Tab Management</b>
+    </td>
+    <td align="center">
+      <img src="images/urls.png" width="200" alt="URL input and suggestions" />
+      <br />
+      <b>Smart Address Bar</b>
+    </td>
+  </tr>
+</table>
+
+### Bookmarks and Privacy
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/bookmarks.png" width="200" alt="Bookmarks screen" />
+      <br />
+      <b>Bookmarks</b>
+    </td>
+    <td align="center">
+      <img src="images/private.png" width="200" alt="Private browsing screen" />
+      <br />
+      <b>Private Browsing</b>
+    </td>
+  </tr>
+</table>
+
+### Reading Experience
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="images/light.png" width="200" alt="Reading in light theme" />
+      <br />
+      <b>Light Theme</b>
+    </td>
+    <td align="center">
+      <img src="images/dark.png" width="200" alt="Reading in dark theme" />
+      <br />
+      <b>Dark Theme</b>
+    </td>
+  </tr>
+</table>
+
 ## Download
 
 https://play.google.com/store/apps/details?id=com.blueberryjoy.reader
