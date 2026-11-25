@@ -638,9 +638,6 @@ public class Window {
                 skipNextLongClick = false;
                 return false;
             }
-            //TODO
-            //WebView.HitTestResult res = ((WebView) v).getHitTestResult();
-            //String link = res.getExtra();
 
             int[] position = ((MyWebView) v).getTouchedPosition();
             JavaScriptHandler.getElementAndClickableByPosition(webView, position[2], position[3], result -> {

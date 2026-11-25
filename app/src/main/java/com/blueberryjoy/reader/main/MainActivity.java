@@ -638,14 +638,7 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test
-        if (BuildConfig.DEBUG) {
-            listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {
-                RelativeLayout relativeLayout = findViewById(R.id.relativeLayout);
-                AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) relativeLayout.getLayoutParams();
-                Message.log("appBarLayout: " + params.getScrollFlags() + ", " + (AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS | AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP));
-            }));
-        }
+        //Test if (BuildConfig.DEBUG) { listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
