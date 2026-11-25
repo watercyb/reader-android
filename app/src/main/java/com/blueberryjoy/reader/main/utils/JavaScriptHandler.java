@@ -86,5 +86,7 @@ public class JavaScriptHandler {
         webView.evaluateJavascript("javascript: if (window.pageReader) window.pageReader.updateHighlightAndScroll(" + direction + "," + idxList + "," + y + ");", callback::onResult);
     }
 
-
+    public static void getMetaContent(@NonNull MyWebView webView, String name, @NonNull JsResultCallback callback) {
+        webView.evaluateJavascript("(function() { if (window.pageReader) { return window.pageReader.getMetaContent('" + name + "'); } })();", callback::onResult);
+    }
 }

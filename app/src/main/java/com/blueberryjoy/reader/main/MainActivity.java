@@ -638,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             }));
         }
 
-        //Test if (BuildConfig.DEBUG) { listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {})); }
+        //Test if (BuildConfig.DEBUG) {listViewItemList.add(new ListViewItem("test", (item, isLongClick) -> {}));}
 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

@@ -121,4 +121,5 @@ dependencies {
     implementation(libs.kotlin.metadata.jvm)
     implementation(libs.androidx.webkit)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.jsoup)
 }

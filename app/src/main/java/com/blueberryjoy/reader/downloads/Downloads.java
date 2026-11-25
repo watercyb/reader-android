@@ -1,6 +1,8 @@
 package com.blueberryjoy.reader.downloads;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,7 +114,6 @@ public class Downloads extends AppCompatActivity {
             if (textViewSort.getText().equals(getString(R.string.download_sort_by_name))) {
                 textViewSort.setText(getString(R.string.download_sort_by_date));
                 downloadsRecyclerViewItems.sortByDate();
-
             } else {
                 textViewSort.setText(getString(R.string.download_sort_by_name));
                 downloadsRecyclerViewItems.sortByName();
@@ -208,8 +209,17 @@ public class Downloads extends AppCompatActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         @SuppressLint("InflateParams") View menuView = inflater.inflate(R.layout.popup_url_menu, null);
         PopupWindow popupWindow = new PopupWindow(menuView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        menuView.findViewById(R.id.textCopyUrl).setVisibility(View.GONE);
-        menuView.findViewById(R.id.textCopyUrlBorder).setVisibility(View.GONE);
+        String url = FileStorage.getUrlFromDownloadedFile(downloadsRecyclerViewItems.get(originalIndex).getFilename());
+        if (!url.isEmpty()) {
+            menuView.findViewById(R.id.textCopyUrl).setOnClickListener(view -> {
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                clipboard.setPrimaryClip(ClipData.newPlainText("URL", url));
+                popupWindow.dismiss();
+            });
+        } else {
+            menuView.findViewById(R.id.textCopyUrl).setVisibility(View.GONE);
+            menuView.findViewById(R.id.textCopyUrlBorder).setVisibility(View.GONE);
+        }
         menuView.findViewById(R.id.textOpen).setOnClickListener(view -> {
             openUrl(originalIndex, false);
             popupWindow.dismiss();

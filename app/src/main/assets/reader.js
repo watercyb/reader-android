@@ -497,6 +497,16 @@ if (typeof window.pageReader === "undefined") {
                 this.sendErrorMessage("clickElement: " + err.message);
             }
         }
+        /* Will Be Called From Java (unused) */
+        getMetaContent(name) {
+            try {
+                const meta = document.querySelector("meta[name='"+name+"']");
+                const content = meta?.getAttribute('content');
+                return content;
+            } catch (err) {
+                this.sendErrorMessage("getMetaContent: " + err.message);
+            }
+        }
     })();
 
     window.pageReader = readerInstance;
