@@ -2,31 +2,12 @@ package com.blueberryjoy.reader.history
 
 class HistoryTrie {
     private val root = HistoryTrieNode()
-    var size = 0
-    var count = 0
 
     fun insert(token: String, list: List<HistoryUrl>) {
         var node = root
         for (chr in token) {
-            //TODO case.
             val chr = if (chr.isUpperCase()) chr.lowercase()[0] else chr
             node.add(list)
-            node = node.nextOrCreate(chr)
-        }
-        node.add(list)
-    }
-
-    fun insert1(token: String, list: List<HistoryUrl>) {
-        var node = root
-        for (chr in token) {
-            //TODO case.
-            val chr = if (chr.isUpperCase()) chr.lowercase()[0] else chr
-            node.add(list)
-
-            //TODO test code
-            if (node.next(chr) == null) size++
-            count++
-
             node = node.nextOrCreate(chr)
         }
         node.add(list)
@@ -35,7 +16,6 @@ class HistoryTrie {
     fun get(token: String): List<List<HistoryUrl>> {
         var node = root
         for (chr in token) {
-            //TODO case.
             val chr = if (chr.isUpperCase()) chr.lowercase()[0] else chr
             val next = node.next(chr) ?: break
             node = next
@@ -45,7 +25,7 @@ class HistoryTrie {
 
     fun addAll(historyTokenMap: HashMap<String, ArrayList<HistoryUrl>>) {
         for ((token, list) in historyTokenMap.entries) {
-            insert1(token, list)
+            insert(token, list)
         }
     }
 }
